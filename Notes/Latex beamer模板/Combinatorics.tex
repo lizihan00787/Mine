@@ -1,0 +1,1550 @@
+\documentclass[UTF8]{beamer}
+\usepackage{ctex}
+\usepackage{graphicx}
+\usepackage{ulem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{graphicx}
+
+\usetheme[block=fill, sectionpage=none]{Berlin}
+\usecolortheme{custom}
+
+\title{组合数学1}
+\subtitle{二项式系数}
+\author{God\_Max\_Me}
+\date{2025 年 1 月 23 日}
+\usefonttheme[onlymath]{serif}
+
+\geometry{paperheight=11.0cm,paperwidth=16.0cm}
+
+\begin{document}
+    \maketitle
+    \section{组合数}
+    \subsection{组合恒等式}
+    \begin{frame}{定义}
+        \begin{itemize}
+            \item \textbf{组合数}，也叫二项式系数，定义为
+            $$
+            C_{n}^{m}=\binom{n}{m}=\frac{n!}{m!(n-m)!}=\frac{n(n-1)\cdots(n-m+1)}{m!}
+            $$
+            表示从 $n$ 个不同元素中选出 $m$ 个（不计顺序）的方案数。
+            \item \textbf{下降幂}：$n$ 的 $m$ 阶下降幂定义为
+            $$
+            n^{\underline m} = n(n-1)\cdots (n-m+1)
+            $$
+            这样二项式系数可以写为
+            $$
+            \binom{n}{m} = \frac{n^{\underline m}}{m!}
+            $$
+        \end{itemize}
+    
+    \end{frame}
+
+    \begin{frame}{插板法}
+        \begin{block}{插板法1}
+            有 $n$ 个完全相同的元素，将其分为 $k$ 组，每组至少有一个元素，一共有多少种分法？
+        \end{block}
+        \pause
+        \vspace{-0.7em}
+        \begin{block}{Solution}
+            $k-1$ 块板插入 $n-1$ 个空隙，答案为
+            \vspace{-1em}
+            $$
+            \binom{n-1}{k-1}
+            $$
+            \vspace{-1em}
+        \end{block}
+        
+        \pause
+        \begin{block}{插板法2}
+            有 $n$ 个完全相同的元素，将其分为 $k$ 组，每组可以为空，一共有多少种分法？
+        \end{block}
+        \pause
+        \vspace{-0.7em}
+        \begin{block}{Solution}
+            先加 $k$ 个元素，让每组都非空，最后从每组中拿走一个元素，答案为
+            \vspace{-0.5em}
+            $$
+            \binom{n+k-1}{k-1}=\binom{n+k-1}{n}
+            $$
+            \vspace{-1em}
+        \end{block}
+    \end{frame}
+    \begin{frame}
+        \begin{block}{插板法3}
+            从 $1,2,\cdots,n$ 中选出 $k$ 个数，要求任何两个数都不相邻，一共有多少种选法？
+        \end{block}
+        \pause
+        \begin{block}{Solution}
+            这 $k$ 个元素把 $1\sim n$ 划分成了 $k+1$ 段，设每段的值为 $a_0,a_1,\cdots,a_{n-1},a_n$，则它们满足
+            $$
+            a_0+a_1+\cdots+a_n=n-k\land a_1,a_2,\cdots,a_{n-1}>0,a_0,a_{n}\ge 0
+            $$
+            给 $a_0,a_n$ 都加上 $1$，让 $a_0,a_1,\cdots,a_{n-1},a_n$ 都 $>0$，此时
+            $$
+            a_0+a_1+\cdots+a_n=n-k+2
+            $$
+            即将 $n-k+2$ 个数划分成至少为 $1$ 的 $k+1$ 段，方案数为
+            $$
+            \binom{n-k+1}{k}
+            $$
+        \end{block}
+    \end{frame}
+
+    \begin{frame}{定义的拓展}
+        上述定义的定义域为 $n,m\in \mathbb N$，使用下面的定义，将定义域扩展到 $n\in \mathbb R,m\in \mathbb Z$：
+
+        $$
+        \binom nm = \begin{cases}
+            \frac{n^{\underline m}}{m!} & m\ge 0\\
+            0& m<0
+        \end{cases}
+        $$
+
+        规定 $0^0=0!=x^{\underline 0}= 1$。
+    \end{frame}
+
+    \begin{frame}{组合恒等式}
+        下面的恒等式如果没有特殊标注则表示对 $n\in \mathbb R,k\in \mathbb Z$ 成立
+        \begin{block}{加法公式}
+        $$
+        \binom nk = \binom{n-1}{k}+\binom{n-1}{k-1}
+        $$
+        \end{block}
+        \pause
+
+        \begin{block}{对称公式}
+            $$
+            \binom nk = \binom n{n-k},\quad n,k\in \mathbb N
+            $$
+
+            注意对称公式对负的 $n$ 是不成立的
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \begin{block}{吸收公式}
+            $$
+            k\binom{n}{k}=n\binom{n-1}{k-1},\quad (n-k)\binom nk = n\binom{n-1}{k}
+            $$
+        \end{block}
+        \begin{block}{上指标反转}
+            $$
+            \binom nk=(-1)^k\binom{k-n-1}k
+            $$
+        \end{block}
+        \pause
+        以上柿子均可以由定义推出，这里不再赘述。
+    \end{frame}
+
+    \begin{frame}{组合求和式}
+        \begin{block}{广义二项式定理}
+            对 $n\in \mathbb R$，$|\frac{x}{y}|<1$
+            \vspace{-0.5em}
+            $$
+            (x+y)^n = \sum_{k=0}^{+\infty}\binom{n}{k}x^ky^{n-k}
+            $$
+            特别地，当 $n\in \mathbb N$ 时就是常用的二项式定理
+            \vspace{-0.5em}
+            $$
+            (x+y)^n = \sum_{k=0}^{n}\binom{n}{k}x^ky^{n-k}
+            $$\vspace{-1em}
+        \end{block}
+        证明的话对 $f(x)=(x+y)^n$ 在 $x=0$ 处做泰勒展开即可。
+        \pause
+        \begin{block}{组合数一行之和}\vspace{-1em}
+            $$
+            \sum_{k=0}^n \binom nk=2^n,\quad n\in\mathbb{N}
+            $$\vspace{-1em}
+        \end{block}
+        二项式定理取 $x=y=1$ 即可。
+    \end{frame}
+
+    \begin{frame}
+
+        \begin{block}{平行求和}\vspace{-2em}
+            $$
+            \binom{n}0+\binom{n+1}{1}+\cdots+\binom{n+m}{m} = \sum_{k=0}^m\binom{n+k}{k}=\binom{n+m+1}{m},\quad m\in \mathbb N
+            $$\vspace{-1.2em}
+        \end{block}
+        \pause
+        \begin{block}{证明}
+            将 $\binom{n+m+1}{m}$ 用加法公式一步步展开即可
+            $$
+            \begin{aligned}
+                \binom{n+m+1}m &= \binom{n+m}{m}+\binom{n+m}{m-1}\\
+                &=\binom{n+m}{m}+\binom{n+m-1}{m-1}+\binom{n+m-1}{m-2}\\
+                &=\cdots\\
+                &=\binom{n+m}{m}+\binom{n+m-1}{m-1}+\cdots+\binom{n+1}{1}+\binom{n}0
+            \end{aligned}
+            $$
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \begin{block}{上指标求和}\vspace{-1em}
+            $$
+            \binom{0}m+\binom{1}{m}+\cdots+\binom{n}{m} = \sum_{k=0}^n\binom{k}{m}=\binom{n+1}{m+1},\quad n,m\in \mathbb N
+            $$\vspace{-0.5em}
+        \end{block}
+        \pause
+        \begin{block}{证明}
+            将 $\binom{n+1}{m+1}$ 用加法公式一步步展开即可
+        \end{block}
+    \end{frame}
+    \begin{frame}
+        \begin{block}{交错和}
+            \vspace{-1em}
+            $$
+            \sum_{k=0}^m(-1)^k\binom{n}{k} =(-1)^m\binom{n-1}{m},\quad m\in \mathbb Z
+            $$\vspace{-1em}
+        \end{block}
+        \pause
+        \begin{block}{证明}
+            \vspace{-1em}
+            $$
+            \begin{aligned}
+                \sum_{k=0}^m(-1)^k\binom{n}{k} &=\sum_{k=0}^m\binom{k-n-1}{k}&&\text{上指标反转}\\
+                \pause
+                &=\binom{m-n}{m}&&\text{平行求和}\\
+                &=(-1)^m\binom{n-1}{m}&&\text{上指标反转}\\
+            \end{aligned}
+            $$
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \begin{block}{范德蒙德卷积}\vspace{-1em}
+            $$
+            \sum_{k}\binom{r}{k}\binom{s}{n-k}=\binom{r+s}{n},\quad n\in\mathbb Z
+            $$\vspace{-1em}
+        \end{block}
+        \pause
+        \begin{block}{组合意义}
+            从 $r+s$ 个物品中一共要选 $n$ 个，总方案数是 $\binom{r+s}{n}$。枚举 $k$ 表示从前 $r$ 个物品中选了 $k$ 个，那么从后面 $s$ 个物品中就选了 $n-k$ 个，方案数是 $\binom{r}{k}\binom{s}{n-k}$。
+        \end{block}
+        \pause
+        进一步结合其他恒等式可以得到下面这些式子
+    \end{frame}
+
+    \begin{frame}{多项式系数}
+        \begin{block}{三项式版恒等式}
+            $$
+            \binom{r}{m}\binom{m}{k}=\binom{r}{k}\binom{r-k}{m-k},\quad m,k\in \mathbb Z
+            $$
+        \end{block}
+        两边都是用定义展开即可得证。
+
+        \pause
+
+        $n$ 个两两不同的物品，分成 $m$ 组，第 $i$ 组有 $a_i$ 个物品，则总的方案数为：
+        $$\frac{n!}{\prod_{i=1}^ma_i!}$$
+        \pause
+        这个被叫做多项式系数，记做 $\binom{n}{a_1,a_2,\cdots,a_m}=\binom{a_1+a_2+\cdots+a_m}{a_1,a_2,\cdots,a_m}$\\
+        \pause
+        它等于如下的二项式系数乘积：
+        $$\binom{a_1+a_2+\cdots+a_m}{a_1,a_2,\cdots,a_m}=\binom{a_1+\cdots+a_m}{a_2+\cdots+a_m}\binom{a_2+\cdots+a_m}{a_3+\cdots+a_m}\cdots\binom{a_{m-1}+a_m}{a_m}\binom{a_m}0$$
+    \end{frame}
+
+    \begin{frame}
+        总结一下，常用恒等式如下表所示：
+    \end{frame}
+
+    \begin{frame}
+        上指标求和和平行求和都有封闭形式，但是遗憾的是，下指标求和没有封闭形式。
+        $$
+        \sum_{k\le m}\binom{n}{k},\quad n,m\in \mathbb N
+        $$
+    \end{frame}
+
+    \begin{frame}
+        \sout{开始推式子吧}
+        \begin{block}{求出下式的封闭形式}\vspace{-1em}
+            $$\sum_k\binom nk^2,\ n\in\mathbb{N}$$
+            \vspace{-1em}
+        \end{block}
+        \pause
+        对称公式之后范德蒙德卷积即可。
+        $$\sum_k\binom nk^2=\sum_k\binom nk\binom n{n-k}=\binom{2n}n$$
+    \end{frame}
+    \begin{frame}
+        \begin{block}{求出下式的封闭形式}
+            $$\sum_kk\binom nk^2$$
+        \end{block}
+        \pause
+        吸收律之后对称公式之后范德蒙德卷积即可。
+        \begin{align*}
+              & \sum_kk\binom nk^2=n\sum_k\binom nk\binom {n-1}{k-1}\\
+            = & n\sum_k\binom nk\binom {n-1}{n-k}=n\binom{2n-1}{n}
+        \end{align*}
+    \end{frame}
+    \begin{frame}
+        \begin{block}{《具体数学》 的例题}
+            $$\sum_{k=0}^m\frac{\binom mk}{\binom nk},\ n,m\in\mathbb{N},\ n\geq m$$
+        \end{block}
+        \pause
+        注意到
+        $$\binom nm\binom mk=\binom nk\binom{n-k}{m-k}\iff\frac{\binom mk}{\binom nk}=\frac{\binom{n-k}{m-k}}{\binom nm}$$
+        提出 $\frac{1}{\binom nm}$ ，
+        $$
+        \begin{aligned}
+            \text{原式}=\frac{1}{\binom{n}{m}}\sum_{k=0}^m\binom{n-k}{m-k}=\frac{1}{\binom{n}{m}}\sum_{k=0}^m\binom{n-m+k}{k}=\frac{\binom{n+1}{m}}{\binom nm}=\frac {n+1}{n+1-m}
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}
+        \begin{block}{求出下式的封闭形式}\vspace{-1em}
+            $$\sum_{k=m}^n(-1)^{k}\binom nk\binom km,\ n,m\in\mathbb{N},\ n\geq m$$
+        \end{block}
+        \vspace{-1em}
+        \pause
+        $$
+        \begin{aligned}
+            & \sum_{k=m}^n(-1)^k\binom nk\binom km =\sum_{k=m}^n(-1)^k\binom nm\binom{n-m}{k-m}\\
+            & =\binom nm\sum_{k=m}^n(-1)^k\binom{n-m}{k-m}=\binom nm(-1)^m\sum_{k=m}^n\binom {k-n-1}{k-m}\\
+            & =\binom nm(-1)^m\sum_{k=0}^{n-m}\binom{k+m-n-1}{k}=\binom nm(-1)^m\binom{0}{n-m}\\
+            & =(-1)^m[n=m]
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}
+        还有一种做法，可以考虑生成函数：
+        \pause
+        \begin{align*}
+            & \sum_{m=0}^{n}\sum_{k=m}^n(-1)^{k}\binom nk\binom kmx^m\\
+            & =\sum_{k=0}^{n}(-1)^{k}\binom nk\sum_{m=0}^k\binom kmx^m\\
+            & =\sum_{k=0}^{n}(-1)^{k}\binom nk(1+x)^k\\
+            & =(-1-x+1)^n=(-x)^n
+        \end{align*}
+        \pause
+        于是上式的 $x^m$ 项系数为
+        $$
+        [x^m](-x)^n=[m=n](-1)^n
+        $$
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{《具体数学》 的例题}
+            $$\sum_k\binom{n+k}{2k}\binom{2k}{k}\frac{(-1)^k}{k+1},\quad n\in \mathbb N$$
+        \end{block}
+        \pause
+        \begin{align*}
+              & \sum_k\binom{n+k}{2k}\binom{2k}{k}\frac{(-1)^k}{k+1}=\sum_k\binom{n+k}{k}\binom{n}{k}\frac{(-1)^k}{k+1}\\
+            = & \sum_k\binom{n+k}{k}\binom{n+1}{k+1}\frac{(-1)^k}{n+1}=\frac{1}{n+1}\sum_k\binom{-n-1}{k}\binom{n+1}{k+1}\\
+            = & \frac 1{n+1}\binom 0n=[n=0]
+        \end{align*}
+    \end{frame}
+
+    \begin{frame}
+        \begin{block}{《具体数学》 的例题}
+            $$\sum_k\binom{n+k}{m+2k}\binom{2k}{k}\frac{(-1)^k}{k+1}$$
+        \end{block}
+        \pause
+        利用式 (5.26) 尝试反向使用范德蒙德卷积：
+        \begin{align*}
+            = & \sum_k\binom{2k}{k}\frac{(-1)^k}{k+1}\sum_{0\leq j\leq n+k-1}\binom{n+k-1-j}{2k}\binom{j}{m-1}\\
+            = & \sum_{j\ge 0}\binom{j}{m-1}\sum_{k\ge j-n+1}\binom{n+k-1-j}{2k}\binom{2k}{k}\frac{(-1)^k}{k+1}\\
+            = & \sum_{j\ge 0<n}\binom{j}{m-1}\sum_{k\ge 0}\binom{n+k-1-j}{2k}\binom{2k}{k}\frac{(-1)^k}{k+1}\\
+            = & \sum_{0\le j<n}\binom{j}{m-1}[n-1-j=0]
+            = \binom{n-1}{m-1}
+        \end{align*}
+    \end{frame}
+    
+    \subsection{例题}
+    \begin{frame}{例题}
+        \sout{终于到OI题了}
+
+        \begin{block}{[SDOI2016] 排列计数}
+        求有多少种 $1\sim n$ 的排列 $a$，满足恰有 $m$ 个位置 $i$ 使得 $a_i = i$。答案对 $10^9 + 7$ 取模。
+
+        $1 \leq T \leq 5 \times 10^5$，$1 \leq n \leq 10^6$，$0 \leq m \leq 10^6$。
+        \end{block}
+        \pause
+        记 $n$ 个元素的错排为 $d_n$，那么原式就等于 $\binom nm d_{n-m}$，考虑快速计算 $d$。
+    \end{frame}
+    \begin{frame}
+        
+        一种做法是直接容斥：
+        $$d_n=n!+\sum_{k=1}^n(-1)^k\binom{n}{k}(n-k)!=n!\sum_{0\leq k\leq n}(-1)^k\frac 1{k!}$$
+        \pause
+        另一种做法是考虑递推，考虑 $n$ 所在的环的大小：
+        \begin{itemize}
+            \item 大小为 $2$，那么剩下的所有是一个 $n-2$ 的错排，方案数为 $(n-1)d_{n-2}$
+            \item 大小 $>2$，那么插入 $n$ 之前就已经是一个错排了，枚举插入位置，方案数为 $(n-1)d_{n-1}$
+        \end{itemize}
+        $$d_n=(n-1)(d_{n-1}+d_{n-2})$$
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[六省联考 2017] 组合数问题}
+            求
+            $$
+            \sum_{i\bmod k=r}\binom{nk}{i}\bmod p
+            $$
+            $1\le n\le 10^9,0\le r<k\le 1000, 2\le p\le 2^{30}-1$
+        \end{block}
+        \pause
+        $$
+        \begin{aligned}
+        &=\sum_{i\bmod k=r}[x^i](1+x)^{nk}\\
+        &=[x^r]\Big((1+x)^{nk}\bmod (x^k-1)\Big)
+        \end{aligned}
+        $$
+
+        循环卷积快速幂即可，复杂度 $O(k^2\log nk)$
+    \end{frame}
+
+%     \begin{frame}{例题}
+%         \begin{block}{[HAOI2011] Problem c}
+
+% 给 $n$ 个人安排座位，先给每个人一个 $1\thicksim n$ 的编号，第 $i$ 个人的编号为 $a_i$（不同人的编号可以相同）。接着从第一个人开始，大家依次入座，第 $i$ 个人来了以后尝试坐到 $a_i$，如果 $a_i$ 被占据了，就接着依次尝试 $a_i+1,a_i+2,\cdots,n$。如果一直尝试到第 $n$ 个都不行，该安排方案就不合法。
+
+% 有 $m$ 个人的编号已经确定，你只能安排剩下的人的编号，求有多少种合法的安排方案。答案对 $M$ 取模。
+
+% $1 \leq T \leq 10$，$1 \leq n \leq 300$， $0 \leq m \leq n$， $2 \leq M \leq 10^9$。
+%         \end{block}
+%         \pause
+
+        
+%         记 $s_i$ 表示一个方案中编号 $\ge i$ 的人的数量。那么无解当且仅当 $\exists i $ 使得 $s_i>n-i+1$。
+%         DP，设 $f_{i,j}$ 表示在考虑完所有 $\ge i$ 的编号，除了那 $m$ 个确定的人以外还有 $j$ 个人的编号 $\ge i$，那么转移为
+%         $$
+%         f_{i,j}=\sum_{k=0}^jf_{i+1,j-k}\binom{j}{k}
+%         $$
+%         复杂度 $O(n^3)$，使用多项式卷积可以做到 $O(n^2\log n)$。
+%     \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[HAOI2018] 苹果树}
+            一棵二叉树，初始只有一个根节点。每次随机在可能的位置接上一个节点来产生
+            一个 $n$ 个节点的二叉树，设树上节点两两距离之和的期望为 $E$，求 $n!\cdot E$ 在 $\bmod P$ 意义下的值。
+
+            $n\le 2000, P\le 10^9+7$
+        \end{block}
+
+        \pause
+
+        做法很多，这里随便讲一种。
+
+        每次操作之后会减少一个剩余位置，增加两个剩余位置，这样能生成的树的总数为 $2\times 3\times \cdots \times n = n!$，于是答案为所有树的节点两两距离之和。
+
+        
+    \end{frame}
+
+    \begin{frame}
+        对于一个节点 $i$（$i\ge 2$），$(i,\mathrm{father}_i)$ 这条边的贡献是 $size_i(n-size_i)$。那么枚举 $size_i$，我们要求 $i$ 的子树大小为 $size_i$ 的树的数量。
+        \begin{itemize}
+            \item $1\sim i$ 这些点随便连，方案数是 $i!$
+            \item 从剩下的 $n-i$ 个节点里选出 $size_i-1$ 个放进 $i$ 的子树，选点方案 $\binom{n-i}{size_i-1}$，子树内方案数 $(size_i)!$
+            \item 剩下的点要放到 $i$ 子树外面，方案数是 $(i-1)i(i+1)\cdots(n-size_i-1)=\frac{(n-size_i-1)!}{(i-2)!}$
+        \end{itemize}
+        最终答案为
+        $$
+        \begin{aligned}
+        &\sum_{i=2}^n\sum_{size_i=1}^{n-i+1}size_i(n-size_i)\cdot i!\cdot\binom{n-i}{size_i-1}(size_i)!\frac{(n-size_i-1)!}{(i-2)!}\\
+        =&\sum_{i=2}^n\sum_{size_i=1}^{n-i+1}size_i(n-size_i)\cdot\binom{n-i}{size_i-1}(size_i)!(n-size_i-1)!i(i-1)\\
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[ZJOI2015] 地震后的幻想乡}
+            给定一张 $n$ 个点 $m$ 条边的图，边的边权是 $[0,1]$ 之间均匀分布的随机实数，且相互独立。求最小生成树的最大边权的期望值。
+
+            结果保留 $6$ 为小数。
+
+            $n\le 10,m\le \frac{n(n-1)}{2}$
+
+            提示（原题给的提示）：对于 $n$ 个 $[0,1]$ 之间的随机变量 $x_1,\cdots,x_n$，第 $k$ 小值的期望值是 $\frac{k}{n+1}$。
+        \end{block}
+        \pause
+
+        首先有一个暴力做法，枚举边权的相对大小，然后做最小生成树，kruskal算出最小生成树最大边权的排名，然后根据提示得出此时的最大边权的期望。
+
+        这个想法启发我们钦定一个边集 $S$ 和一条边 $e$，$S$ 为前 $|S|$ 小的所有边，$e$ 为第 $|S|+1$ 小的边。如果加入 $S$ 后图未连通，加入 $e$ 后\textbf{恰好}使图联通，那么此时最小生成树的期望就是 $\frac{|S|+1}{m+1}$。$S$ 恰好是前 $|S|$ 小且 $e$ 恰好是第 $|S|+1$ 小的概率是 $\frac{1}{\binom{m}{|S|+1}\cdot (|S|+1)}$
+    \end{frame}
+
+    \begin{frame}
+        于是我们统计这样的 $(S,e)$ 的数量。恰好联通这个条件并不好统计，我们转换一下，可以变成加之前不连通的边集数 $-$ 加之后不连通的边集数。
+
+        令 $f_{S,i},g_{S,i}$ 分别表示点集为 $S$，边集大小为 $i$，且点集不连通/连通的边集数量，令 $d_S$ 表示点集 $S$ 的导出子图的边数，则
+        $$
+        g_{S,i}+f_{S,i} = \binom{d_S}{i}
+        $$
+        考虑 $f$ 的转移，对于一个 $S$，任取 $S$ 中的一个点 $k$，枚举 $k$ 所在的连通块 $T$
+        $$
+        f_{S,i} = \sum_{k\in T\subsetneq S}\sum_{j} g_{T,j}\binom{d_{S\setminus T}}{i-j}
+        $$
+    \end{frame}
+
+    \begin{frame}
+        最后考虑如何统计答案，令点集的全集为 $U$，考虑加入第 $k$ 条边时恰好连通的二元组 $(S,e)$，$|S|+1=k$，这样的二元组数量是
+        $$
+        (m-k+1)f_{U,k-1}-kf_{U,k}
+        $$
+
+        于是最终答案为
+        $$
+        \sum_{k=1}^m\frac{k}{m+1}\cdot\frac{1}{\binom{m}{k}\cdot k}((m-k+1)f_{U,k-1}-kf_{U,k})
+        $$
+
+        化简可得一个更简单的表达式为
+        $$
+        \frac{1}{m+1}\sum_{k=1}^m\frac{f_{U,k}}{\binom{m}{k}}
+        $$
+
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{某联考题}
+            给定序列 $a$，每次询问给出 $[l,r]$ 和 $k$。
+            
+            回答：在序列 $a$ 中值在 $[l,r]$ 内的数所有数中随机选择 $k$ 个，最大值的期望$\bmod\  998244353$，不足 $k$ 个输出 $-1$。
+
+            $n,\sum k\le 10^5,a_i\le 10^8$
+        \end{block}
+
+        \pause
+
+        排序后把值域$[l,r]$换成序列上的区间$[l,r]$，答案为 
+        $$
+        \sum_{i=l+k-1}^r\binom{i-l}{k-1}a_i
+        $$
+    \end{frame}
+
+    \begin{frame}
+        
+    根据范德蒙德卷积
+    $$
+    \begin{aligned}
+    ans&=\sum_{i=l+k-1}^ra_i\sum_{j=0}^{k-1}\binom{i}{j}\binom{-l}{k-j-1}\\
+    &=\sum_{j=0}^{k-1}\binom{-l}{k-j-1}\sum_{i=l+k-1}^{r}a_i\binom{i}{j}
+    \end{aligned}
+    $$
+    前面的组合数使用上指标反转即可。
+
+    \pause
+    因为限制了 $\sum k$，考虑根号分治
+
+    \begin{itemize}
+        \item 
+    $<B$的部分，对 $\sqrt{B}$个$j$，预处理出 $a_i\binom{i}{j}$ 的前缀和，询问的时候枚举 $j$ 即可，复杂度 $O(Bn+\sum k)$
+
+    \item $\ge B$的部分，$O(n)$暴力即可
+    \end{itemize}
+
+
+    $B=\sqrt{n}$有最优复杂度，总复杂度 $O(n\sqrt{n})$。
+    \end{frame}
+
+    \section{Lucas 定理}
+    \subsection{Lucas 定理}
+    \begin{frame}{Lucas 定理}
+        Lucas 定理可以用来求大组合数对小模数取模的结果
+        \begin{block}{Lucas 定理}
+            对于质数 $p$，
+            $$
+            \binom{n}{m}\bmod p = \binom{\lfloor n/p\rfloor}{\lfloor m/p\rfloor}\cdot\binom{n\bmod p}{m\bmod p}\bmod p
+            $$
+        \end{block}
+    \end{frame}
+
+    \begin{frame}{Lucas 定理的证明}
+        \begin{block}{引理1}\vspace{-1em}
+            $$
+            \binom{p}{n}\bmod p = [n=0\lor  n=p]
+            $$\vspace{-1em}
+        \end{block}
+        \textbf{证明.} $\binom{p}{n}=\frac{p!}{n!(p-n)!}$，分子中 $p$ 的次数为 $1$，若 $\binom{p}{n}\not\equiv 0 \pmod p$，则 $n=p$ 或 $p-n=p$，此时 $n=0$ 或 $p$，$\binom{p}{n}\bmod p = 1$。
+
+        \pause
+
+        \begin{block}{引理2}
+            \vspace{-1em}
+            $$
+            (a+b)^p\equiv a^p+b^p \pmod p
+            $$
+            \vspace{-1em}
+        \end{block}
+        \textbf{证明.}
+        \vspace{-1em}
+        $$
+        \begin{aligned}
+        (a+b)^p&\equiv \sum_{n=0}^p\binom{p}{n}a^nb^{p-n} \pmod p\\
+        &\equiv a^p+b^p \pmod p
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}{Lucas 定理的证明}
+        $\binom{n}{m}\bmod p$ 为 $(1+x)^n\bmod p $ 的 $x^m$ 项系数，
+        $$
+        \begin{aligned}
+        (1+x)^n\bmod p &= (1+x)^{p\lfloor n/p\rfloor }(1+x)^{n\bmod p}\bmod p\\
+        &= (1+x^p)^{\lfloor n/p\rfloor }(1+x)^{n\bmod p}\bmod p
+        \end{aligned}
+        $$
+        $(1+x^p)^{\lfloor n/p\rfloor }$ 中的项的次数都是 $p$ 的整倍数，$(1+x)^{n\bmod p}$ 中的项的次数都 $<p$。
+        
+        把 $m$ 拆成 $p\lfloor m/p\rfloor + m\bmod p$，那么 $p\lfloor m/p\rfloor$ 项系数由 $(1+x^p)^{\lfloor n/p\rfloor }$ 贡献，为 $\dbinom{\lfloor n/p\rfloor}{\lfloor m/p\rfloor}$；$m\bmod p$ 项系数由 $(1+x)^{n\bmod p}$ 贡献，为 $\dbinom{n\bmod p}{m\bmod p}$。
+
+        $\ $
+
+        于是就得到 Lucas 定理
+        $$
+        \binom{n}{m}\bmod p = \binom{\lfloor n/p\rfloor}{\lfloor m/p\rfloor}\cdot\binom{n\bmod p}{m\bmod p}\bmod p
+        $$
+        
+        \vspace{-2em}
+        \hfill $\Box$
+
+    \end{frame}
+
+    \begin{frame}{扩展Lucas定理}
+        Lucas 定理要求模数必须是质数，如果模数不是质数怎么办。
+        \begin{block}{问题}
+            求
+            $$
+            \binom{n}{m}\bmod M
+            $$
+            其中 $M\le 10^6$ 有质因数分解
+            $$
+            M = p_1^{\alpha_1}\cdots p_m^{\alpha_m}
+            $$
+        \end{block}
+        \pause
+
+        首先按照 $M$ 的因式分解转化成求 $\binom{n}{m}\bmod p^{\alpha}$，最后 CRT 合并即可。于是现在问题转化成求
+        $$
+        \binom{n}{m}\bmod p^\alpha=\frac{n!}{m!(n-m)!}\bmod p^\alpha
+        $$
+        其中 $p$ 是质数。
+    \end{frame}
+
+    \begin{frame}
+        问题在于分母中可能含有 $p$ 这个因子，无法直接求逆，考虑把分子分母中的 $p$ 因子全部提出来。
+
+        设 $n!,m!,(n-m)!$ 中 $p$ 因子的次数分别为 $x,y,z$（这是好求的），我们只需要求
+        $$
+        \frac{\frac{n!}{p^x}}{\frac{m!}{p^y}\frac{(n-m)!}{p^z}}p^{x-y-z}\bmod p^\alpha
+        $$
+
+        现在分母可以 exgcd 求逆了，我们只需要求形如下面这样的式子
+        $$
+        \frac{n!}{p^x}\bmod p^{\alpha}
+        $$
+        即 $n!$ 中去除 $p$ 因子后 $\bmod p^{\alpha}$ 的结果。
+    \end{frame}
+    
+    \begin{frame}
+        将 $n!$ 中的元素分成两个部分：
+        \begin{itemize}
+            \item $p$ 的倍数，这一部分的积为 $p^{\lfloor n/p\rfloor}(\lfloor n/p\rfloor)!$
+            \item 非 $p$ 的倍数，这一部分又可以按照 $\bmod p^{\alpha}$ 的循环节和余项两部分
+        \end{itemize}
+        所以有：
+$$
+n! = q^{\left\lfloor\frac{n}{q}\right\rfloor} \cdot \left(\left\lfloor\frac{n}{q}\right\rfloor\right)! \cdot {\left(\prod_{i,(i,q)=1}^{q^\alpha}i\right)}^{\left\lfloor\frac{n}{q^\alpha}\right\rfloor} \cdot \left(\prod_{i,(i,q)=1}^{n\bmod q^\alpha}i\right)
+$$
+
+于是：
+$$
+\frac{n!}{q^{\left\lfloor\frac{n}{q}\right\rfloor}} = \left(\left\lfloor\frac{n}{q}\right\rfloor\right)! \cdot {\left(\prod_{i,(i,q)=1}^{q^\alpha}i\right)}^{\left\lfloor\frac{n}{q^\alpha}\right\rfloor} \cdot \left(\prod_{i,(i,q)=1}^{n\bmod q^\alpha}i\right)
+$$
+
+循环节内的乘积需要暴力求；$\displaystyle \left(\left\lfloor\frac{n}{q}\right\rfloor\right)!$ 可以递归求解。
+\pause
+\begin{block}{思考题}
+    如果我要求的是一个 $\binom{n}{m}\bmod 10^{18}$ 怎么办。
+\end{block}
+    \end{frame}
+    \subsection{例题}
+    \begin{frame}{经典题}
+        \begin{block}{[SDOI2010] 古代猪文}
+            给定 $n,g$，求
+            $$
+            g^{\sum_{d|n}\binom{n}{d}}\bmod 999911659
+            $$
+            $1\le n,g\le 10^9$
+        \end{block}
+        \pause
+
+        $999911659$ 是质数，由费马小定理，我们只需求
+        $$
+        \sum_{d|n}\binom{n}{d}\bmod 999911658
+        $$
+        将 $999911658$ 分解质因数为 $2\times 3\times 4679\times 35617$，做 exLucas 即可。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[SHOI2015] 超能粒子炮·改}
+            给定 $n,m$，求
+            $$
+            \sum_{k=0}^{m}\binom{n}{k}\bmod 2333
+            $$
+            $m\le n\le 10^9$
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        
+        将 $k$ 按照 $\lfloor \frac{k}{p} \rfloor$ 分类
+        $$
+        \begin{aligned}
+        \text{原式} &= \sum_{i=0}^{\lfloor m/p \rfloor -1}\sum_{j=0}^{p-1}\binom{n}{ip+j}+\sum_{k=p\lfloor m/p \rfloor}^{m}\binom{n}{k}\\
+            &=\sum_{i=0}^{\lfloor m/p \rfloor -1}\binom{\lfloor n/p\rfloor}{i}\sum_{j=0}^{p-1}\binom{n\bmod p}{j}+\sum_{k=p\lfloor m/p \rfloor}^{m}\binom{n}{k}\\
+            &=2^{n\bmod p}\sum_{i=0}^{\lfloor m/p \rfloor -1}\binom{\lfloor n/p\rfloor}{i}+\sum_{k=p\lfloor m/p \rfloor}^{m}\binom{n}{k}
+        \end{aligned}
+        $$
+        前面一项可以递归求，后面的余项可以 $O(p)$ 暴力。复杂度 $O(p\log m)$。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[AHOI2017/HNOI2017] 抛硬币}
+            给定 $a,b,k$，求满足下列条件的 $01$ 串二元组 $(s,t)$ 的数量
+            \begin{itemize}
+                \item $|s|=a,|t|=b$
+                \item $s$ 中 $1$ 的数量严格大于 $t$ 中 $1$ 的数量
+            \end{itemize}
+            答案对 $10^k$ 取模。
+
+            $1\le a,b\le 10^{15},b\le a\le b+10^4,1\le k\le 9$
+        \end{block}
+        \pause
+
+        即求
+        $$
+        \sum_{i=0}^a\sum_{j=0}^{i-1}\binom{a}{i}\binom{b}{j}
+        $$
+    \end{frame}
+
+    \begin{frame}
+        $$
+        \begin{aligned}
+        \text{原式}&=\sum_{i=1}^a\sum_{j=0}^{a-i}\binom{a}{i+j}\binom{b}{j}=\sum_{i=1}^{a}\sum_{j=0}^b\binom{a}{i+j}\binom{b}{b-j}\\
+        &=\sum_{i=1}^a\binom{a+b}{b+i}=\sum_{i=b+1}^{a+b} \binom{a+b}{i}&&\text{范德蒙德卷积}\\
+        \pause
+        &=\sum_{i=b+1}^{\lceil \frac{a+b}2 \rceil -1}\binom{a+b}{i}+\sum_{\lceil \frac{a+b}2 \rceil}^{a+b}\binom{a+b}{i}
+        \end{aligned}
+        $$
+        前者只有 $\frac{a-b}{2}$ 项，可以每一项都 exLucas 求。后者是 $\sum_{i=0}^{a+b}\binom{a+b}{i}=2^{a+b}$ 的一半（如果 $a+b$ 是偶数的话还要减去一个 $\binom{a+b}{(a+b)/2}$）。
+
+    \end{frame}
+
+    \section{卡特兰数}
+    \subsection{卡特兰数的通项公式}
+    \begin{frame}{卡特兰数}
+        Catalan 数列 $H_n$ 是以下问题的方案数：
+        \begin{enumerate}
+            \item 有一个大小为 $n\times n$ 的方格图，左下角为 $(0, 0)$ 右上角为 $(n, n)$，从左下角开始每次都只能向右或者向上走一单位，不走到对角线 $y=x$ 上方（但可以触碰）的情况下到达右上角有多少可能的路径？
+            \item 在圆上选择 $2n$ 个点，将这些点成对连接起来使得所得到的 $n$ 条线段不相交的方法数？
+            \item 一个栈的进栈序列为 $1,2,3, \cdots ,n$ 有多少个不同的出栈序列？
+            \item $n$ 个结点可构造多少个不同的二叉树？
+            \item $n$ 对括号能组成的括号序列数？
+            \item ……
+        \end{enumerate}
+        \pause
+        
+        众所周知，卡特兰数有以下两个表达式
+        $$
+        \begin{aligned}
+            H_n&=\begin{cases}
+            \sum_{i=0}^{n-1}H_iH_{n-i-1}&(n\ge 2)\\
+            1&(n=0,1)
+            \end{cases}\\
+        &=\binom{2n}{n}-\binom{2n}{n-1}
+        \end{aligned}
+        $$
+
+    \end{frame}
+
+    \begin{frame}{卡特兰数的通项公式}
+        \begin{block}{卡特兰数的通项公式}
+            \vspace{-1em}
+            $$
+            H_n = \frac{\binom{2n}{n}}{n+1}
+            $$
+            \vspace{-1em}
+        \end{block}
+        由此还可以得到一个递推式
+        $$
+        H_n=\frac{H_{n-1}(4n-2)}{n+1}
+        $$
+    \end{frame}
+
+    \begin{frame}{卡特兰数通项公式的证明}
+        \vspace{-1em}
+$$
+H_n=\sum_{i=0}^{n-1}H_{i}H_{n-i-1} \quad (n\ge 2)
+$$
+其中 $H_0=1,H_1=1$。设它的普通生成函数为 $H(x)$，利用卷积，得到它的一个方程。
+
+$$
+\begin{aligned}
+H(x)&=\sum_{n\ge 0}H_nx^n\\
+&=1+\sum_{n\ge 1}\sum_{i=0}^{n-1}H_ix^iH_{n-i-1}x^{n-i-1}x\\
+&=1+x\sum_{i\ge 0}H_{i}x^i\sum_{n\ge 0}H_{n}x^{n}\\
+&=1+xH^2(x)
+\end{aligned}
+$$
+
+解得
+$$
+H(x)=\frac{1\pm \sqrt{1-4x}}{2x}
+$$
+\end{frame}
+
+\begin{frame}
+    
+那么这就产生了一个问题：我们应该取哪一个根呢？我们将其分子有理化：
+$$
+H(x)=\frac{2}{1\mp \sqrt{1-4x}}
+$$
+代入 $x=0$，我们得到的是 $H(x)$ 的常数项，也就是 $H_0$。当 
+ 
+$H(x)=\dfrac{2}{1+\sqrt{1-4x}}$ 的时候有 $H(0)=1$，满足要求。而另一个解会出现分母为 $0$ 的情况（不收敛），舍弃。
+
+因此我们得到了卡特兰数生成函数的封闭形式：
+
+$$
+H(x)=\frac{1- \sqrt{1-4x}}{2x}
+$$
+
+\end{frame}
+
+\begin{frame}
+    
+接下来我们要将其展开。使用牛顿二项式定理。
+
+$$
+\begin{aligned}
+(1-4x)^{\frac{1}{2}}
+&=\sum_{n\ge 0}\binom{\frac{1}{2}}{n}(-4x)^n\\
+&=1+\sum_{n\ge 1}\frac{\left(\frac{1}{2}\right)^{\underline{n}}}{n!}(-4x)^n
+\end{aligned}
+$$
+
+其中
+$$
+\begin{aligned}
+\left(\frac{1}{2}\right)^{\underline{n}}
+&=\frac{1}{2}\frac{-1}{2}\frac{-3}{2}\cdots\frac{-(2n-3)}{2}\\
+&=\frac{(-1)^{n-1}(2n-3)!!}{2^n}\\
+&=\frac{(-1)^{n-1}(2n-2)!}{2^n(2n-2)!!}\\
+&=\frac{(-1)^{n-1}(2n-2)!}{2^{2n-1}(n-1)!}
+\end{aligned}
+$$
+\end{frame}
+
+\begin{frame}
+于是
+$$
+\begin{aligned}
+(1-4x)^{\frac{1}{2}}
+&=1+\sum_{n\ge 1}\frac{(-1)^{n-1}(2n-2)!}{2^{2n-1}(n-1)!n!}(-4x)^n\\
+&=1-\sum_{n\ge 1}\frac{(2n-2)!}{(n-1)!n!}2x^n
+=1-\sum_{n\ge 1}\binom{2n-1}{n}\frac{1}{(2n-1)}2x^n
+\end{aligned}
+$$
+带回原式得到
+
+$$
+\begin{aligned}
+H(x)&=\frac{1- \sqrt{1-4x}}{2x}=\frac{1}{2x}\sum_{n\ge 1}\binom{2n-1}{n}\frac{1}{(2n-1)}2x^n\\
+&=\sum_{n\ge 1}\binom{2n-1}{n}\frac{1}{(2n-1)}x^{n-1}=\sum_{n\ge 0}\binom{2n+1}{n+1}\frac{1}{(2n+1)}x^{n}\\
+&=\sum_{n\ge 0}\binom{2n}{n}\frac{1}{n+1}x^{n}\\
+\end{aligned}
+$$
+这样我们就得到了卡特兰数的通项公式。
+\end{frame}
+
+\begin{frame}{$\binom{2n}{n}$ 的生成函数}
+    \begin{itemize}
+        \item 
+        利用 $H_n=\dbinom{2n}{n}\dfrac{1}{n+1}$ 的生成函数是 $H(x)=\dfrac{1- \sqrt{1-4x}}{2x}$，求 $\dbinom{2n}{n}$ 的生成函数。
+    \end{itemize}
+    \pause
+
+    $$
+    Q(x)=\sum_{n\ge 0} \binom{2n}{n}x^n=(x\cdot H)'(x) = \frac{1}{\sqrt{1-4x}}
+    $$
+\end{frame}
+
+\subsection{例题}
+\begin{frame}{例题}
+    \begin{block}{[THUSC2021] 种树}
+        这是一道\textbf{通信题}
+
+给你一棵 $n$ 个点的树，你需要完成一个编码器和解码器。
+
+编码器需要返回一个$128$位二进制数，用于表示这棵树。解码器需要根据编码器返回的 $128$ 位二进制数还原这棵树（还原出一棵同构的树即可）。两棵树同构当且仅当它们在节点无标号、考虑孩子顺序的意义下相同。
+
+
+
+$n\le 70,T\le 10^5$
+    \end{block}
+
+    \pause
+
+    可以先考虑 $n\le 65$。
+
+    \pause
+
+    递归地表示这棵树：如果往儿子走，则当前位填$1$，往父亲走填$0$。还原时也递归地还原这棵树即可。然后因为$1$一定往儿子走，不会往父亲走，前后两位可以去掉，可以将长度控制在$2n-2$以内。
+\end{frame}
+
+\begin{frame}
+    上述过程是一个括号匹配的过程，填$1$则为左括号，填$0$为右括号。
+
+    而我们有可以省去最靠前的一个$($和最靠后的一个$)$，这样的合法括号序列个数为$Catalan(n-1)$个。
+
+    而$Catalan(69)$刚好比$2^{128}-1$小，也就是我们现在要将一个括号序列与一个数字一一对应。
+
+    \pause
+
+    我们计算这个括号序列的字典序是所有合法括号序列的第几项，也就是对于每一个填$1$的位，求出这一位填$0$，前面所有位都一样的合法括号序列数，可以用组合数计算。这样我们就完成了编码。
+
+    解码时就是上述过程的逆过程。如果当前位填$0$之后，合法括号序列的个数小于我们所需的，那么这一位必须填$1$，否则必须填$0$。这样我们完成了解码。
+\end{frame}
+
+\begin{frame}{例题}
+    \begin{block}{某联考题}
+        给定一个长度为 $n$ 的括号序列 $c$（不一定合法，但左括号和右括号数量相同）
+
+    定义一个 $1,2,\cdots,n$ 的排列 $p$ 是好的，当且仅当括号序列 $d(\forall i\in [1,n],d_i=c_{p_i})$ 是合法的括号序列，定义 $c$ 的价值为所有好的排列的逆序数总和。
+
+    $c$ 并不稳定，会发生 $q$ 次改变，具体来说，$c$ 中的某两个元素会发生交换。（改变是永久的）
+
+    你需要对一开始的 $c$ 和每次改变后的 $c$ 分别求出它的价值对输入的质数 $P$ 取模的结果。
+
+    $n\le 10^7,q\le 10^5$
+    \end{block}
+
+
+\end{frame}
+
+    \begin{frame}
+        记$m=\frac{n}{2}$，一个排列将原序列 $c$ 映射为一个合法括号序列 $d$。
+
+以下四种映射的其中之一会造成 $1$ 的贡献（颜色用于表示相对顺序）
+
+\begin{itemize}
+    \item 子序列 ${\color{red}(}{\color{blue}(}\to{\color{blue}(}{\color{red}(}$
+    \item 子序列 ${\color{red})}{\color{blue})}\to{\color{blue})}{\color{red})}$
+    \item 子序列 ${\color{red}(}{\color{blue})}\to{\color{blue})}{\color{red}(}$
+    \item 子序列 ${\color{red})}{\color{blue}(}\to{\color{blue}(}{\color{red})}$
+\end{itemize}
+
+
+记原序列中 \texttt{((}，\texttt{))}，\texttt{()}，\texttt{)(} 子序列的个数分别为$a_0,a_1,a_2,a_3$，对于每个 \texttt{((}，\texttt{))}，\texttt{()}，\texttt{)(} 子序列，分别有 $b_0,b_1,b_2,b_3$ 个排列的映射（对于不同位置的子序列，这个排列的数量应当是相同的）会造成 $1$ 的贡献，那么最终答案为
+$$
+a_0b_0+a_1b_1+a_2b_2+a_3b_3
+$$
+\pause
+其中 $a_0,a_1,a_2,a_3$ 是好维护的：
+
+现在考虑交换两个位置
+\begin{itemize}
+    \item 如果这两个位置的字符一样，显然对答案没有变化
+    \item 否则$a_2,a_3$的变化量为$\pm (r-l)$
+\end{itemize}
+
+$b_0,b_1,b_2,b_3$ 应该是只与 $n$ 有关的常数，我们下面考虑求出 $b_0,b_1,b_2,b_3$。
+    \end{frame}
+
+    \begin{frame}
+        \begin{itemize}
+            \item 求 $b_0,b_1$
+        \end{itemize}
+
+        二者的值是相同的，所以就求 $b_0$ 即可。
+
+        对于所有 $Catalan(m)$ 个括号序列，这些序列里都有 $\frac{m(m-1)}{2}$ 个 \texttt{((} 子序列。在这 $\frac{m(m-1)}{2}$ 个 \texttt{((} 子序列中任选一个与原序列的 \texttt{((} 匹配。因为我们要求产生贡献必须交换相对位置，所以这两个位置的映射方式就固定了。
+
+        剩下 $m-2$ 个 \texttt{(} 和 $m$ 个 \texttt{)} 的映射方式是任意的，方案数为 $(m-2)!\cdot m!$。
+
+        总方案数为
+        $$
+        b_0=b_1 = Catalan(m)\cdot \frac{m(m-1)}{2} \cdot (m-2)!\cdot m!= \frac 12Catalan(m) (m!)^2
+        $$
+    \end{frame}
+
+    \begin{frame}
+        \begin{itemize}
+            \item 求 $b_2,b_3$
+        \end{itemize}
+
+        对于所有 $Catalan(m)$ 个括号序列，只要这个序列中有一个 \texttt{)(} 子序列，这个子序列和原序列的 \texttt{()} 对应上就会产生 $1$ 的贡献，此时剩下的位置的映射方式是任意的，方案数为 $((m-1)!)^2$，即
+        $$
+        b_2 = \left(\sum_{\text{无标号括号序列}d} d\text{ 中)(子序列数量}\right) ((m-1)!)^2
+        $$
+
+        同理
+        $$
+        b_3 = \left(\sum_{\text{无标号括号序列}d} d\text{ 中()子序列数量}\right) ((m-1)!)^2
+        $$
+
+        一个括号序列中 \texttt{()} 和 \texttt{)(} 子序列的数量之和是 $m^2$ 个，于是两式相加得
+        $$
+        b_2+b_3 = Catalan(m)m^2((m-1)!)^2=Catalen(m)(m!)^2
+        $$
+        于是只需求出 $b_2$ 即可求出 $b_3$。
+    \end{frame}
+    \begin{frame}
+        考虑求所有合法无标号括号序列中 \texttt{)(} 子序列的数量。如果两对括号相离，则贡献为$1$，否则没有贡献。
+        
+        直接做不好做，容斥一下，转为求两对括号相包含的贡献为 $1$。枚举这一对括号包含了 $i$ 对括号，包含的括号内部可以随意排列（$Catalan(i)$），剩下的也可以随便排列（$Catalan(m-i-1)$），然后将自己和自己包含的括号随便插入另外$m-i-1$个括号构成的括号序列中，共 $2(m-i-1)+1$ 个空。于是，相互包含的括号对数为
+$$
+\sum_{i=1}^{m-1}(2(m-i-1)+1)iCatalan(i)Catalan(m-i-1)
+$$
+
+\vspace{-1em}
+而在所有括号序列中任选两对匹配括号的方案是$Catalan(m)\times \dfrac{m(m-1)}{2}$，所以 \texttt{)(} 子序列出现的次数是
+$$
+Catalan(m)\times \dfrac{m(m-1)}{2}-\sum_{i=1}^{m-1}(2(m-i-1)+1)iCatalan(i)Catalan(m-i-1)
+$$
+
+这个数再乘上$((m-1)!)^2$就是$b_2$。用 $Catalen(m)(m!)^2-b_2$ 就是 $b_3$。
+
+总复杂度 $O(n+q)$。
+    \end{frame}
+
+    \section{二项式反演}
+    \subsection{二项式反演}
+    \begin{frame}{容斥}
+        记 $f_n$ 表示恰好使用 $n$ 个不同元素形成特定结构的方案数，$g_n$ 表示从 $n$ 个不同元素中选出若干个元素形成特定结构的总方案数。
+
+若已知 $f_n$ 求 $g_n$，那么显然有：
+
+$$
+g_n = \sum_{i = 0}^{n} \binom{n}{i} f_i
+$$
+
+若已知 $g_n$ 求 $f_n$，使用容斥，我们得到：
+$$
+f_n = \sum_{i = 0}^{n} \binom{n}{i} (-1)^{n-i} g_i
+$$
+
+    \end{frame}
+
+    \begin{frame}{二项式反演}
+        上面容斥的式子本质上就是二项式反演
+        \begin{block}{二项式反演}
+            $$
+            g_n = \sum_{i = 0}^{n} \binom{n}{i} f_i\iff f_n = \sum_{i = 0}^{n} \binom{n}{i} (-1)^{n-i} g_i
+            $$
+        \end{block}
+        它还有一个等价形式
+        
+        \begin{block}{二项式反演的一个等价形式}
+            $$
+            g_n = \sum_{i = 0}^{n}(-1)^i\binom{n}{i} f_i\iff f_n = \sum_{i = 0}^{n} \binom{n}{i} (-1)^{i} g_i
+            $$
+        \end{block}
+    \end{frame}
+    
+    \begin{frame}{二项式反演的证明}
+        我们只证明 $ g_n = \sum_{i = 0}^{n} \binom{n}{i} f_i\implies f_n = \sum_{i = 0}^{n} \binom{n}{i} (-1)^{n-i} g_i$，另一边是同样的。
+        $$
+        \begin{aligned}
+            \sum_{i = 0}^{n} \binom{n}{i} (-1)^{n-i} g_i&= \sum_{i = 0}^{n} \binom{n}{i} (-1)^{n-i} \sum_{j=0}^i\binom{i}{j}f_j\\
+            &=  \sum_{j=0}^nf_j\sum_{i=j}^n\binom{n}{i}\binom{i}j(-1)^{n-i}\\
+            \pause
+            &= \sum_{j=0}^nf_j\sum_{i=j}^n\binom{n}{j}\binom{n-j}{i-j}(-1)^{n-i}&&\text{三项式版恒等式}\\
+            &=\sum_{j=0}^n\binom{n}{j}f_j\sum_{k=0}^{n-j}\binom{n-j}{k}(-1)^{n-j-k}&&\text{令 }k=i-j\\
+            &=\sum_{j=0}^n\binom{n}{j}f_j[n-j=0]=f_n && \text{二项式定理}
+        \end{aligned}
+        $$
+
+        \vspace{-3em}
+        \hfill $\Box$
+    \end{frame}
+
+    \begin{frame}{矩阵形式}
+        如果把 $f_0,f_1,\cdots, f_n$ 和 $g_0,,g_1,\cdots, g_n$ 写成列向量，则二项式反演可以写为
+
+        \begin{gather*}
+        \underbrace{
+        \begin{pmatrix}
+        \binom{0}{0}&0&\cdots&0\\
+        \binom{1}{0}&\binom{1}{1}&\cdots&0\\
+        \vdots&\vdots&\ddots&\vdots\\
+        \binom{n}{0}&\binom{n}{1}&\cdots&\binom{n}{n}
+        \end{pmatrix}
+        }_{\boldsymbol A}
+        \begin{pmatrix}
+            f_0\\
+            f_1\\
+            \vdots\\
+            f_n
+        \end{pmatrix}=\begin{pmatrix}
+            g_0\\
+            g_1\\
+            \vdots\\
+            g_n
+        \end{pmatrix}
+        \iff\\
+        \underbrace{
+        \begin{pmatrix}
+        \binom{0}{0}&0&\cdots&0\\
+        -\binom{1}{0}&\binom{1}{1}&\cdots&0\\
+        \vdots&\vdots&\ddots&\vdots\\
+        (-1)^{n}\binom{n}{0}&(-1)^{n-1}\binom{n}{1}&\cdots&\binom{n}{n}
+        \end{pmatrix}
+        }_{\boldsymbol B}
+        \begin{pmatrix}
+            g_0\\
+            g_1\\
+            \vdots\\
+            g_n
+        \end{pmatrix}=\begin{pmatrix}
+            f_0\\
+            f_1\\
+            \vdots\\
+            f_n
+        \end{pmatrix}
+    \end{gather*}
+
+        刚才给出的证明等价于证明 $\boldsymbol A \cdot \boldsymbol B=\boldsymbol I$。
+    \end{frame}
+
+    \begin{frame}
+        将 $\boldsymbol A$ 和 $\boldsymbol B$ 转置之后得到的矩阵仍然是互逆的，所以，我们还可以得到二项式反演的另一个形式
+
+        \begin{block}{二项式反演的另一个形式}
+            $$
+            g_m = \sum_{i=m}^n\binom{i}{m}f_i\iff f_m=\sum_{i=m}^n(-1)^{i-m}\binom{i}{m}g_i
+            $$
+        \end{block}
+
+        从组合意义来说，前面的形式中，$g_m$ 表示“至多”$m$ 个的方案数，而在这种形式中，$g_m$ 表示“至少”$m$ 个的方案数。
+
+        二项式反演最常见的转化，就是将“恰好”转化为“至多”或者“至少”, 再二项式反演回来。
+    \end{frame}
+    \subsection{例题}
+    \begin{frame}{例题}
+        \begin{block}{洛谷P10596 BZOJ2839 集合计数}
+        一个有 $n$ 个元素的集合有 $2^n$ 个不同子集（包含空集），现在要在这 $2^n$ 个集合中取出若干集合（至少一个），使得它们的交集的元素个数恰好为 $k$，求取法的方案数，答案模 $10^9+7$。
+
+        $1\leq n\leq 10^6$，$0\leq k\leq n$。
+        \end{block}
+
+        \pause
+
+        令 $f_k$ 表示交集个数“\textbf{至少}”是 $k$ 的方案数。那么我们先在 $n$ 个元素中选 $k$ 个作为交集的部分。包含这 $k$ 的元素的集合有 $2^{n-k}$ 个，在这些集合中任选至少一个，方案数为 $2^{2^{n-k}}-1$，则
+        $$
+        f_k=\binom{n}{k}(2^{2^{n-k}}-1)
+        $$
+        注意，这里“至少 $k$ 个”的含义是，钦定了满足性质的 $k$ 个元素，剩下的性质不作限制。也就是说，一个实际上交集大小为 $m$ 的方案，它在 $f_k$ 中被计数了 $\binom{m}{k}$ 次。
+    \end{frame}
+    \begin{frame}
+        设 $g_k$ 表示交集个数\textbf{恰好}是 $k$ 的方案数。枚举实际的交集大小 $i$，在这 $i$ 个元素里面任选 $k$ 个作为满足 $f_k$ 限制的那 $k$ 个元素，我们有关系式
+        $$
+        f_k=\sum_{i=k}^n\binom{i}{k}g_i
+        $$
+        \pause
+
+        由二项式反演
+        $$
+        g_k = \sum_{i=k}^n(-1)^{i-k}\binom{i}{k}f_i=\sum_{i=k}^n(-1)^{i-k}\binom{i}{k}\binom{n}{i}(2^{2^{n-i}}-1)
+        $$
+        复杂度 $O(n)$。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{洛谷P4859 已经没有什么好害怕的了}
+            给定 $n$ 个 $A$ 类物品与 $n$ 个 $B$ 类物品，每个物品具有一个权值，将 $A$ 类物品与 $B$ 类物品两两配对，使得 $A$ 物品权值 $>$ $B$ 物品的组恰好有 $k$ 个。求配对方案数 $\bmod 10^9+9$。
+            
+            所有权值互不相同。$n\le 2000$
+        \end{block}
+        \pause
+
+        题目的要求是恰好 $k$ 个，比较难求，但我们可以先钦定 $k$ 组，让这 $k$ 组满足 $A > B$，其余组随便选择，求出答案后二项式反演回来。
+
+        考虑 $f_{i,j}$ 表示已经配对了前 $i$ 个 $A$，钦定了 $j$ 组满足 $A > B$，剩下的不管，将 $A$ 从小到大排序, 那么得到转移方程：
+        $$
+        f_{i,j} = f_{i−1,j} + f_{i−1,j−1}(d_i − (j − 1))
+        $$
+        其中 $d_i$ 表示 $< a_i$ 的 $b$ 的数量。那么此时我们得到 $g_i = (n − i)!f_{n,i}$，表示钦定了 $i$ 组 $A > B$ 的方案数
+
+        于是直接用上面的柿子反演回来即可。复杂度 $O(n^2)$。
+
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{洛谷P6295 有标号 DAG 计数}
+            求 $n$ 个点的有标号弱连通DAG数量 $\bmod 998244353$。
+
+            $n,T\le 10^5$
+        \end{block}
+        \pause
+
+        $\exp$ 组合意义为：有标号对象组成的集合个数。设 $n$ 个点的有标号DAG（不一定弱连通）数量的生成函数为 $G(x)$，$n$ 个点的有标号弱连通DAG数量的生成函数为 $F(x)$，则
+        $$
+        G(x)=\exp(F(x))\implies F(x)=\ln G(x)
+        $$
+        我们要求的是 $F(x)$，所以只需求出 $G(x)$ 再取 $\ln$ 即可。
+    \end{frame}
+
+    \begin{frame}
+        设 $g_i$ 表示 $i$ 个点的有标号 DAG 数量，即 $G(x)$ 是 $g_i$ 的生成函数。
+
+        令 $h_{i,j}$ 表示 $i$ 个点的图，钦定其中 $j$ 个点并让这 $j$ 个点入度为 $0$ 的方案数（类似于之前的“至少 $j$ 个”）；令 $c_{i,j}$ 表示 $i$ 个点的图恰好有 $j$ 个点入度为 $0$ 的方案数，则有二项式反演：
+
+        $$
+        h_{i,j}=\sum_{k=j}^i\binom{k}{j}c_{i,k}\iff c_{i,j}=\sum_{k=j}^i\binom{k}{j}(-1)^{k-j}h_{i,k}
+        $$
+        \pause
+
+        同时我们还有
+        $$
+        h_{i,j} = \binom{i}{j}2^{j(i-j)}g_{i-j}
+        $$
+        $$
+        g_i=\sum_{j=1}^ic_{i,j}
+        $$
+    \end{frame}
+
+    \begin{frame}
+        代入，得
+        $$
+        \begin{aligned}
+        g_n&=\sum_{i=1}^nc_{n,i}=\sum_{i=1}^n\sum_{j=i}^n\binom{j}{i}(-1)^{j-i}h_{n,j}\\
+        &=\sum_{i=1}^n\sum_{j=i}^n\binom{j}{i}(-1)^{j-i}\binom{n}{j}2^{j(n-j)}g_{n-j}\\
+        &=\sum_{j=1}^n\binom{n}{j}2^{j(n-j)}g_{n-j}\sum_{i=1}^j\binom{j}{i}(-1)^{j-i}\\
+        &=\sum_{j=1}^n(-1)^{j+1}\binom{n}{j}2^{j(n-j)}g_{n-j}
+        \end{aligned}
+        $$
+        \pause
+        将 $j(n-j)$ 拆成 $\binom{n}{2}-\binom{j}{2}-\binom{n-j}{2}$，把上式写成卷积的形式
+
+        （或者把 $2^{j(n-j)}$ 写成 $\sqrt{2}^{n^2-j^2-(n-j)^2}$，这就需要求出 $\sqrt 2$ 的二次剩余）
+    \end{frame}
+
+    \begin{frame}
+        $$
+        \begin{aligned}
+        g_n&=\sum_{j=1}^n(-1)^{j+1}\binom{n}{j}2^{j(n-j)}g_{n-j}\\
+        \frac{g_n}{n!2^{\binom{n}{2}}}&=\sum_{j=1}^n\frac{(-1)^{j+1}}{2^{\binom j2}j!}\frac{g_{n-j}}{2^{\binom {n-j}2}(n-j)!}
+        \end{aligned}
+        $$
+
+        令
+        $$
+        \begin{aligned}
+        P(x)&=\sum_{i=0}\frac{g_i}{2^{\binom{i}{2}}i!}x^i\\
+        Q(x)&=\sum_{i=1}\frac{(-1)^{i+1}}{2^{\binom i2}i!}x^i
+        \end{aligned}
+        $$
+
+        那么 $P(x)=P(x)Q(x)+1$，解得
+        $$
+        P(x)=\frac{1}{1-Q(x)}
+        $$
+        于是做一遍多项式求逆求出 $P$，然后就得到了 $g_n$，即 $G(x)$，再取 $\ln$ 得到 $F$。复杂度 $O(n\log n)$。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[CTS2019] 珍珠}
+            称一个长度为 $n$，元素取值 $[1,D]$ 的整数序列是合法的，当且仅当其中能够选出至少 $m$ 对相同元素（不能重复选出元素）。
+
+            问合法序列个数 $\bmod 998244353$。
+
+            $1\le m\le 10^9,1\le n\le 10^9,1\le D\le 10^5$
+        \end{block}
+        
+        \pause
+
+        对于一个序列，设其中 $i$ 的出现次数为 $c_i$，则题目的限制可以写为
+        $$
+        \sum_{i=1}^D\left\lfloor\frac{c_i}{2}\right\rfloor\ge m\implies \sum_{i=1}^n\frac{c_i-(c_i\bmod 2)}{2}\ge m
+        $$
+        其中 $\sum_{i=1}^D c_i=n$，则
+        $$
+        \sum_{i=1}^Dc_i\bmod 2\le n-2m
+        $$
+
+        其中 $\sum_{i=1}^Dc_i\bmod 2$ 可以理解为出现次数为奇数的元素数量。
+    \end{frame}
+
+    \begin{frame}
+        设 $f_i$ 表示恰好有 $i$ 种元素出现了奇数次的方案数，那么：
+        $$
+        ans=\sum_{i=0}^{\min(D,n-2m)}f_i
+        $$
+        \pause
+        先求出 $g_i$ 表示钦定其中 $i$ 种元素出现了奇数次，其他元素随便取（“至少”）的方案数。那么：
+        $$
+        g_i=\sum_{j=i}^{D}f_i\binom{i}{j}\Rightarrow f_i=\sum_{j=i}^{D}g_j\binom{i}{j}(-1)^{i-j}
+        $$
+        因此如果求得 $g$，可以直接 $\mathcal O(D\log D)$ 卷积得到 $f$。
+    \end{frame}
+
+    \begin{frame}
+        因为序列中需要考虑顺序，所以考虑 EGF，每个颜色贡献的 EGF 之积的 $[x^n]$ 会贡献给 $g_k$。
+        
+        \begin{itemize}
+            \item 被钦定的那 $k$ 个颜色，只在选择奇数次时作出贡献，因此其 OGF 为 $x+x^3+x^5+\cdots$，EGF为 $\frac{e^x-e^{-x}}{2}$
+            \item 剩下的 $n-k$ 个颜色，贡献都是 $1$，EGF 就是 $e^x$
+        \end{itemize}
+
+        于是
+        $$
+        \begin{aligned}
+            g_k&=\binom{D}{k}n![x^n](\frac{e^x-e^{-x}}{2})^k(e^x)^{D-k}\\
+            &=\binom{D}{k}\frac{n!}{2^k}[x^n](e^x-e^{-x})^k(e^x)^{D-k}\\
+            &=\binom{D}{k}\frac{n!}{2^k}[x^n]\sum_{j=0}^{k}\binom{k}{j}(e^x)^j(-e^{-x})^{k-j}(e^x)^{D-k}\\
+            &=\binom{D}{k}\frac{n!}{2^k}\sum_{j=0}^{k}\binom{k}{j}(-1)^{k-j}[x^n](e^x)^{D-2(k-j)}\\
+        \end{aligned}
+        $$
+        其中 $[x^n](e^x)^{D-2(k-j)} = \frac{(D-2(k-j))^n}{n!}$
+        
+    \end{frame}
+
+    \begin{frame}
+        代入，得
+        $$
+        \begin{aligned}
+            g_k&=\binom{D}{k}\frac{1}{2^k}\sum_{j=0}^{k}\binom{k}{j}(-1)^{k-j}[D-2(k-j)]^{n}\\
+            &=\binom{D}{k}\frac{k!}{2^k}\sum_{j=0}^{k}\frac{(-1)^{k-j}[D-2(k-j)]^{n}}{j!(k-j)!}\\
+            \end{aligned}
+        $$
+
+        上式也是一个卷积的形式，具体地
+        $$
+        a_i=\frac{1}{i!},b_i=\frac{(-1)^{i}(D-i)^n}{i!}
+        $$
+        两者卷积得到 $g$，再用二项式反演的式子卷积得到 $f$，复杂度 $O(D\log D)$。
+    \end{frame}
+
+    \section{牛顿级数}
+    \subsection{牛顿级数}
+    \begin{frame}{高阶差分}
+        定义差分算子：
+        $$
+        \Delta f(n)=f(n+1)-f(n)
+        $$
+        以及它的复合
+        $$
+        \Delta^{m+1}f(n)=\Delta^m f(n+1)-\Delta^m f(n)
+        $$
+        \pause
+        它对于加法、数乘和乘法有如下运算律：
+        \begin{gather*}
+        \Delta(f(n)+g(n))=\Delta f(n)+\Delta g(n)\\
+        \Delta (c(f(n)))=c\cdot \Delta f(n)\\
+        \Delta(f(n)g(n)) = f(n)\Delta g(n)+g(n+1)\Delta f(n)
+        \end{gather*}
+    \end{frame}
+
+    \begin{frame}{$n$ 阶差分的性质}
+        \begin{block}{$n$ 阶差分的性质}
+            \vspace{-1em}
+            $$
+            \Delta ^n f(x)=\sum_{k=0}^n\binom{n}{k}(-1)^{n-k}f(x+k)
+            $$
+            \vspace{-1em}
+        \end{block}
+        \pause
+        \textbf{证明}：定义平移算子 $\operatorname{E} f(x) = f(x+1)$，从而 $\Delta=\operatorname{E}-1$，于是根据二项式定理
+        $$
+        \Delta^n = (\operatorname E-1)^n=\sum_{k=0}^n\binom{n}{k}E^k(-1)^{n-k}=\sum_{k=0}^n\binom{n}{k}(-1)^{n-k}f(x+k)
+        $$
+
+        \vspace{-3em}
+        \hfill $\Box$
+        \pause
+
+        \vspace{1.5em}
+        \begin{block}{组合数的差分}
+            计算
+            \vspace{-1em}
+            $$
+            \Delta^m \left(\binom{x}{k}\right)
+            $$
+            \vspace{-1em}
+        \end{block}
+        \pause
+        加法公式给出，$\displaystyle \Delta \left(\binom{x}{k}\right)=\binom{x}{k-1}$，于是 $\displaystyle \Delta^m \left(\binom{x}{k}\right)=\binom{x}{k-m}.$
+    \end{frame}
+
+    \begin{frame}{牛顿级数}
+        因为 $\binom{x}{n}$（或者说 $x^{\underline n}$） 是一个 $n$ 次多项式，所以一个多项式 $f(x)=a_0+a_1x+a_2x^2+\cdots+a_nx^n$ 一定可以写为如下形式
+        $$
+        f(x)=c_0\binom{x}{0}+c_1\binom{x}{1}+c_2\binom{x}{2}+\cdots+c_n\binom{x}{n}
+        $$
+        这样一个展开式称为 $f(x)$ 的\textbf{牛顿级数}。
+
+        \pause
+        取 $\Delta^k f(0)$，
+        $$
+        \Delta^kf(0) = \sum_{i=0}^nc_i\binom{0}{i-k} = c_k
+        $$
+
+        所以一个多项式可以很容易地写成牛顿级数的形式
+        $$
+        f(x)=f(0)\binom{x}{0}+\Delta f(0)\binom{x}{1}+\Delta^2 f(0)\binom{x}{2}+\cdots+\Delta^n f(0)\binom{x}{n}
+        $$
+    \end{frame}
+
+    \begin{frame}{例子}
+        \begin{block}{求下列高阶差分}
+            \vspace{-1em}
+            $$
+            \Delta^n x^n,\ \Delta^m x^n(m>n)
+            $$
+            \vspace{-1.5em}
+        \end{block}
+        将 $x^n$ 写成牛顿级数
+        \begin{gather*}
+        f(x)=c_0\binom{x}{0}+c_1\binom{x}{1}+c_2\binom{x}{2}+\cdots+c_n\binom{x}{n}\\
+        \Delta^n f(x) = c_n\binom{x}{0} = c_n\\
+        \Delta^m f(x) = 0
+        \end{gather*}
+
+        而 $c_n\binom{x}{n}=\frac{c_n}{n!}x^{\underline n}$ 中的最高次项就是 $x^n$，于是
+        $$
+        c_n=n!,\quad \Delta^n f(x) = n!
+        $$
+    \end{frame}
+
+    \begin{frame}
+        设 $n$ 为多项式 $f(x)=a_0+a_1x+a_2x^2+\cdots+a_nx^n$ 的次数，对 $x=0$ 利用 
+        $$
+        \Delta ^n f(x)=\sum_{k=0}^n\binom{n}{k}(-1)^{n-k}f(x+k)
+        $$
+        和
+        $$
+        \Delta^n f(0)=c_n = n! a_n
+        $$
+        我们可以得到下面这个恒等式
+        $$
+        \sum_{k=0}^n\binom{n}{k}(-1)^{k}(a_0+a_1k+a_2k^2+\cdots+a_nk^n)=(-1)^nn!a_n
+        $$
+    \end{frame}
+
+    \begin{frame}{应用}
+        作为应用
+        \begin{block}{求下列式子的封闭形式}
+            \begin{enumerate}
+                \item $\displaystyle \sum_{k}(-1)^k\binom{n}{k}(n-k)^n$
+                \item $\displaystyle \sum_{k}(-1)^k\binom{n}{k}\binom{kn}{n}$
+            \end{enumerate}
+        \end{block}
+        \pause
+        \begin{block}{答案}
+            \begin{enumerate}
+                \item $n!$
+                \item $(-1)^nn^n$
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \subsection{例题}
+    \begin{frame}{例题}
+        \begin{block}{拉格朗日插值}
+            但是请使用牛顿级数。
+
+            具体地，已知 $n$ 阶多项式 $P(x)$ 在前 $n + 1$ 个点处的值
+            $P(0), P(1),\cdots, P(n)$，求 $P(x)$ 的值，要求 $O(n)$。
+        \end{block}
+        \pause
+
+        $$
+        \begin{aligned}
+            P(x)= & \sum_{k\leq n}c_k\binom xk=\sum_{k\leq n}\binom xk\sum_{t}(-1)^{k-t}\binom kt P(t)\\
+                = & \sum_{t\leq n}P(t)\sum_{t\leq k\leq n}\binom xk(-1)^{k-t}\binom kt\\
+                = & \sum_{t\leq n}P(t)\binom xt\sum_{t\leq k\leq n}\binom {x-t}{k-t}(-1)^{k-t}
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}
+        $$
+        \begin{aligned}
+            = & \sum_{t\leq n}P(t)\binom xt\sum_{k\leq n-t}\binom{x-t}k(-1)^k\\
+            = & \sum_{t\leq n}P(t)\binom xt\binom{x-t-1}{n-t}(-1)^{n-t}&&\text{交错和}\\
+            = & \sum_{t\leq n}(-1)^{n-t}P(t)\frac{x^{\underline{n+1}}}{t!(n-t)!(x-t)}
+        \end{aligned}
+        $$
+
+        预处理前缀积和后缀积即可做到 $O(n)$。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{洛谷P7438 更简单的排列计数}
+
+        设 $\operatorname{cyc}_\pi$ 将长为 $n$ 的排列 $\pi$ 当成置换时所能分解成的循环个数。给定两个整数 $n,k$ 和一个 $k-1$ 次多项式，对 $1\leq m\leq n$ 求：
+
+        $$
+        \sum\limits_{\pi}F(\operatorname{cyc}_{\pi})\bmod 998244353
+        $$
+
+        其中 $\pi$ 是长度为 $m$ 且不存在位置 $i$ 使得 $\pi_i=i$ 的排列。
+
+
+        $1\leq n\leq 6\times 10^5$，$1\leq k\leq 100$，$0\leq [x^k]F(x)\leq 998244352$。
+        \end{block}
+        \pause
+
+        
+        把多项式 $F(x)$ $O(k^2)$ 转成牛顿级数，
+        $$
+        F(x)=\sum_{i=0}^{k-1}a_i\binom{x}{i}
+        $$
+        现在问题变为求出答案的每一项，即对每一个 $1\le m\le n$ 和 $0\le i< k$ 求出 $\sum_{\pi,|\pi|=m}\binom{\operatorname{cyc}_{\pi}}{i}$。
+    \end{frame}
+
+    \begin{frame}
+        错排数的 EGF 为许多长度大于 1 的环构成的大于 1 的排列的 $\exp$。其中环的 EGF 为
+        $$
+        \sum_{i=2} \frac{(i-1)!}{i!}x^i = -\ln (1-x)-x
+        $$
+        所以错排数的 EGF 为
+        $$
+        G(x)=e^{-\ln (1-x)-x}
+        $$
+
+        \pause
+        这题除了要求错排的个数，还要求出这些错排中选 $i$ 个环的方案数。为此，引入一个新变量 $y$，给每个环的EGF都带上$(1+y)$ 的因子，变为
+        $$
+        (-\ln (1-x)-x)(1+y)
+        $$
+        含这个 $y$ 因子表示选这个环，不含这个 $y$ 因子表示不选这个环
+        $$
+        G(x,y)=e^{(-\ln (1-x)-x)(1+y)}
+        $$
+        我们所求的 $\sum_{\pi,|\pi|=m}\binom{\operatorname{cyc}_{\pi}}{i}$ 就是 $[x^my^i]G$。
+    \end{frame}
+
+    \begin{frame}
+        记 $g_{a,b} = [x^ay^b]G$。将 $G$ 对 $x$ 求导
+        $$
+        \frac{\partial G}{\partial x}(x,y) = \frac{x(1+y)}{1-x}G
+        $$
+        那么
+        $$
+        \begin{aligned}
+        (n+1)g_{n+1,k} &= \sum_{i=0}^{n-1}(g_{i,k}+g_{i,k-1})\\
+        ng_{n,k}&=\sum_{i=0}^{n-2}(g_{i,k}+g_{i,k-1})
+        \end{aligned}
+        $$
+        于是我们得到了递推式
+        $$
+        (n+1)g_{n+1,k} = ng_{n,k} + (g_{n-1,k}+g_{n-1,k-1})
+        $$
+        $O(nk)$ 递推即可求出 $g$。总复杂度 $O(nk+k^2)$。
+    \end{frame}
+
+    \section{完}
+	\begin{frame}
+		\begin{center}
+			\begin{Huge}
+				完$\ $结$\ $撒$\ $花\\
+			\end{Huge}
+		\end{center}
+	\end{frame}
+
+\end{document}

@@ -1,0 +1,153 @@
+\documentclass[UTF8]{beamer}
+\usepackage{ctex}
+\usepackage{graphicx}
+\usepackage{ulem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{graphicx}
+
+\usetheme[block=fill, sectionpage=none]{Berlin}
+\usecolortheme{custom}
+
+\title{组合数学}
+\author{God\_Max\_Me}
+\institute{Chengdu No.7 High School.}
+\date{2025 年}
+\usefonttheme[onlymath]{serif}
+
+\geometry{paperheight=11.0cm,paperwidth=16.0cm}
+
+
+
+
+\begin{document}
+  \maketitle
+  \section{前言}
+
+  \begin{frame}{一些必要 trick}
+    \begin{itemize}
+      \item
+        推式子，先提 $\sum$ 和 $\Pi$
+        到最前面，然后从后往前合并，必要时考虑更改 $\sum$ 的取值
+      \item
+        看到次方变为斯特林数，$x^n=\sum\limits_{i=0}^{n} {n \brack i} {x \choose i}i!=\sum\limits_{i=0}^{n}\sum\limits_{i=1}^m{(-1)^{m-i}{i^n \over (m-i)!}}{x \choose i}$
+      \item
+        注意莫反、欧反的形式
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{推式子基本原理}
+    \begin{itemize}
+      \item
+        先把 $\sum$ 移到最前面。
+      \item
+        将多个 $\sum$ 排序，范围更小的放在前面。
+      \item
+        将只与当前 $\sum$ 有关的式子尽量往前提。
+      \item
+        将能简化式子的特殊边界提出来。
+      \item
+        从后往前处理。
+    \end{itemize}
+  \end{frame}
+  
+  \section{组合数学}
+  \subsection{组合恒等式}
+
+  \begin{frame}
+    \begin{block}{递推式}
+      $$
+      {n \choose m}={n-1 \choose m}+{n-1 \choose m-1}
+      $$
+    \end{block}
+    
+    \pause
+    证明
+
+    从组合意义上推导，在 $n$ 个人中选 $m$
+    个相当于单独考虑最后一人，若他要选，则为 ${n-1 \choose m-1}$ 他不选则为
+    ${n-1 \choose m}$。
+  \end{frame}
+  
+  \begin{frame}
+    \begin{block}{吸引/相伴等式}
+      $$
+      \begin{aligned}
+      {{n \choose m} \over {n-1 \choose m-1}}&={{n} \over {m}} \\
+      {{n \choose m} \over {n-1 \choose m}}&={{n} \over {n-m}} \\
+      {{n \choose m} \over {n \choose m-1}}&={{n-m+1} \over {m}} \\
+      \end{aligned}
+      $$
+
+      \pause
+      另外的形式：
+
+      $$
+      \begin{aligned}
+      k {n \choose k}&=n {n-1 \choose k-1} \\
+      (n-k){n \choose k}&=n{n-1 \choose k}
+      \end{aligned}
+      $$
+    \end{block}
+  \end{frame}
+
+    \begin{frame}
+      \begin{block}{上指标反转}
+        $$
+        {n \choose m}=(-1)^m{m-n-1 \choose m}
+        $$
+      \end{block}
+      \pause
+      证明
+
+      $$
+      \begin{aligned}
+      {n \choose m}={n^{\underline{m}} \over m!}&={n\times(n-1)\times (n-2)\times...\times (n-m+1) \over m!} \\
+      &={(-1)^m\times (-n)\times(1-n)\times...\times(m-n-1) \over m!} \\
+      &={(-1)^m\times (m-n-1)^{\underline{m}} \over m!} \\
+      &=(-1)^m{m-n-1 \choose m}
+      \end{aligned}
+      $$
+    \end{frame}
+
+    \begin{frame}
+      \begin{block}{三项式系数恒等式}
+        $$
+        {n \choose m}{m \choose k}={n \choose k}{n-k \choose m-k}
+        $$
+
+        等式两边拆开约分即可得证。
+      \end{block}
+      \pause
+      \begin{block}{平行求和}
+        $$
+        \begin{aligned}
+        {n \choose 0}&+{n+1 \choose 1}+...+{n+m \choose m} \\
+        &=\sum\limits_{i=0}^{m}{n+i \choose i}={n+m+1 \choose m} \\
+        m &\in \mathbb{N}
+        \end{aligned}
+        $$
+
+        证明
+
+        将${n+m+1 \choose m}$用加法公式展开即可。
+      \end{block}
+    \end{frame}
+
+    \begin{frame}
+      \begin{block}{上指标求和}
+        $$
+        \sum\limits_{i=0}^{n}{i \choose m}={n+1 \choose m+1}
+        $$
+
+        证明
+
+        从组合意义入手，相当于我从 \(n+1\) 个数中选 \(m+1\) 个数，先假设选
+        \(i\)，那么 \(i\) 前面还需要选 \(m\) 个数，枚举这个 \(i\)，即为答案。
+        也可通过微积分求导知识进行证明，这里不再详述。
+      \end{block}
+    \end{frame}
+
+    
+
+\end{document}

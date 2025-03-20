@@ -1,0 +1,459 @@
+\documentclass{beamer}
+\usepackage{booktabs}
+\usepackage{ctex}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{ulem}
+
+\title{Game Theory}
+\author{whx1003}
+\date{2024 年 8 月 17 日}
+
+\usetheme{default}
+\geometry{paperheight=11.0cm,paperwidth=16.0cm}
+\setbeamertemplate{background}{\includegraphics[height=\paperheight]{images/bg.png}}
+\addtobeamertemplate{block begin}{\pgfsetfillopacity{0.75}}{\pgfsetfillopacity{1}}
+\addtobeamertemplate{block alerted begin}{\pgfsetfillopacity{0.75}}{\pgfsetfillopacity{1}}
+\addtobeamertemplate{block example begin}{\pgfsetfillopacity{0.75}}{\pgfsetfillopacity{1}}
+
+\definecolor{uibred}  {HTML}{db3f3d}
+\definecolor{uibblue} {HTML}{4ea0b7}
+\definecolor{uibgreen}{HTML}{789a5b}
+\definecolor{uibgray} {HTML}{d0cac2}
+\definecolor{uiblink} {HTML}{00769E}
+\setbeamercolor{block body} {bg = uibgray}
+\setbeamercolor{block title}{fg = white,bg = uibblue}
+
+\usefonttheme{serif}
+\AtBeginDocument{
+    \DeclareSymbolFont{pureletters}{OML}{cmm}{m}{it}
+    \SetSymbolFont{pureletters}{bold}{OML}{cmm}{bf}{it}
+}
+\hypersetup{
+    hidelinks,
+    colorlinks=true,
+    urlcolor=blue
+}
+
+\newcommand{\nl}{\\\hspace*{\fill}\\}
+
+\begin{document}
+	\maketitle
+
+	\begin{frame}{Preface}
+		OI 比赛中常见的博弈有如下的几种类型:\nl
+		\begin{itemize}
+			\item 传统组合数学意义上的经典模型, 如 Nim 博弈, Nash 博弈等.\\
+			\item 没什么经典模型, 但是比较考验选手对整个博弈的细致分析的, 比如仔细考虑博弈双方的最优策略等.\\
+			\item 完全是套了一个博弈的壳, 其实是在考察其它内容, 比如组合数学/图论等.\nl
+		\end{itemize}
+		其中第一种在古早时期 (大约 15, 16 年这样) 比较喜欢考, 我在役期间考的比较多的是后两种.\nl
+		``OI 不是知识竞赛''.
+	\end{frame}
+
+	\begin{frame}{Examples}
+		\begin{block}{经济学}
+			股市是按照这样的方式运行的: 每个人可以持有股票, 如果抛出过多股票则股价下跌, 没有抛股票的人血亏. 因此当金融危机发生时, 如果有某些消息让一部分股民抛售了股票, 剩下的人也必须跟着抛售, 抛售越晚越亏.
+		\end{block}
+		\begin{block}{买东西}
+			一般买东西的时候, 由商家先给出一个价格, 随后顾客将这个价格压低, 随后商家再将这个压低的价格抬高, 重复过程. 顾客会希望最小化最终价格, 而商家会希望最大化.
+		\end{block}
+		\begin{block}{小学数学}
+			桌子上有 20 个硬币, Alice 和 Bob 两个人依次取硬币, 每次可以取一枚或两枚, Alice 先开始取. 取到最后一枚硬币的人获胜, 问谁会获胜?
+		\end{block}
+	\end{frame}
+
+	\begin{frame}{一些概念}
+		Game theory: 传统意义上的博弈论, 涉及经济学, 逻辑学, 计算机科学等.\nl
+		Combinatorial game theory: Game theory 的一部分, 主打的是 ``sequential games with perfect information''. ``sequential'' 指的是双方交替行动, 而非同时行动; ``perfect information'' 指的是双方在做决策的时候都知道当前局面处于什么状态, 以及可以向什么状态转移.\nl
+		完全信息 (complete information) 博弈: 指的是博弈双方都清楚双方的目标 (或者采取某些操作对双方的收益). 当然 OI 范围内的一般都是完全信息博弈.\nl
+		\begin{itemize}
+			\item 象棋/围棋: perfect \& complete.\\
+			\item 扑克牌: imperfect \& complete. 你在打牌的时候是不知道对手的手牌的, 也即不知道现在是处于博弈的哪个状态的.\\
+			\item 狼人杀/三国杀: imperfect \& incomplete. 此时不仅你不知道对手有哪些可能的决策, 甚至不知道对手的身份, 也就对应不知道对手的获胜目标.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{平等博弈}
+		一个 OI 中更重要的概念是所谓的 ``平等博弈'' (或 ``无偏博弈'', impartial game): 在博弈的同一状态下, 如果不论是谁做操作, 可能做出的决策集合是相同的, 那么就是一个平等博弈.\nl
+		平等博弈意味着我们不用区分一个状态下是 ``Alice 做操作'' 还是 ``Bob 做操作'', 因此只要博弈可以终止, 递归可证一个局面要么是 ``先手必胜'' 的, 要么是 ``后手必胜'' 的.\nl
+		反之, 如果是非平等博弈, 则需要区分一个状态是 ``先手必胜'', ``后手必胜'', ``Alice 必胜'' 或者 ``Bob 必胜'' 的.
+	\end{frame}
+
+	\begin{frame}{有向图博弈}
+		所有的平等博弈都可以抽象出如下的一个模型:
+		\begin{block}{Game on DAG}
+			有一张有向无环图, 其中一个节点上有一个棋子. 从 Alice 开始游戏, Alice 和 Bob 轮流将这个棋子沿着一条有向出边移动, 无法移动者判负. 问最后谁会获胜.
+		\end{block}
+		注意到这是一个平等博弈, 于是只用考虑先手必胜/必败. 于是按照拓扑排序的方式递推出当前棋子在每个节点时对应先手必胜/先手必败即可.\nl
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{POJ \#2505 A multiplication game}
+			初始有两个数 $p,n$, 双人博弈, 每次给 $p$ 乘以一个 $2\sim 9$ 之间的整数, 如果操作之后 $p\geq n$ 则获胜, 问最后谁会获胜.\\
+			$p,n<2^{32}$.
+		\end{block}
+		\pause
+		平等博弈, 因此只用考虑先手必胜/先手必败. 注意到当 $p\in[n/9,n)$ 的时候先手直接获胜, 同理当 $p\in[n/18,n/9)$ 的时候先手必败, 同理当 $p\in[n/81,n/18)$ 的时候先手必胜, 以此类推. 因此只需要判断一下 $18^kp$ 和 $n$ 的大小关系即可.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Ferguson Game}
+			有两堆石子分别 $n,m$ 个, 双人博弈, 每次操作是清空其中一堆石子并将另一堆石子分成非空的两堆新的石子. 无法操作者输, 问最后谁会获胜.\\
+			例: $(1,1)$ 是先手必败, $(2,1)$ 是先手必胜.
+		\end{block}
+		\pause
+		我们来递推算一下胜负情况. 首先 $(1,1)$ 是一个必败状态, 其次 $(2,1),(2,2),(1,2)$ 都是必胜状态. 列表如下:\\
+		\begin{center}
+			\begin{tabular}{c|cccc}
+				\toprule
+				    & $1$ & $2$ & $3$ & $4$\\
+				\hline
+				$1$ & $0$ & $1$ & $0$ & $1$\\
+				$2$ & $1$ & $1$ & $1$ & $1$\\
+				$3$ & $0$ & $1$ & $0$ & $1$\\
+				$4$ & $1$ & $1$ & $1$ & $1$\\
+				\bottomrule
+			\end{tabular}\\
+		\end{center}
+		看起来似乎是两堆石子均为奇数则先手必败, 否则先手必胜. 这个结论确实是对的, 而且是容易归纳证明的.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Chomp Game}
+			有一块 $n\times m$ 的网格, 双人博弈, 每次操作是选中其中一个未被删除的格子 $(x_0,y_0)$, 将所有 $x\geq x_0$ 且 $y\geq y_0$ 的格子 $(x,y)$ 删除. 删除 $(1,1)$ 的人输, 问最后谁会获胜.
+		\end{block}
+		\pause
+		结论: 除了 $n=m=1$ 先手必败, 其余情况都是先手必胜.\nl
+		原因是先手第一步一定会删除 $(n,m)$ 这个格子, 因此后手的操作序列里一定没有这个格子. 假如先手必败, 则:
+		\begin{itemize}
+			\item 如果先手第一步选择的不是 $(n,m)$, 则可以转换为选择 $(n,m)$, 并留给后手对应的局面.\\
+			\item 如果先手第一步选择的是 $(n,m)$, 则可以转换为不选择 $(n,m)$, 而是直接使用后手原本的应对.\\
+		\end{itemize}
+		这样我们就非构造性地证明了先手必胜.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Bash Game}
+			有一堆石子共 $n$ 个, 双人博弈, 每次从石子堆中取出 $1\sim m$ 个石子. 无法操作者输, 问最后谁会获胜.
+		\end{block}
+		\pause
+		先手必败当且仅当 $n\equiv 0\pmod{m+1}$. 因为此时先手取 $x$ 个, 后手可以取 $m+1-x$ 个, 使得回到 $k(m+1)$ 个的状态. 而如果不是 $k(m+1)$, 则先手一次操作后可以变为这个状态, 也即先手必胜.
+	\end{frame}
+
+	\begin{frame}{Sprague-Grundy 定理}
+		回忆之前的有向图博弈模型. 我们进一步对每个点定义如下的 Sprague-Grundy 函数: 对没有出边的节点定义其函数值为 $0$, 对其它节点定义其函数值为其指向的节点的函数值的 mex, 即
+		$$
+		\operatorname{SG}(u)=\operatorname{mex}\{\operatorname{SG}(v)\mid (u,v)\in E\}.
+		$$
+
+		其中 $\operatorname{mex} S:=\min\{x\in\mathbb N\mid x\not\in S\}$, 则一个节点先手必败当且仅当其函数值为 $0$. 这个函数有一个惊人的结论, 那就是:
+		\begin{block}{Sprague-Grundy 定理}
+			\textbf{定理 (Sprague-Grundy).} 对一个由多个平行进行的组合游戏构成的博弈, 其整体的 SG 函数值为各个子游戏的函数值的异或和.
+		\end{block}
+		这里的 ``由多个平行进行的子游戏组成'' 的意思是, 现在有多张互不干扰的有向无环图, 并构成一个整体的博弈. 博弈的每次操作是, 选出其中一张有向图并将棋子移动一次. 依旧是无法移动的人失败.\nl
+		证明可以看 \href{https://en.wikipedia.org/wiki/Sprague-Grundy_theorem}{Wikipedia} 或者网上随便找个博客.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Nim Game}
+			现在有 $n$ 堆石子, 第 $i$ 堆有 $a_i$ 个. 双人博弈, 每次从一个当前非空的石子堆当中取至少一个. 无法操作者输, 问最后谁会获胜.\\
+			$n\leq 10^5,a_i\leq 10^9$.
+		\end{block}
+		\pause
+		这个是一个完全信息平等博弈, 因此可以使用有向图模型.\nl
+		显然每一堆的 SG 函数值就恰好是其中的石子个数, 因此根据 Sprague-Grundy 定理只需要计算每一堆大小的异或和, 如果这个值是 $0$ 则先手必败, 否则先手必胜.\nl
+		\pause
+		Nim 游戏有很重要的地位, 这是因为\textbf{一个 SG 函数值为 $x$ 的博弈, 很大程度上是等价于一个``仅有一个 $x$ 个石子的石子堆''的 Nim 游戏的}. 这可以这样理解: 二者唯一的不同是, SG 函数值为 $x$ 的游戏可能可以向函数值大于 $x$ 的游戏转移, 但这是不优的, 因为后手可选的操作方案会变多. 因此只会向 SG 更小的方向转移, 也即等价于 Nim 游戏.\nl
+		这个观点可以直接导出, 我们接下来许多有关 Nim 游戏的变种, 其结论也适用于 SG 函数为对应值的变种.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{POJ \#2425. A Chess Game}
+			有一个 $n$ 个点的有向无环图, 其上有 $m$ 个棋子. Alice 和 Bob 在其上博弈, 每次可以将其中一枚棋子沿出边移动一次, 允许棋子重叠. Alice 先开始, 不能移动则输掉游戏, 问最后谁会获胜.\\
+			$n\leq 10^3,m\leq 10$.
+		\end{block}
+		\pause
+		棋子之间独立, 因此算一下每个点的 SG 函数值然后异或一下得到整个游戏的 SG 函数值就行.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Lasker's Nim Game}
+			现在有 $n$ 堆石子, 第 $i$ 堆有 $a_i$ 个. 双人博弈, 每次从一个当前非空的石子堆当中取至少一个, 或者选取一个石子堆分成两个非空的石子堆. 无法操作者输, 问最后谁会获胜.\\
+			$n\leq 10^5,a_i\leq 10^9$.
+		\end{block}
+		\pause
+		先计算每一堆石子的 SG 函数值.
+		$$
+		\operatorname{SG}(n)=\operatorname{mex}(\{\operatorname{SG}(k)\mid 0\leq k<n\}\cup\{\operatorname{SG}(k)\oplus\operatorname{SG}(n-k)\mid 0<k<n\}).
+		$$
+		\begin{center}
+			\begin{tabular}{cccccccccc}
+				\toprule
+				                   $n$ & $0$ & $1$ & $2$ & $3$ & $4$ & $5$ & $6$ & $7$ & $8$\\
+				\hline
+				$\operatorname{SG}(n)$ & $0$ & $1$ & $2$ & $4$ & $3$ & $5$ & $6$ & $8$ & $7$\\
+				\bottomrule
+			\end{tabular}\\
+		\end{center}
+		归纳可证: 对 $k\geq 1$,
+		\begin{align*}
+			\operatorname{SG}(4k)=4k-1,\operatorname{SG}(4k+1)=4k+1,\\
+			\operatorname{SG}(4k+2)=4k+2,\operatorname{SG}(4k+3)=4k+4.
+		\end{align*}
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{棋盘游戏}
+			有一个 $m\times m$ 的棋盘和 $n$ 个棋子, 初始位置给定. 双人博弈, 每次选取一个在 $(x,y)$ 的棋子移动到 $(x-k,y)$ 或 $(x,y-k)$ 或 $(x-k,y-k)$. 第一个将其中一个棋子放置到 $(0,0)$ 的人获胜, 问最后谁会获胜.\\
+			$m\leq 100$.
+		\end{block}
+		\pause
+		问题在于, 普通的 SG 函数计算的是 ``所有 $n$ 个棋子都到达 $(0,0)$ 时, ...'', 但这里是只需要其中一个.\nl
+		因此考虑如何转化. 考虑一个棋子到达 $(1,2)$ 或 $(2,1)$ 后, 双方都不会在动它, 于是可以把这两个点设定为终止点, 并递推计算 SG 函数值. 复杂度 $\mathcal O(m^3)$. 类似的 ``先满足某种条件获胜'' 的问题都可以类似转化.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Crosses and Crosses}
+			有一个 $1\times n$ 的纸条, 初始全部为空. 双人博弈, 每次选取一个空白的位置涂黑. 第一个满足 ``操作后有连续三个位置被涂黑'' 的人获胜, 问最后谁会获胜.\\
+			$n\leq 5000$.
+		\end{block}
+		\pause
+		当一个格子被涂黑之后, 它左右两侧与它距离 $\leq 2$ 的格子就都不能再被涂黑了. 因此一次操作等价于删除连续的 $5$ 个元素 (边界除外), 然后将原游戏划分成一或两个子游戏. 递推计算 SG 函数值即可, 复杂度 $\mathcal O(n^2)$.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Ruler Game}
+			有 $n$ 个硬币排成一排, 其中 $m$ 个初始向上, 其余向下. 双人博弈, 每次选取一个区间, 并将区间内的硬币全部翻面, 要求区间左端点的硬币是从向上翻到向下. 无法操作者输, 问最后谁会获胜.\\
+			$n\leq 10^9, m\leq 10^5$.
+		\end{block}
+		\pause
+		这类的翻硬币游戏有这样一个结论: 整个游戏的 SG 函数值是每个硬币单独存在时的函数值异或起来, 也即可以认为硬币之间是互不干扰的平行的组合游戏.
+		\begin{align*}
+			\operatorname{SG}\left(\blacksquare\blacksquare\square\right)&=\operatorname{mex}\left(\square\blacksquare\square,\square\square\square,\square\square\blacksquare,\blacksquare\square\square,\blacksquare\square\blacksquare\right).\\
+			\operatorname{SG}\left(\begin{aligned}
+				\blacksquare\square\square\\
+				\square\blacksquare\square
+			\end{aligned}\right)&=\operatorname{mex}\left(\begin{aligned}
+				\square\square\square\\
+				\square\blacksquare\square
+			\end{aligned},
+			\begin{aligned}
+				\square\blacksquare\square\\
+				\square\blacksquare\square
+			\end{aligned},
+			\begin{aligned}
+				\square\blacksquare\blacksquare\\
+				\square\blacksquare\square
+			\end{aligned},
+			\begin{aligned}
+				\blacksquare\square\square\\
+				\square\square\square
+			\end{aligned},
+			\begin{aligned}
+				\blacksquare\square\square\\
+				\square\square\blacksquare
+			\end{aligned}
+			\right).
+		\end{align*}
+
+		其中,
+		$$
+		\operatorname{SG}\left(\begin{aligned}
+			\square\blacksquare\blacksquare\\
+			\square\blacksquare\square
+		\end{aligned}\right)=
+		\operatorname{SG}\left(\begin{aligned}
+			\square\blacksquare\square
+		\end{aligned}\right)\oplus
+		\operatorname{SG}\left(\begin{aligned}
+			\square\square\blacksquare\\
+		\end{aligned}\right)\oplus
+		\operatorname{SG}\left(\begin{aligned}
+			\square\blacksquare\square
+		\end{aligned}\right)=
+		\operatorname{SG}\left(\begin{aligned}
+			\square\square\blacksquare\\
+		\end{aligned}\right).
+		$$
+
+		有了这个结论, 我们直接只需要对每种仅包含一个棋子的局面算出 SG 函数, 打表不难发现 $\operatorname{SG}(n)=\operatorname{lowbit}(n)$, 于是就做完了.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{HDU \#5963. 朋友}
+			有一棵有根树, 边权为 $0$ 或 $1$. 双人博弈, 每次选择一条边权为 $1$ 的边, 随后将这条边到根的路径上的所有边 (包括它自己) 的边权翻转. 无法操作者输.\\
+			你需要维护两类操作: 一种是修改其中一条边的边权, 另一种是指定其中一个点为根, 问最后谁会获胜.\\
+			$n,q\leq 10^5$.
+		\end{block}
+		\pause
+		注意到是我们之前提到过的翻硬币模型, 因此实际上每条边是独立的游戏. 对一条边, 简单计算会发现当且仅当它与根相连时 SG 值为 $1$, 否则为 $0$, 因此只需要统计根旁边权为 $1$ 的边的个数奇偶性.\nl
+		\pause
+		也可以这样理解: 如果一条与根相连的边是 $0$, 那么不管先手在对应的子树内如何操作, 一定会导致这条边变为 $1$, 因此后手一定可以让其变回 $0$, 也即胜负只和这条边的初始权值有关.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{「HAOI 2015」数组游戏}
+			有一个长为 $n$ 的数组, 值为 $0/1$. 双人博弈, 每次选择一个值为 $1$ 位置 $x$, 然后再选定一个 $k$, 并将 $x,2x,\cdots,kx$ 的格子全部翻转. 不能操作者输, 问最后谁会获胜.\\
+			$k$ 组询问, 每组询问当中值为 $1$ 的格子至多 $w$ 个.\\
+			$n\leq 10^9,k,w\leq 100$.
+		\end{block}
+		\pause
+		翻硬币模型, 只需要对每个格子计算 SG 函数. 由于一个格子只能影响 $i,2i,\cdots,ki$, 于是 $\lfloor n/i\rfloor$ 相同的格子的 SG 函数值也是相同的.\nl
+		对一个 $\lfloor n/i\rfloor$, 计算其 SG 函数值的时候我们遍历所有 $j$, 然后计算翻转 $i,2i,\cdots,ij$ 时的 SG 函数值并取 mex. 但是不同的 $\lfloor n/ij\rfloor$ 只有 $\mathcal O(\sqrt{n/i})$ 个, 于是不同的 SG 函数值也只有这么多 (因为一个块内出现两次会抵消), 于是实际上我们整除分块之后暴力计算的复杂度是
+		$$
+		\sum_{i=1}^{\sqrt n}\mathcal O(\sqrt i)+\mathcal O(\sqrt{n/i})=\mathcal O(n^{3/4}),
+		$$
+
+		于是可以通过.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Anti-Nim}
+			Nim 游戏, 但是变为不能取石子的人获胜.
+			$n\leq 10^5,a_i\leq 10^9$.
+		\end{block}
+		\pause
+		这里我们需要更加细致地考虑 Nim 的结论是怎么得到的. 实际上 Nim 是在说, 当前局面异或和不为 $0$ 时, 先手总能让异或和变回 $0$; 而当前局面异或和为 $0$ 时, 先手总会让异或和变为非 $0$.\nl
+		这里直接考虑异或和比较困难, 我们不妨先考虑一些简单的情况:\\
+		\begin{itemize}
+			\item 假如当前局面全部是 $1$, 则胜负只和堆数的奇偶性有关.\\
+			\item 假如当前局面有恰一个不为 $1$ 的堆, 那么先手可以决定这一堆变成 $0$ 还是 $1$, 也即先手必胜.
+		\end{itemize}
+		因此, 如果有多个堆 $>1$, 那么游戏的结果只和 ``只剩下一个 $>1$ 的堆的时候, 是谁在操作'' 有关. 因此类似 Nim, 这种情况下只要初始异或和非 $0$, 先手就可以控制自己的局面下异或和非 $0$ 而后手的局面下异或和为 $0$, 这样仅有一堆 $>1$ 的时候一定是自己操作, 也就先手必胜.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Nimk Game}
+			现在有 $n$ 堆石子, 第 $i$ 堆有 $a_i$ 个. 双人博弈, 每次从至多 $k$ 个当前非空的石子堆当中取至少一个. 无法操作者输, 问最后谁会获胜.\\
+			$n\leq 10^5,a_i\leq 10^9$.
+		\end{block}
+		\pause
+		一个简单的观察: 当所有 $a_i=1$ 时游戏退化为 Bash Game, 所以至少需要 Bash Game 的结论.\nl
+		这里需要考虑我们在 Nim 的时候, 先手如何保证让一个非 $0$ 的异或和变回 $0$. 这等价于先手需要找到一堆石子, 使得其异或上异或和会变小. 这是一定可以实现的, 只需要找导致异或和最高位不为 $0$ 的那一堆即可.\nl
+		那么这里是类似的, 考虑如果将每个 $a_i$ 写成二进制, 那么在每一位上每次先手可以造成 $1\sim k$ 个影响, 这其实相当于是一个 Bash Game. 我们有结论: 先手必败当且仅当对每个二进制位, 这一位为 $1$ 的 $a_i$ 有 $k+1$ 的倍数个. 这是可以仿照普通 Nim 证明的.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{HDU \#2486. A simple stone game}
+			有一个数 $n$. 双人博弈, 第一次先选出一个 $1\sim n-1$ 之间的数 $x$, 然后 $n\gets n-x$. 第二次开始每次将 $n$ 减掉一个数, 这个数不能超过上一次减的数的 $k$ 倍. 减到 $0$ 的人获胜, 问最后谁会获胜.\\
+			$n\leq 10^8, k\leq 10^5$.\\
+			提示: 打表发现 $k=1$ 时先手必败当且仅当 $n=2^m$; $k=2$ 时先手必败当且仅当 $n$ 是 Fibonacci 数.
+		\end{block}
+		\pause
+		我们来试图证明一下 $k=1,2$ 时的结论. 当 $k=1$ 时, 考虑如果当前局面下 $n$ 的二进制表示当中只有一个 $1$, 那么不管先手第一步选取什么, (因为不会让后手一步变成 $0$), 轮到后手的时候二进制表示一定有至少两个 $1$, 此时后手只需要选取其 lowbit 即可. 随后先手的操作一定会让 $1$ 的个数增多, 重复这个过程即可.\nl
+		$k=2$ 的情况是类似的, 注意到 Fibonacci 数有如下的一个性质: 每个正整数可以唯一地表示为若干个互不相邻的 Fibonacci 数的和, 于是类似 $k=1$ 的情况就得证了.\nl
+	\end{frame}
+
+	\begin{frame}{例题}
+		那么对于任意的 $k$, 我们需要构造一个数列 $\{a_n\}$ 满足任意一个正整数都可以唯一地表示成若干个 $a$ 中的数的和且这一表示中任意两个数之间至少有 $k$ 倍的关系. 我们递推构造这个数列. 初始 $a_1=1$, 假设我们已经构造完成 $a_{1\sim n}$, 那么我们还需要额外维护 $\{b_n\}$ 表示 $a_{1\sim n}$ 按照上述方式构造出的最大的数 (同时归纳也可以说明, 现在 $1\sim b_n$ 都可以被构造). 于是显然
+		$$
+		a_{n+1}=b_n+1,\quad b_{n+1}=a_{n+1}+b_{j},\quad\text{where }j=\max\{j\mid ka_j<a_{n+1}\}.
+		$$
+
+		于是当且仅当为这个数列当中的数的时候先手必败.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{不知道哪里来的题}
+			初始有两个数 $a,b$. 双人博弈, 每次操作依次进行:
+			\begin{itemize}
+				\item 如果 $a>b$, 则交换 $a,b$.
+				\item 如果 $a=0$, 则当前玩家失败, 游戏结束.
+				\item 玩家选择: 将 $b$ 变为 $b\bmod a$, 或者选定一个 $k\geq 1$ 并将 $b$ 减去 $a^k$.
+			\end{itemize}
+			问最后谁会获胜. $0\leq a,b\leq 10^{18}$.
+		\end{block}
+		\pause
+		首先递归计算 $b\gets b\bmod a$ 之后的胜负情况: 如果是先手必败, 则先手直接做这个操作然后获胜. 否则如果先手必胜, 那么注意到我们有 $b-a^k\equiv b\pmod a$, 因此此时先后手都不会做取模的操作, 否则将直接失败.\nl
+		因此问题转化为, 有一堆石子共 $\lfloor b/a\rfloor$ 个, 双方每次可以取 $1,a,a^2,a^3,\cdots$ 个, 无法操作者输.
+	\end{frame}
+	
+	\begin{frame}{例题}
+		下面是 $a=2\sim 10$, $n=0\sim 16$ 的 SG 函数表.\\
+		\begin{center}
+			\begin{tabular}{c|ccccccccccccccccc}
+				\toprule
+				      & $0$ & $1$ & $2$ & $3$ & $4$ & $5$ & $6$ & $7$ & $8$ & $9$ & $10$ & $11$ & $12$ & $13$ & $14$ & $15$ & $16$\\
+				\hline
+				$a=2$ & $0$ & $1$ & $2$ & $0$ & $1$ & $2$ & $0$ & $1$ & $2$ & $0$ &  $1$ &  $2$ &  $0$ &  $1$ &  $2$ &  $0$ &  $1$\\
+				$a=3$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$\\
+				$a=4$ & $0$ & $1$ & $0$ & $1$ & $2$ & $0$ & $1$ & $0$ & $1$ & $2$ &  $0$ &  $1$ &  $0$ &  $1$ &  $2$ &  $0$ &  $1$\\
+				$a=5$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$\\
+				$a=6$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $2$ & $0$ & $1$ & $0$ &  $1$ &  $0$ &  $1$ &  $2$ &  $0$ &  $1$ &  $0$\\
+				$a=7$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$\\
+				$a=8$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $2$ & $0$ &  $1$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$ &  $1$\\
+				$a=9$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$\\
+				$a=10$& $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ & $0$ & $1$ &  $2$ &  $0$ &  $1$ &  $0$ &  $1$ &  $0$ &  $1$\\
+				\bottomrule
+			\end{tabular}\\
+		\end{center}
+		\pause
+		规律: 先手必胜当且仅当 $(n+1)\bmod (a+1)$ 为偶数.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{AGC010F. Tree Game}
+			现在有一棵树, 第 $i$ 个节点上有 $a_i$ 个石子, 其中一个节点上有一个棋子. 双人博弈, 每次操作从当前棋子占据的点上移除一个石子, 并将棋子移动到相邻节点. 无法操作者输.\\
+			你需要计算, 全部 $n$ 种放初始棋子的方案中, 有多少种先手必胜.\\
+			$n\leq 3000,a_i\leq 10^9$.
+		\end{block}
+		\pause
+		以初始点为根, 用 $f_u$ 表示仅考虑 $u$ 的子树, 从 $u$ 出发能不能先手必胜. 如果 $u$ 的某个子树先手必胜, 那么先手不会走向那个子树; 否则如果子树先手必败, 那么先手走过去之后后手会走回来, 重复这个过程, 如果 $a_v<a_u$ 那么先手最终可以走过去获胜, 否则如果没有这样的子树先手必败. 对每个点为根算一遍即可.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{AGC014D. Black and White Tree}
+			现在有一棵树. 双人博弈, Alice 先手, 交替进行: Alice 将树上一个未染色的点染成白色, Bob 将树上一个未染色的点染成黑色. 所有点都染色后, 如果有一个白点只和白点相邻, 则 Alice 获胜, 否则 Bob 获胜. 问最后谁会获胜.
+			$n\leq 10^5$.
+		\end{block}
+		\pause
+		首先 Alice 不会染叶子: 因为 Bob 只要染这个叶子的父亲就寄了; 相反, 如果两个叶子共用一个父亲, 那么 Alice 将这个父亲染了就赢.\nl
+		因此考虑这样的一个博弈顺序: Alice 将某个叶子的父亲染白, Bob 将对应的叶子染黑, 反复过程, 会发现获得了原树的一个匹配. 因此:\\
+		\begin{itemize}
+			\item 如果原树有完美匹配, 那么每次 Alice 染一个点, Bob 只需要染匹配点, 这样 Alice 必败.\\
+			\item 否则, 按照我们之前的方案进行, 一定某一次有两个叶子共用父亲, 这样 Alice 必胜.\\
+		\end{itemize}
+		于是检查原树有没有完美匹配即可.
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{HDU \#6105. Gameia}
+			现在有一棵树. 双人博弈, Alice 先手, 交替进行: Alice 将树上一个未染色的点染成白色, Bob 将树上一个未染色的点染成黑色, 同时将这个点的邻居 (不论有没有染色) 变为黑色. 此外, Bob 还可以最多 $k$ 次地在任意时刻剪断一条边. 所有点都染色后, 如果还有白点, 则 Alice 获胜, 否则 Bob 获胜. 问最后谁会获胜.\\
+			$n,k\leq 1000$.
+		\end{block}
+		\pause
+		还是一样, 如果原树没有完美匹配则 Alice 一定获胜. 如果有完美匹配则需要讨论:
+		\begin{itemize}
+			\item 如果 Bob 可以最初始就将原树分为两个两个的匹配, 那么 Bob 显然获胜.\\
+			\item 否则, Alice 每次染叶子, Bob 必须染对应的父亲, 并且需要提前把父亲和其他节点分割 (否则与父亲相连的点也被染黑, 剩下奇数个未染色节点一定没有完美匹配), 于是 Alice 获胜.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{例题}
+		\begin{block}{Green Hackenbush on Trees}
+			现在有一棵有根树. 双人博弈, 每次可切断一条边, 保留包含根的部分. 无法操作者输, 问最后谁会获胜.\\
+			$n\leq 10^5$.
+		\end{block}
+		\pause
+		这个是所谓的 Green Hackenbush 的弱化版 (在树上的情况). 我们有所谓的 Colon Principle:
+		\begin{block}{Colon Principle}
+			\textbf{定理 (Colon Principle).} 设仅考虑点 $u$ 对应的子树时, 局面的 SG 函数值为 $f_u$, 那么
+			$$
+			f_u=\bigoplus_{v\in\text{Son}(u)}(f_v+1).
+			$$
+		\end{block}
+		\textbf{证明.} 这个定理实际上是在说, 如果一棵树的 SG 值是 $x$, 那么新加一个点作为新的树根连向原树根, 得到的树的 SG 值是 $x+1$. 这是可以简单归纳的: 因为所有后继状态要么是全删 (对应 SG 值为 $0$), 要么对应原树的一个后继状态加上新的这条边, (对应 SG 值恰加 $1$). $\Box$
+	\end{frame}
+
+	\begin{frame}{备选题目/练习题}
+		FLOJ: \#3637, \#3865, \#4009, \#4012.\nl
+		Luogu: \#5387, \#7841, \#7979, \#8347.\nl
+		AGC002E, AGC005E, AGC010D, AGC010E, AGC026F, AGC029D.\nl
+		「HNOI 2007」分裂游戏, 「ZJOI 2009」取石子游戏, 「SDOI 2011」黑白棋, 「SNOI 2020」取石子.\nl
+		几张 (应该会) 一并下发的 PPT.\nl
+		进阶知识: Green Hackenbush (无向图上的版本, Fusion Principle), Nim 积 (大小为 $2^k$ 的有限域的构造), 超现实数 (surreal numbers).\nl
+		需要知识背景的: UOJ \#76, AGC017D, FLOJ \#4155, 「清华集训 2017」福若格斯.\nl
+		如果还有时间给大家讲讲超现实数/mgx
+	\end{frame}
+\end{document}

@@ -1,0 +1,1250 @@
+\documentclass[UTF8]{beamer}
+\usepackage{ctex}
+\usepackage{graphicx}
+\usepackage{ulem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{graphicx}
+
+\usetheme[block=fill, sectionpage=none]{Berlin}
+\usecolortheme{custom}
+
+\title{组合数学2}
+\subtitle{斯特林数\&容斥}
+\author{harryzhr}
+\date{2025 年 1 月 23 日}
+\usetheme{Berlin}
+\usefonttheme[onlymath]{serif}
+
+\geometry{paperheight=11.0cm,paperwidth=16.0cm}
+
+\begin{document}
+    \maketitle
+    \newcommand{\st[3]}{{\begin{bmatrix}{#2}\\{#3}\end{bmatrix}}}
+    \newcommand{\St[3]}{{\begin{Bmatrix}{#2}\\{#3}\end{Bmatrix}}}
+    \section{斯特林数}
+    \subsection{斯特林数}
+    \begin{frame}{第二类斯特林数}
+        由于第二类斯特林数更常见也更常用，且《具体数学》先介绍的是第二类斯特林数，所以这里我们也先介绍第二类斯特林数。
+
+        $\St{n}{k}$ 表示将 $n$ 个元素划分成 $k$ 个\textbf{非空子集}的方案数。
+
+        \pause
+        $n$ 较小时第二类斯特林数的值如下：
+        \begin{center}
+        \begin{tabular}{|c|ccccccc|}
+            \hline
+             $n$ &  $\begin{Bmatrix}n\\0\end{Bmatrix}$  &   $\begin{Bmatrix}n\\1\end{Bmatrix}$    &            $\begin{Bmatrix}n\\2\end{Bmatrix}$   &$\begin{Bmatrix}n\\3\end{Bmatrix}$   &$\begin{Bmatrix}n\\4\end{Bmatrix}$   &   $\begin{Bmatrix}n\\5\end{Bmatrix}$   &$\begin{Bmatrix}n\\6\end{Bmatrix}$  
+            \\\hline
+            $0$&$1$&&&&&&\\\hline
+            $1$&$0$&$1$&&&&&\\\hline
+            $2$&$0$&$1$&$1$&&&&\\\hline
+            $3$&$0$&$1$&$3$&$1$&&&\\\hline
+            $4$&$0$&$1$&$7$&$6$&$1$&&\\\hline
+            $5$&$0$&$1$&$15$&$25$&$10$&$1$&\\\hline
+            $6$&$0$&$1$&$31$&$90$&$65$&$15$&$1$\\\hline
+            \end{tabular}
+        \end{center}
+    \end{frame}
+
+    \begin{frame}{第二类斯特林数的特殊值与递推式}
+        第二类斯特林数的一些特殊值如下：
+        \begin{gather*}
+        \St{n}{0} = [n=0],\quad \St{n}{1}=\St{n}{n} = 1(n>0)\\ 
+        \St{n}{2} = 2^{n-1}-1(n>0),\quad \St{n}{n-1} = \binom{n}{2}
+        \end{gather*}
+        \pause
+
+        \begin{block}{第二类斯特林数的递推式}
+        $$
+        \St nk = k\St {n-1}k+\St{n-1}{k-1}
+        $$
+        即考虑第 $n$ 个元素放在哪个集合。要么在已经有的 $k$ 个非空集合里选一个放进去，要么自己单开一个新的集合。
+        \end{block}
+    \end{frame}
+    
+    \begin{frame}{第二类斯特林数的生成函数}
+        \pause
+        一个盒子装 $n$ 个物品且盒子非空的方案数是 $[n>0]$。我们可以写出它的EGF为 
+        $$
+        F(x)= \sum_{n=1}^{\infty}\frac{x^n}{n!}=e^x-1
+        $$
+        
+        由 EGF 卷积的组合意义，$F^k(x)$ 就是 $n$ 个有标号物品放到 $k$ 个\textbf{有}标号盒子里的EGF。而第二类斯特林数是 $n$ 个有标号物品放到 $k$ 个\textbf{无}标号盒子里的方案数，所以要再除以一个 $k!$
+
+        $$
+        \frac{1}{n!}\St nk = [x^n]\frac{(e^x-1)^k}{k!}
+        $$
+    \end{frame}
+
+    \begin{frame}{第二类斯特林数的通项公式}
+        
+        \vspace{-0.2em}
+        \begin{block}{第二类斯特林数的通项公式}
+            \vspace{-1em}
+            $$
+            \begin{Bmatrix}n\\k\end{Bmatrix}=\dfrac{1}{k!}\sum\limits_{i=0}^k(-1)^i\binom{k}{i}(k-i)^n = \sum_{i=0}^k\frac{(-1)^{k-i}i^n}{i!(k-i)!}
+            $$
+            \vspace{-1em}
+        \end{block}
+        \pause
+        \textbf{证明}：设将 $n$ 个有标号物品放到 $k$ 个有标号盒子（允许空盒子）的方案数为 $G_i$；将 $n$ 个有标号物品放到 $k$ 个有标号盒子（不允许空盒子）的方案数为 $F_i$
+        \vspace{-0.2em}
+        \begin{gather*}
+        G_i = k^n,\ G_i = \sum_{j=0}^i \binom{i}{j}F_j
+        \end{gather*}
+
+        \vspace{-0.5em}
+        \pause
+        由二项式反演
+        \vspace{-1em}
+        $$
+        F_k=\sum_{i=0}^k(-1)^{k-i}\binom{k}{i}G_i=\sum_{i=0}^k(-1)^{k-i}\binom{k}{i}i^n=\sum_{i=0}^k\frac{k!(-1)^{k-i}i^n}{i!(k-i)!}
+        $$
+        
+        $F_k$ 是有标号的盒子，第二类斯特林数是无标号盒子再除以一个 $k!$
+        \vspace{-0.2em}
+        $$
+        \begin{Bmatrix}n\\k\end{Bmatrix} = \sum_{i=0}^k\frac{(-1)^{k-i}i^n}{i!(k-i)!}
+        $$
+    \end{frame}
+
+    
+    \begin{frame}
+        \begin{block}{Remark}
+            高阶差分与第二类斯特林数有奇妙的性质
+            $$
+            \Delta^m x^n|_{x=0}=m!\St nm
+            $$
+        \end{block}
+        \pause
+        \textbf{证明}：
+        $$
+        \Delta ^m x^n|_{x=0}=\sum_{k=0}^m\binom{m}{k}(-1)^{m-k}k^n
+        $$
+        $$
+        m!\St{n}{m}=\sum_{k=0}^m(-1)^k\binom{m}{k}(m-k)^n
+        $$
+        令 $k\gets m-k$ 可知两式相等。
+    \end{frame}
+
+    \begin{frame}{第一类斯特林数}
+        $\st{n}{k}$ 表示将 $n$ 个元素排成 $k$ 个\textbf{轮换}的方案数。也即所有 $n!$ 个排列中，构成的置换有 $k$ 个环的排列数。
+        \pause
+
+        $n$ 较小时第一类斯特林数的值如下：
+        \begin{center}
+        \begin{tabular}{|c|ccccccc|}
+            \hline
+             $n$ &  $\begin{bmatrix}n\\0\end{bmatrix}$  &   $\begin{bmatrix}n\\1\end{bmatrix}$    &            $\begin{bmatrix}n\\2\end{bmatrix}$   &$\begin{bmatrix}n\\3\end{bmatrix}$   &$\begin{bmatrix}n\\4\end{bmatrix}$   &   $\begin{bmatrix}n\\5\end{bmatrix}$   &$\begin{bmatrix}n\\6\end{bmatrix}$  
+            \\
+            \hline
+            $0$&$1$&&&&&&\\
+            \hline
+            $1$&$0$&$1$&&&&&\\
+            \hline
+            $2$&$0$&$1$&$1$&&&&\\
+            \hline
+            $3$&$0$&$2$&$3$&$1$&&&\\
+            \hline
+            $4$&$0$&$6$&$11$&$6$&$1$&&\\
+            \hline
+            $5$&$0$&$24$&$50$&$35$&$10$&$1$&\\
+            \hline
+            $6$&$0$&$120$&$270$&$225$&$85$&$15$&$1$\\
+            \hline
+            \end{tabular}
+        \end{center}
+    \end{frame}
+
+    
+    \begin{frame}{第一类斯特林数的特殊值}
+        第一类斯特林数的一些特殊值如下：
+        \begin{gather*}
+        \st{n}{0} = [n=0],\quad \st{n}{n} = 1(n>0)\\ 
+        \st{n}{1} = (n-1)!(n>0),\quad \st{n}{n-1} = \binom{n}{2}
+        \end{gather*}
+
+        \pause
+        由定义易知
+        $$
+        \st nk \ge \St nk
+        $$
+        当每个轮换都至多有 $2$ 个元素时等号成立，此时 $k=n$ 或 $n-1$，
+        $$
+        \st{n}{n} = \St nn = 1,\quad  \st{n}{n-1} = \St{n}{n-1} = \binom{n}{2}
+        $$
+
+        
+    \end{frame}
+
+    \begin{frame}{第一类斯特林数的递推式}
+        \begin{block}{第一类斯特林数的递推式}
+            $$
+            \st nk = (n-1)\st {n-1}k+\st{n-1}{k-1}
+            $$
+            即考虑第 $n$ 个元素放在哪个轮换里。要么在已经有的 $k$ 个轮换里选一个位置插进去，方案数是 $n-1$；要么自己单开一个新的轮换。
+            \end{block}
+    \end{frame}
+
+    \begin{frame}{第一类斯特林数的生成函数}
+        \pause
+        类似第二类斯特林数地，我们先考虑 $1$ 个盒子，即 $k=1$ 时 $\begin{bmatrix}n\\1\end{bmatrix}=(n-1)!$ 的 EGF：
+
+        $$
+        F(x)=\sum_{n=1}^\infty(n-1)!\dfrac{x^n}{n!}=\sum\limits_{n=1}^\infty \dfrac{x^n}{n} = -\ln(1-x)
+        $$
+
+        那么 $n$ 个元素组成 $k$ 个\textbf{无}标号轮换的 EGF 为
+        $$
+        \frac{F^k(x)}{k!}=\frac{(-1)^k\ln^k(1-x)}{k!}
+        $$
+        即
+        $$
+        \frac{1}{n!}\st nk = [x^n]\frac{(-1)^k\ln^k(1-x)}{k!}
+        $$
+        \pause
+        \begin{block}{Remark}
+            第一类斯特林数没有实用的通项公式
+        \end{block}
+
+    \end{frame}
+
+    \begin{frame}{第一类斯特林数的一行之和}
+        我们知道一个有 $n$ 个元素的排列和一个 $n$ 个元素的置换一一对应，于是对所有置换中的轮换个数求和，我们有
+        $$
+        \sum_{k=0}^n \st nk = n!
+        $$
+    \end{frame}
+
+    \subsection{斯特林数恒等式与上升幂、下降幂}
+    \begin{frame}{下降幂}
+        \small{
+        我们在组合数中已经定义了下降幂
+        \vspace{-0.5em}
+        $$
+        x^{\underline n} = x(x-1)\cdots(x-n+1) = \prod_{i=0}^{n-1}(x-i)
+        $$
+        \vspace{-0.8em}
+        这是一个关于 $x$ 的 $n$ 次多项式，所以 $x^n$ 一定可以由若干下降幂来表示，计算发现
+
+        \begin{gather*}
+        \begin{aligned}
+            x^0 &= x^{\underline 0}\\
+            x^1 &= x^{\underline 1}\\
+            x^2 &= x^{\underline 2}+x^{\underline 1}\\
+            x^3 &= x^{\underline 3}+ 3x^{\underline 2} +x^{\underline 1}\\
+            x^4 &= x^{\underline 4} + 6x^{\underline 3}+ 7x^{\underline 2} +x^{\underline 1}
+        \end{aligned}
+        \end{gather*}
+        \pause
+        这与第二类斯特林数的值对上了，于是我们得到恒等式
+        \begin{block}{通常幂转下降幂}
+            \vspace{-1em}
+            $$
+            x^n = \sum_{k=0}^n \St{n}k x^{\underline k} = \sum_{k=0}^n \St nk \binom xk k!
+            $$
+        \vspace{-1em}
+        \end{block}
+        }
+    \end{frame}
+
+    \begin{frame}
+        \textbf{证明}：使用数学归纳法，一个重要的观察是
+        $$
+        x^{\underline{k+1}} = x^{\underline k}(x-k)\implies x\cdot x^{\underline k} = x^{\underline {k+1}}+kx^{\underline k}
+        $$
+        \pause
+        那么
+        $$
+        \begin{aligned}
+        x\cdot x^{n-1}&=x\cdot \sum_{k=0}^{n-1}\St{n-1}k x^{\underline k}\\
+        &=\sum_{k=0}^{n-1}\St{n-1}k x^{\underline k+1}+\sum_{k=0}^{n-1}\St{n-1}k kx^{\underline k}\\
+        &=\sum_{k=1}^{n}\St{n-1}{k-1}x^{\underline k}+\sum_{k=1}^{n-1}\St{n-1}k kx^{\underline k}\\
+        &=\sum_{k=1}^{n}\left(k\St{n-1}k+\St{n-1}{k-1}\right)x^{\underline k} = \sum_{k=1}^{n}\St{n}k x^{\underline k}
+        \end{aligned}
+        $$
+    \end{frame}
+    \begin{frame}{上升幂}
+        
+        \small{
+        定义上升幂
+        \vspace{-0.5em}
+        $$
+        x^{\overline n} = x(x+1)\cdots(x+n-1) = \prod_{i=0}^{n-1}(x+i) 
+        $$
+        \vspace{-0.8em}
+        
+        展开上升幂，得到
+        $$
+        \begin{aligned}
+        x^{\overline{0}} &= x^0\\
+        x^{\overline{1}} &= x^1\\
+        x^{\overline{2}} &= x^2+x^1\\
+        x^{\overline{3}} &= x^3+3x^2+2x\\
+        x^{\overline{4}} &= x^4+6x^3+11x^2+6x
+        \end{aligned}
+        $$
+        \pause
+        这与第一类斯特林数的值对上了，于是我们得到恒等式
+        \begin{block}{上升幂转通常幂}
+            \vspace{-1em}
+            $$
+            x^{\overline n} = \sum_{k=0}^n \st{n}k x^{k}
+            $$
+        \vspace{-1em}
+        \end{block}
+        }
+    \end{frame}
+    \begin{frame}
+        \textbf{证明}：还是一样地使用数学归纳法，这次的观察是
+        $$
+        (x+n-1)\cdot x^k = x^{k+1}+(n-1)x^k
+        $$
+        那么
+        $$
+        \begin{aligned}
+        (x+n-1)x^{\overline{n-1}} &= (x+n-1)\sum_{k=0}^{n-1} \st {n-1}kx^k\\
+        &=\sum_{k=0}^{n-1}(n-1)\st{n-1}k x^k +\sum_{k=1}^n\st{n-1}{k-1}x^k\\
+        &=\sum_{k=0}^n\st nk x^k
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}{上升幂、下降幂与通常幂的转化}
+        注意到上升幂和下降幂有交错的符号，比如
+        $$
+        \begin{aligned}
+        x^{\underline 4} &= x(x-1)(x-2)(x-3) = x^4-6x^3+11x^2-6x\\
+        x^{\overline 4} &= x(x+1)(x+2)(x+3) = x^4+6x^3+11x^2+6x
+        \end{aligned}
+        $$
+        由
+        $$
+        x^{\overline n} = \sum_{k=0}^n \st{n}k x^{k}
+        $$
+        我们得到
+        \begin{block}{下降幂转通常幂}
+        $$
+        x^{\underline n} = \sum_{k=0}^n(-1)^{n-k}\st{n}k x^{k}
+        $$
+        \end{block}
+    \end{frame}
+    \begin{frame}
+        对 $\displaystyle x^n = \sum_{k=0}^n \St{n}k x^{\underline k}$
+        两边带入 $-x$
+        $$
+        (-1)^nx^n = \sum_{k=0}^n \St{n}k (-x)^{\underline k}
+        $$
+        同时我们还有
+        $$
+        x^{\underline n} =(-1)^n(-x)^{\overline n}
+        $$
+        于是得到
+        \begin{block}{通常幂转上升幂}
+            $$
+            x^n=\sum_{k=0}^n\St nk(-1)^{n-k}x^{\overline k}
+            $$
+        \end{block}
+    \end{frame}
+
+    \begin{frame}{反转公式}
+        通常幂转上升幂，再上升幂转通常幂，得到
+        $$
+        x^n=\sum_{k}\St nk(-1)^{n-k}x^{\overline k} = \sum_{k,m} \St nk \st km (-1)^{n-k}x^m
+        $$
+        对比两侧多项式的系数，我们得到
+        \begin{block}{反转公式}
+            \vspace{-0.5em}
+            $$
+            \sum_{k} \St nk \st km (-1)^{n-k}=[m=n]
+            $$
+            类似地，下降幂转通常幂，再通常幂转下降幂，可以得到
+            $$
+            \sum_{k} \st nk \St km (-1)^{n-k}=[m=n]
+            $$
+            \vspace{-1em}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        总结一下，基本的斯特林数恒等式有
+    \end{frame}
+
+    \begin{frame}{附加的斯特林数恒等式}
+        《具体数学》还给出了附加的斯特林数恒等式，由于大部分用的比较少，下面就挑几个来讲
+        
+        \begin{center}
+        \end{center}
+    \end{frame}
+
+    \begin{frame}
+        \begin{enumerate}\setcounter{enumi}{0}
+            \item 
+            $$
+            \St {n+1}{m+1}=\sum_k \binom{n}k\St{k}{m}
+            $$
+            \pause
+            组合意义：枚举 $k$ 表示 $n+1$ 号节点所在的集合之外剩下了 $k$ 个节点，这 $k$ 个节点要构成 $m$ 个集合。
+            \pause
+            \item 
+            $$
+            \st {n+1}{m+1} = \sum_k \st nk \binom km
+            $$
+            \pause
+            组合意义：还是枚举 $n+1$ 号点所在环的大小，设为 $t+1$，那么方案数应该是 $t!\st {n-t} m$，这 $t!\st {n-t} m$ 个方案对应 $\st n0,\st n1,\cdots, \st nn$ 的所有置换中不连接这 $t$ 个和剩下 $n-t$ 个点的所有置换，所以有上式。
+        \end{enumerate}
+        或者使用 EGF 也可证明。
+    \end{frame}
+
+    
+    \begin{frame}
+        \begin{enumerate}\setcounter{enumi}{2}
+            \item
+            $$
+            \St nm = \sum_{k}\binom{n}{k}\St{k+1}{m+1}(-1)^{n-k}
+            $$
+            \item
+            $$
+            \st nm = \sum_k \st{n+1}{k+1}\binom  km (-1)^{m-k}
+            $$
+            \pause
+
+            这是前两个式子的二项式反演
+        \end{enumerate}
+    \end{frame}
+
+    \begin{frame}
+        \begin{enumerate}\setcounter{enumi}{4}
+            \item 
+            $$
+            \St{m+n+1}{m}=\sum_{k=0}^m k\St{n+k}{k}
+            $$
+            \item 
+            $$
+            \st{m+n+1}{m}=\sum_{k=0}^m (n+k)\st{n+k}{k}
+            $$
+            \pause
+            \textbf{证明}：
+            对于 5.：
+            $$
+            \text{原式} = \sum_{k=0}^m\St{n+k+1}{k}-\St{n+k}{k-1}=\St{m+n+1}{m}
+            $$
+            6. 同理
+        \end{enumerate}
+    \end{frame}
+    \subsection{例题}
+    \begin{frame}{例题}
+        \begin{block}{CF932E Team Work}
+            给定 $n,k$，求：
+            $$
+            \sum_{i=1}^n \binom ni \times i^k\bmod 10^9+7
+            $$
+            $1\le k\le 5000,\ 1\le n\le 10^9$
+        \end{block}
+    \end{frame}
+    \begin{frame}
+        通常幂转下降幂
+        $$
+        \begin{aligned}
+            \text{原式}&=\sum_{i=0}^n\binom ni\sum_{j=1}^k\St{k}j i^{\underline j}\\
+            &=\sum_{j=1}^k\St{k}{j}j!\sum_{i=0}^n\binom ni \binom ij\\
+            \pause
+            &=\sum_{j=1}^k\St{k}{j}j!\sum_{i=0}^n\binom{n}{j}\binom{n-j}{i-j}\\
+            &=\sum_{j=1}^k\St{k}{j}j!\binom{n}{j}\sum_{i=0}^{n-j}\binom{n-j}{i}\\
+            &=\sum_{j=1}^k \St kj j!\binom nj 2^{n-j}
+        \end{aligned}
+        $$
+        复杂度 $O(k^2)$。\pause
+
+        洛谷题解有 $O(k)$ 做法，有兴趣可以去看看。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[省选联考 2020 A 卷] 组合数问题}
+            给定一个 $m$ 次多项式 $f(k) = a_0+a_1k+a_2k^2+\cdots+a_mk^m$ 以及 $n,x,p$，求
+            $$
+            \left(\sum_{k=0}^n f(k)\times x^k\times \binom nk\right)\bmod p
+            $$
+            $1\le n,x,p\le 10^9,0\le m\le \min(n,1000)$
+        \end{block}
+        \pause
+        首先把 $f(k)$ 转成 $m$ 次的下降幂多项式 $f(k)=b_0+b_1k^{\underline 1}+b_2k^{\underline 2}+\cdots+b_m k^{\underline m}$，
+        $$
+        \sum_{i=0}^m a_ik^i=\sum_{i=0}^ma_i\sum_{j=0}^i\St ij k^{\underline j} = \sum_{i=0}^m\left(\sum_{j=i}^m \St ji a_j \right)k^{\underline i}
+        $$
+        取 $\displaystyle b_i=\sum_{j=i}^m\St ji a_j$ 即可。
+    \end{frame}
+
+    \begin{frame}
+        问题变为求
+        $$
+        \sum_{k=0}^n\sum_{i=0}^m b_ik^{\underline i} \times x^k\times \binom nk
+        $$
+        
+        \pause
+        注意到
+        $$
+        \binom{n}{k}\times k^{\underline i} = \binom{n-i}{k-i}\times n^{\underline i}
+        $$
+        于是
+        $$
+        \begin{aligned}
+        \sum_{k=0}^n\sum_{i=0}^m b_ik^{\underline i} \times x^k\times \binom nk&=\sum_{i=0}^mb_in^{\underline i}\sum_{k=0}^n\binom{n-i}{k-i}x^{k}\\
+        &=\sum_{i=0}^mb_in^{\underline i}x^i\sum_{k=0}^{n-i}\binom{n-i}{k}x^k\\
+        &=\sum_{i=0}^m b_in^{\underline i} x^i(x+1)^{n-i}
+        \end{aligned}
+        $$
+
+        复杂度 $O(m^2)$。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \vspace{-0.2em}
+        \begin{block}{[FJOI2016] 建筑师}
+            给定 $n,A,B$，求满足下列条件的 $1\sim n$ 的排列数 $\bmod 10^9+7$。
+            \begin{itemize}
+                \item 恰好有 $A$ 个数是前缀最大值
+                \item 恰好有 $B$ 个数是后缀最大值
+            \end{itemize}
+            $n\le 5\times 10^4,1\le A,B\le 100, T\le 2\times 10^5$
+        \end{block}
+        \pause
+        对于一个排列，把中间最大值拿掉，最大值左边按照 $[\text{前缀最大值},\text{下一个前缀最大值})$ 分组，最大值右边按照 $(\text{下一个后缀最大值},\text{后缀最大值}]$ 分组。
+
+        这样我们把 $n-1$ 个数分成了 $A+B-2$ 组，每一组内，除了最大值的位置必须固定以外，其他位置都是任意选的。于是分组的方案数为 $\st {n-1}{A+B-2}$。
+
+        最后再组合数选出哪些分组在最大值左边，剩下的在右边，答案为
+        $$
+        \st{n-1}{A+B-2}\times \binom {A+B-2}{A-1}
+        $$
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[国家集训队] Crash 的文明世界}
+            给定一棵 $n$ 个点的树，以及一个常数 $k$，对每个 $i=1,2,\cdots,n$，求
+            $$
+            S(i)=\sum_{j=1}^n\operatorname{dist}(i,j)^k
+            $$
+            其中 $\operatorname{dist}(i,j)$ 表示 $i,j$ 两点在树上的距离。
+
+            $1\le n\le 5\times 10^4,1\le k\le 150$
+        \end{block}
+
+        \pause
+
+        利用通常幂转下降幂 $\displaystyle m^n=\sum_{i} \St ni \binom mi i!$，我们要求的是
+        $$
+        S(u)=\sum_{v=1}^n\sum_{i=0}^k\St{k}i\binom{\operatorname{dist}(u,v)}{i} i!
+        =\sum_{i=0}^k\St{n}i i!\sum_{v=1}^n\binom{\operatorname{dist}(u,v)}{i}
+        $$
+    \end{frame}
+
+    \begin{frame}
+        设 $\displaystyle f_{u,i} = \sum_{v\in \operatorname{subtree}(u)} \binom{\operatorname{dist}(u,v)}{i}$，有转移
+        $$
+        \begin{aligned}
+        f_{u,i} &= \sum_{v\in \operatorname{subtree}(u)} \binom{\operatorname{dist}(u,v)}{i}\\
+        &= \sum_{v\in \operatorname{subtree}(u)} \binom{\operatorname{dist}(u,v)-1}{i}+\binom{\operatorname{dist}(u,v)-1}{i-1}\\
+        &= \sum_{v\in \operatorname{son}(u)}f_{v,i}+f_{v,i-1}
+        \end{aligned}
+        $$
+
+        换根 DP 即可，复杂度 $O(nk)$。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{某联考题}
+            给定 $n,m,b,c$，求满足下列条件的 $m$ 元组 $(x_1,x_2,x_3,\cdots,x_m)$ 的个数模 $998244353$。
+
+            \begin{itemize}
+                \item $x_i\in[0,b^i-c]\cap \mathbb Z$.
+                \item  $\sum x_i\le n$
+            \end{itemize}
+
+            $-10^8\le c<b,2\le b<10^8,1\le m\le 80,1\le n\le b^{m+1}$，$n$ 用高精度表示。
+        \end{block}
+
+        \pause
+        容斥，枚举哪些数超过了 $b^i-c$，钦定这些数必须选至少 $b^i-c+1$，然后就是插板法：
+        $$
+        \begin{aligned}
+        ans&=\sum_{S}(-1)^{|S|}\binom{n+m-1-\sum_{i\in S}(b^i-c+1)}{m}\\
+        &=\sum_{S}(-1)^{|S|}\binom{n+m-1+(c-1)|S|-\sum_{i\in S}b^i}{m}
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}
+注意到除了 $\sum_{i\in S}b^i$ 的部分，其他部分都可以枚举 $|S|$ 直接算出。枚举 $|S|$，那么组合数就是一个关于 $\sum_{i\in S}b^i$ 的多项式（下降幂转通常幂）
+$$
+\begin{aligned}
+\binom{n-x}{m}&=\frac{1}{m!}\sum_{i=0}^m(-1)^{m-i}\begin{bmatrix}m\\i\end{bmatrix}(n-x)^i\\
+&=\frac{1}{m!}\sum_{i=0}^m(-1)^{m-i}\begin{bmatrix}m\\i\end{bmatrix}\sum_{j=0}^i(-1)^j\binom{i}{j}x^jn^{i-j}\\
+\end{aligned}
+$$
+对所有  $\sum_{i\in S}b^i\le n+m-1+(c-1)|S|$, $|S|=p$ 的 $S$ 维护 $\sum_{i\in S}b^i$ 的 $k$ 次方之和。
+    \end{frame}
+
+    \begin{frame}
+        令 $A=n+m-1+(c-1)|S|$，用 $b$ 进制表示。
+
+        数位 DP，从高位到低位枚举 $\sum_{i\in S}b^i$ 与 $A$ 的 LCP，即枚举第一个没有顶上界的位置。$\sum_{i\in S}b^i$ 在 $b$ 进制下数位只有 $0$ 和 $1$。如果 $A$ 在这一位 $>1$，那么这一位之后一定会不顶上界；若 $A$ 在这一位 $=1$，如果 $\sum_{i\in S}b^i$ 这一位等于 $0$，剩下的位可以随便选，否则 $b^i$ 必须出现在 $S$ 内。
+
+        剩下的可以随便填的位可以预处理 DP：设 $f_{i,j,k}$ 表示考虑 $b^1\sim b^i$，这 $i$ 个数里选了 $j$ 个的所有 $S$ 中 $\sum_{i\in S}b^i$ 的 $k$ 次方之和。状态数 $O(m^3)$，转移用二项式定理展开，转移是 $O(m)$ 的。预处理复杂度 $O(m^4)$。
+        
+        总复杂度 $O(m^4)$。
+    \end{frame}
+
+    \subsection{斯特林数求行、列}
+    \begin{frame}{第一类斯特林数求行}
+        \begin{block}{洛谷P5408 第一类斯特林数·行}
+    给定$n$，对于所有的整数$i\in[0,n]$，求出$\begin{bmatrix}n\\ i\end{bmatrix}$。答案对某 NTT 模数取模。
+
+    $1\le n< 262144$。
+        \end{block}
+        \pause
+        第一类斯特林数第 $n$ 行的 OGF 为
+        $$
+        x^{\overline{n}}=\sum\limits_{i=0}^n\begin{bmatrix}n\\i\end{bmatrix}x^i
+        $$
+
+        问题转化成求$x^{\overline{n}}$。
+
+        考虑快速幂，我们需要在已知 $x^{\overline{n}}$ 的情况下快速求出 $x^{\overline{2n}}$ 和 $x^{\overline{n+1}}$。
+    \end{frame}
+
+\begin{frame}
+    \begin{itemize}
+        \item 由$x^{\overline{n}}$求$x^{\overline{n+1}}$可以直接 $O(n)$ 乘上$(x+n)$ 得到
+        \item 考虑怎么已知$x^{\overline{n}}$，求$x^{\overline{2n}}$，设 $x^{\overline{n}}=f(x)=\sum_{i=0}^nf_ix^i$
+    \end{itemize}
+
+    $$
+    \begin{aligned}
+    f(x+n)&=\sum\limits_{i=0}^nf_i(x+n)^i\\
+    &=\sum\limits_{i=0}^n\sum\limits_{j=0}^i\binom{i}{j}x^jn^{i-j}\\
+    &=\sum\limits_{i=0}^nx^i\sum\limits_{j=i}^nf_j\binom{j}{i}n^{j-i}\\
+    &=\sum\limits_{i=0}^nx^i\dfrac{1}{i!}\sum\limits_{j=i}^nj!f_j\dfrac{n^{i-j}}{(i-j)!}
+    \end{aligned}
+    $$
+
+
+    后面是一个卷积的形式。复杂度为 $T(n) = T(\frac{n}{2})+\Theta (n\log n) = \Theta(n\log n)$。
+\end{frame}
+
+    \begin{frame}{第一类斯特林数求列}
+        \begin{block}{洛谷P5409 第一类斯特林数·列}
+        给定$n,k$，对于所有的整数$i\in[0,n]$，求出$\begin{bmatrix}i\\ k\end{bmatrix}$。答案对某 NTT 模数取模。
+
+        $1\leqslant k,n< 131072$。
+        \end{block}
+        \pause
+        第一类斯特林数第 $k$ 列的 EGF 为
+        $$
+        \frac{1}{n!}\st nk = [x^n]\frac{(-1)^k\ln^k(1-x)}{k!}=[x^n]\dfrac{S(x)^k}{k!}
+        $$
+        其中 $S(x)=\sum\limits_{i=0}^n(i-1)!\dfrac{x^i}{i!}$。
+        
+        多项式快速幂即可。
+    \end{frame}
+    \begin{frame}{第二类斯特林数求行}
+        \begin{block}{洛谷P5395 第二类斯特林数·行}
+            给定$n$，对于所有的整数$i\in[0,n]$，求出$\begin{Bmatrix}n\\ i\end{Bmatrix}$。答案对某 NTT 模数取模。
+
+    $1\le n< 2\times 10^5$
+        \end{block}
+        \pause
+
+        根据通项公式，我们有
+
+        $$
+        \begin{aligned}
+        \begin{Bmatrix}n\\k\end{Bmatrix}&=\dfrac{1}{k!}\sum\limits_{i=0}^k(-1)^i\binom{k}{i}(k-i)^n\\
+        &=\sum\limits_{i=0}^n\dfrac{(-1)^i}{i!}\times \frac{(k-i)^n}{(k-i)!}
+        \end{aligned}
+        $$
+
+        卷积即可。
+    \end{frame}
+    \begin{frame}{第二类斯特林数求列}
+        \begin{block}{洛谷P5396 第二类斯特林数·列}
+            给定$n,k$，对于所有的整数$i\in[0,n]$，求出$\begin{Bmatrix}i\\ k\end{Bmatrix}$。答案对某 NTT 模数取模。
+    
+            $1\leqslant k,n< 131072$。
+        \end{block}
+        \pause
+
+        第二类斯特林数第 $k$ 列的 EGF 为
+        $$
+        \frac{1}{n!}\St nk = [x^n]\frac{(e^x-1)^k}{k!}
+        $$
+        多项式快速幂即可。
+    \end{frame}
+    
+    \begin{frame}{例题}
+        \begin{block}{洛谷P2791 幼儿园篮球题}
+        一共 $n$ 个篮球，其中 $m$ 个是没气的，剩下的 $n-m$ 个是有气的。鉴于蔡\texttt{**}的高超技术，他投\textbf{没气的球一定能进}，而投\textbf{有气的球一定不能}。蔡\texttt{**}在这 $n$ 个球中\textbf{随机}选出 $k$ 个投篮。如果投进了 $x$ 个，则这次表演的\textbf{失败度}为 $x^L$。求这场表演的\textbf{期望失败度}对 $998244353$ 取模的结果。
+
+        $S$ 组数据，$L$ 是一个输入的常数，对每组数据都相同。
+
+        $1\leq S\leq200$，$1\leq L\leq2\times 10^5$，$1\leq m\leq n\leq2\times 10^7$。
+        \end{block}
+        \pause
+
+        问题为求
+        $$
+        \sum_{i=0}^k\binom mi\binom{n-m}{k-i}i^L
+        $$
+    \end{frame}
+
+    \begin{frame}
+        通常幂转下降幂
+        \begin{align*}
+            \sum_{i=0}^k\binom mi\binom{n-m}{k-i}i^L&=\sum_{i=0}^k\binom mi\binom{n-m}{k-i}\sum_{t}{L\brace t}t!\binom it\\
+            & =\sum_{t}{L\brace t}t!\sum_i\binom mi\binom{n-m}{k-i}\binom it\\
+            & =\sum_{t}{L\brace t}t!\binom mt\sum_i\binom {m-t}{i-t}\binom{n-m}{k-i}\\
+            & =\sum_{t}{L\brace t}t!\binom mt\binom{n-t}{k-t}
+        \end{align*}
+
+        $O(L\log L)$ 求出第二类斯特林数的第 $L$ 行，然后每组询问 $O(L)$ 计算即可。
+    \end{frame}
+
+    \section{斯特林反演}
+    \subsection{斯特林反演}
+    \begin{frame}{斯特林反演}
+        \begin{block}{斯特林反演}
+            \vspace{-1em}
+            $$
+            f(n)=\sum_{k=0}^n \St nk g(k)\iff g(n) = \sum_{k=0}^n(-1)^{n-k}\st nk f(k)
+            $$
+            \vspace{-0.7em}
+        \end{block}
+        \pause
+        \textbf{证明}：我们有反转公式
+        \begin{gather*}
+        \sum_{k} \St nk \st km (-1)^{n-k}=[m=n]\\
+        \sum_{k} \st nk \St km (-1)^{n-k}=[m=n]
+        \end{gather*}
+        直接带入易证
+    \end{frame}
+
+    \begin{frame}{另一个形式}
+        和二项式反演类似地，斯特林反演也有另一种形式
+        \begin{block}{斯特林反演的另一个形式}
+            $$
+            f(m)=\sum_{k=m}^n \St km g(k)\iff g(m) = \sum_{k=m}^n (-1)^{k-m}\st km f(k)
+            $$
+        \end{block}
+    \end{frame}
+
+    \subsection{例题}
+    \begin{frame}{例题}
+        \begin{block}{TopCoder13444 CountTables}
+            给出一个 $n\times m$ 大小的矩形，每个位置可以填上 $[1,c]$ 中的任意一个整数，要求填好后任意两行互不相同且任意两列互不相同，两行或两列相同当且仅当对应位置完全相同，求方案数 $\bmod 10^9+7$。
+
+            $n,m\le 5000$
+        \end{block}
+        \pause
+
+        先只考虑让行之间互不相同，一个 $n$ 行 $m$ 列且行互不相同的矩形的方案数为 $(c^m)^{\underline{n}}$。
+
+    \end{frame}
+
+    \begin{frame}
+        
+    设 $g(m)$ 表示行互不相同的情况下，$m$ 列的矩形的方案数。$g(m)=(C^m)^{\underline{n}}$。
+
+    设 $f(m)$ 表示行和列都分别互不相同的情况下，$m$ 列的矩形的方案数，也就是我们要的答案。
+
+    枚举 $m$ 列分成了 $i$ 个不同的列，我们得到
+    $$
+    g(m)=\sum\limits_{i=0}^m\begin{Bmatrix}m\\i \end{Bmatrix}f(i)
+    $$
+
+    由斯特林反演得到：
+    $$
+    f(m)=\sum\limits_{i=0}^m(-1)^{m-i}\begin{bmatrix}m\\i \end{bmatrix}g(i)
+    $$
+
+    于是可以 $O(n^2)$计算了。
+    \end{frame}
+    \begin{frame}{例题}
+        \begin{block}{洛谷P10591 BZOJ4671 异或图}
+        定义两个结点数相同的图 $G_1$ 与图 $G_2$ 的异或为一个新的图 $G$，其中如果 $(u,v)$ 在 $G_1$ 与 $G_2$ 中的出现之和为 $1$，那么边 $(u,v)$ 在 $G$ 中，否则这条边不在 $G$ 中。
+
+        现在给定 $s$ 个结点数相同的图 $G_{1\sim s}$，$S=\{G_1,G_2,\dots,G_s\}$，请问 $S$ 有多少个子集的异或为一个连通图？
+
+        $2\leq n\leq 10$，$1\leq s\leq 60$。
+        \end{block}
+        \pause
+
+        设 $f_i$ 表示钦定了 $i$ 个点集，这 $i$ 个点集两两之间必须没有边相连，点集内部随便连的方案数；$g_i$ 表示恰好有 $i$ 个连通块的方案数，那么
+        $$
+        f_x=\sum_{i=x}^n \St ix g_i
+        $$
+        由斯特林反演
+        $$
+        g_x = \sum_{i=x}^n(-1)^{i-x}\st ix f_i
+        $$
+    \end{frame}
+    \begin{frame}
+        我们要求的是
+        $$
+        g_1=\sum_{i=1}^n(-1)^{i-1}\st i1 f_i = \sum_{i=1}^n (-1)^{i-1}(i-1)!f_i
+        $$
+        于是问题转化为求所有的 $f_i$。
+
+        \pause
+
+        $n$ 很小，考虑直接枚举哪些点被分到了一个集合（这里的枚举量是贝尔数 $B_n = \sum_{k=0}^n{n \brace k}$ 级别的，当 $n=10$ 时，$B_n\approx 10^5$）
+
+        对于某一条连接了两个不同集合的边 $i$，设编号为 $b_{i,1},b_{i,2},\cdots, b_{i,k}$ 的图包含这条边，设布尔变量 $x_j$ 表示编号为 $j$ 的图选/不选，则我们得到了异或方程组
+        $$
+        a_{b_{i,1}}\oplus a_{b_{i,2}}\oplus\cdots\oplus a_{b_{i,k}} = 0
+        $$
+
+        线性基求出这个方程组的秩为 $r$，那么这个方程的解空间的秩（也就是自由元的数量）为 $c=s-r$，方案数为 $2^{s-r}=2^c$。
+
+        复杂度\sout{大约}是 $O(B_n\times s\times n^2)$。
+    \end{frame}
+
+
+    \section{容斥}
+    \subsection{朴素容斥}
+    \begin{frame}{基本容斥}
+        \begin{block}{容斥原理}
+            设 $S_1,S_2,\cdots, S_n$ 为 $n$ 个集合，则
+            $$
+            \left|\bigcup_{i=1}^n S_i \right| = \sum_{x=1}^n(-1)^{x-1}\sum_{i_1<i_2<\cdots<i_x}\left|\bigcap _{j=1}^xS_{i_j}\right|
+            $$
+        \end{block}
+        就是小学奥数的那个容斥原理。证明考虑若某个元素的被 $m$ 个集合包含，那么它的容斥系数之和为
+        $$
+        \sum_{i=1}^n(-1)^{i-1}\binom ni = \binom n0-\sum_{i=0}^n(-1)^i\binom ni = 1 
+        $$
+        \pause
+        当然朴素容斥原理用的并不多，重要的是正难则反和容斥的思想。
+    \end{frame}
+    \begin{frame}{例题}
+        \begin{block}{[HNOI2011] 卡农}
+            在集合 $S=\{1,2,\cdots,n\}$ 中，选出 $m$ 个无序的互不相同的非空子集，使得每个元素的出现次数均为偶数。求选择方案数 $\bmod 10^8+7$。
+            
+            $n, m \le 10^6$
+        \end{block}
+        \pause
+
+        首先无序这一条件可以通过计算出有序的答案再除以 $m!$ 完成。
+        考虑设 $f_i$ 表示选出 $i$ 个子集满足所有限制的方案数，所有的三个限制为：
+        \begin{enumerate}
+            \item 每个元素都被选择了偶数次
+            \item 每个集合都非空
+            \item 任何两个集合互不相同
+        \end{enumerate}
+    \end{frame}
+    \begin{frame}
+        先忽略后面两个限制，只考虑第一个限制，即所有元素出现次数均为偶数：前 $i-1$ 个集合任选，为了保证出现次数为偶数，最后一个集合就被确定了，方案数为
+        $$
+        (2^n-1)^{\underline i-1}
+        $$
+        \pause
+        $\ $
+
+        此时再减去不满足剩下两个限制的方案数：
+        \begin{itemize}
+            \item 第 $i$ 个集合为空集，这当且仅当前 $i-1$ 个元素构成一个合法的选择方案，答案减去 $f_{i-1}$
+            \item 第 $i$ 个集合与第 $j$ 个集合相同，这当且仅当剩下的 $i-2$ 个集合构成了一个合法方案，$i$ 和 $j$ 的集合与这 $i-2$ 个集合都不同，答案减去 $f_{i-2}\times (i-1)\times (2^{n}-1-(i-2))$ 
+        \end{itemize}
+        于是我们得到了递推式
+        $$
+        f_i = (2^n-1)^{\underline i-1}-f_{i-1}-f_{i-2}\times (i-1)\times (2^{n}-1-(i-2))
+        $$
+        直接递推即可，复杂度 $O(n+m)$。
+    \end{frame}
+    \begin{frame}{例题}
+        \begin{block}{[JLOI2016] 成绩比较}
+            有 $n$ 个人，$m$ 门课，每位同学在第 $i$ 门课上的分数是 $[1,U_i]$ 之间的一个整数。已知小 B 每门课的排名，第 $i$ 门课的排名为 $R_i$。其中排名的定义为有且仅有 $R_i-1$ 位同学这门课的分数大于小 B 的分数，有且仅有 $n-R_i$ 位同学这门课的分数小于等于小 B（不包括他自己）。
+            
+            此外，还知道恰好有 $k$ 位同学每门课成绩都小于等于小 B 的成绩（称这 $k$ 同学被小 B 碾压），求合法的得分情况的方案数 $\bmod 10^9+7$。
+
+            $n,m\le 100,U_i\le 10^9$
+        \end{block}
+        \pause
+
+        问题可以分为三部分，即先选出 $k$ 个同学被碾压，然后再钦定同学们各科分数与小 B 的相
+对大小，最后直接得到每位同学的分数，三部分的方案数可以直接乘起来。
+
+第一部分的方案数显然是 $\dbinom{n-1}{k}$。
+    \end{frame}
+
+    \begin{frame}
+        对于第二部分，每一门中得分比 B 高的 $R_i-1$ 个人一定会分配给那 $n-k-1$ 为未被碾压的同学，直接分配，方案数为
+        \vspace{-0.1em}
+        $$
+        \prod_{i=1}^m\binom{n-k-1}{R_i-1}
+        $$
+        \vspace{-0.1em}
+        但是直接这样分配，可能导致那 $n-k-1$ 位同学中有人每一门都没被选到。
+
+        容斥，枚举至少有 $i$ 个人每次都没选上，那么第二部分的方案数为
+        \vspace{-0.1em}
+        $$
+        \sum_{i=k}^{n-1}\binom{n-k-1}{i-k}(-1)^{i-k}\prod_{j=1}^m\binom{n-i-1}{R_j-1}
+        $$
+        \vspace{-0.1em}
+        \pause
+        对于第三部分，每一门分别考虑，枚举 $B$ 的分数，那么第三部分的方案数为
+        \vspace{-0.1em}
+        $$
+        \begin{aligned}
+        \prod_{i=1}^m \sum_{j=1}^{U_i}j^{n-R_i}(U_i-j)^{R_i-1}
+        &=\prod_{i=1}^m\sum_{j=1}^{U_i}j^{n-R_i}\sum_{k=0}^{R_i-1}\binom{R_i-1}{k}U_i^k(-1)^{R_i-1-k}j^{R_i-1-k}\\
+        &=\prod_{i=1}^m\sum_{k=0}^{R_i-1}\binom{R_i-1}{k}U_i^k(-1)^{R_i-1-k}\sum_{j=1}^{U_i} j^{n-k-1}
+        \end{aligned}
+        $$
+        \vspace{-0.1em}
+        拉格朗日插值求自然数幂前缀和即可，复杂度 $O(n^2m)$。
+    \end{frame}
+    
+    % \begin{frame}
+        
+    % \end{frame}
+
+    
+    \subsection{Min-Max 容斥}
+    \begin{frame}{Min-Max 容斥}
+        \begin{block}{Min-Max 容斥}
+            \vspace{-2em}
+            \begin{gather*}
+                \max(S) = \sum_{T\subseteq S}(-1)^{|T|-1}\min(T)\\
+                \min(S) = \sum_{T\subseteq S}(-1)^{|T|-1}\max(T)
+            \end{gather*}
+
+            \vspace{-0.5em}
+            其中 $\max (S)$ 表示集合 $S$ 中所有元素的最大值，$\min (S)$ 同理。
+        \end{block}
+        \pause
+        \textbf{证明}：只证明第一个式子，第二个同理。设 $|S|=n$，那么对于一个第 $k+1$ 大的元素，大小为 $i$ 的，以它为最小值的集合有 $\binom{k}{i-1}$ 个，它在右侧被计数的次数为
+        $$
+        \sum_{i=1}^{k+1}\binom{k}{i-1}(-1)^{i-1} =\sum_{i=0}^k\binom{k}i (-1)^i = [k=0] 
+        $$
+    \end{frame}
+
+    
+    \begin{frame}{期望的 Min-Max 容斥}
+        上面那个式子看着很憨，\sout{都能算最小值了还算不了最大值吗}，但是 Min-Max 容斥更好用的一点是它在期望意义下也是成立的。
+        \begin{block}{期望的 Min-Max 容斥}
+            \vspace{-2em}
+            \begin{gather*}
+                E(\max(S)) = \sum_{T\subseteq S}(-1)^{|T|-1} E(\min(T))\\
+                E(\min(S)) = \sum_{T\subseteq S}(-1)^{|T|-1}E(\max(T))
+            \end{gather*}
+
+            \vspace{-0.5em}
+            其中 $E(\max (S))$ 表示集合 $S$ 中所有元素最大值的期望，$E(\min (S))$ 同理。
+        \end{block}
+        \pause
+        \textbf{证明}：还是只证第一个式子，我们考虑计算期望的一种方法：
+        $$
+        E\left(\max_{i\in S}{x_i}\right)=\sum_{y}{P(y=x)\max_{j\in S}{y_j}}
+        $$
+        其中 $y$ 是一个长度为 $n$ 的序列。
+    \end{frame}    
+    \begin{frame}
+        我们对后面的 $\max$ 使用之前 Min-Max 容斥的式子：
+        $$
+        \begin{aligned}E\left(\max_{i\in S}{x_i}\right)&=\sum_{y}{P(y=x)\max_{j\in S}{y_j}}\\
+        &=\sum_{y}{P(y=x)\sum_{T\subseteq S}{(-1)^{|T|-1}\min_{j\in T}{y_j}}} \end{aligned}
+        $$
+        调换求和顺序：
+        $$
+        \begin{aligned}E\left(\max_{i\in S}{x_i}\right)
+        &=\sum_{y}{P(y=x)\sum_{T\subseteq S}{(-1)^{|T|-1}\min_{j\in T}{y_j}}}\\
+        &=\sum_{T\subseteq S}{(-1)^{|T|-1}\sum_y{P(y=x)\min_{j\in T}{y_j}}}\\
+        &=\sum_{T\subseteq S}{(-1)^{|T|-1}E\left(\min_{j\in T}{y_j}\right)} \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}{$k$th Min-Max 容斥}
+        \begin{block}{第 $k$ 大/小的Min-Max 容斥}
+            \vspace{-2em}
+            \begin{gather*}
+                k\operatorname{thmax}(S) = \sum_{T\subseteq S}(-1)^{|T|-k}\binom{|T|-1}{k-1}\min(T)\\
+                k\operatorname{thmin}(S) = \sum_{T\subseteq S}(-1)^{|T|-k}\binom{|T|-1}{k-1}\max(T)\\
+            \end{gather*}
+
+            \vspace{-2em}
+            其中 $k\operatorname{thmax} (S)$ 表示集合 $S$ 中所有元素的第 $k$ 大值，$k\operatorname{thmin} (S)$ 同理。
+        \end{block}
+        \pause
+        \textbf{证明}：和前面同理，对于一个第 $i+1$ 大的元素，大小为 $j$ 的，以它为最小值的集合有 $\binom{i}{j-1}$ 个，它在右侧被计数的次数为
+        \vspace{-0.6em}
+        $$
+        \begin{aligned}
+        \sum_{j=k}^{i+1}\binom{i}{j-1}(-1)^{j-k}\binom{j-1}{k-1} &=\binom{i}{k-1}\sum_{j=k}^{i+1}(-1)^{j-k}\binom{i-k+1}{j-k}\\
+        &=\binom{i}{k-1}[i-k+1=0]=[i=k-1]
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}{期望的 $k$th Min-Max 容斥}
+        $k$th Min-Max 容斥在期望意义下也成立。
+        
+        \begin{block}{期望的第 $k$ 大/小的Min-Max 容斥}
+            \vspace{-2em}
+            \begin{gather*}
+                E(k\operatorname{thmax}(S)) = \sum_{T\subseteq S}(-1)^{|T|-k}\binom{|T|-1}{k-1}E(\min(T))\\
+                E(k\operatorname{thmin}(S)) = \sum_{T\subseteq S}(-1)^{|T|-k}\binom{|T|-1}{k-1}E(\max(T))\\
+            \end{gather*}
+            \vspace{-3em}
+        \end{block}
+        证明和期望的 Min-Max 容斥同理。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[HAOI2015] 按位或}
+        刚开始你有一个数字 $0$，每一秒钟你会随机选择一个 $[0,2^n-1]$ 的数字，与你手上的数字进行按位或操作。选择数字 $i$ 的概率是 $p_i$。保证 $0\leq p_i \leq 1$，$\sum p_i=1$ 。问期望多少秒后，你手上的数字变成 $2^n-1$。相对或绝对误差不超过 $10^{-6}$。
+
+        $n\leq 20$。
+        \end{block}
+        \pause
+        定义 $k_i$ 表示二进制下第 $i$ 的 $1$ 第一次出现的时间，于是我们要求的是 $E(\max\{k_1,\cdots,k_n\})$，Min-Max 容斥转换为求 $E(\min\{k_1,\cdots,k_n\})$。$E(\min (T))$ 为 $T$ 中至少有 $1$ 个位置变成 $1$ 所需要的的时间。
+        $$
+        E(\min(T))=\frac{1}{\sum_{X\cap T\ne \varnothing} p(X)} = \frac{1}{1-\sum_{X\cap T=\varnothing} p(X)}
+        $$
+        使用 FWT 求子集的概率之和即可，复杂度 $O(n2^n)$。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{洛谷P4707 重返现世}
+            有 $n$ 种物品, 每一秒会随机获得某种某一种物品，第 $i$ 种物品出现的概率为 $\frac{p_i}{m}$，其中 $m=\sum p_i$，求收集到至少 $x$ 种不同物品的期望时间，答案 $\bmod 998244353$。
+
+            $n\le 1000,m\le 10^4, |n-x|\le 10$
+        \end{block}
+        \pause
+
+        令 $k = n +1-x$，再令 $S$ 为每个物品第一次出现的期望时间，要求的就是 $E(k\operatorname{thmax}(S))$。于是 Min-Max 容斥得到，答案为
+        $$
+        \sum_{T\subseteq S}(-1)^{|T|-k}\binom{|T|-1}{k-1}E(\min(T))
+        $$
+        其中
+        $$
+        E(\min(T)) = \frac{m}{\sum_{i\in T}p_i}
+        $$
+        现在考虑对某一个 $E(\min(T))$ 的值（这样的值一共 $O(m)$ 个），求所有这样的 $T$ 的容斥系数之和。
+    \end{frame}
+
+    \begin{frame}
+        考虑 DP，设 $f_{i,j}$ 表示考虑了前 $i$ 种物品，$\sum p= j$ 的所有 $T$ 的容斥系数之和。
+
+        新加入物品 $i$ 时，如果不选 $i$ 则直接有 $f_{i-1,j}$ 转移过来，否则，$f_{i,j}$ 应当由 $f_{i,j-p_i}$ 转移过来，新增的容斥系数为
+        $$
+        \begin{aligned}
+            &\sum_{T\subseteq S,i\in T}(-1)^{|T|-k}\binom{|T|-1}{k-1}=\sum_{T\subseteq S\setminus \{i\}} \binom{|T|}{k-1}(-1)^{|T|-k+1}\\
+            =&\sum_{T\subseteq S\setminus \{i\}} \binom{|T|-2}{k-2}(-1)^{|T|-k+1}-\sum_{T\subseteq S\setminus \{i\}} \binom{|T|-1}{k-1}(-1)^{|T|-k}
+        \end{aligned}
+        $$
+        后者就是 $f_{i-1,j-p_i}$，而前者是 $k\gets k-1$ 时的  $f_{i-1,j-p_i}$，于是我们再额外维护一维 $k$，转移有
+        $$
+        f_{i,j,k} = f_{i-1,j,k}+ f_{i-1,j-p_i,k-1}-f_{i-1,j-p_i,k}
+        $$
+        复杂度 $O(nmk)$，需要滚一下空间。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[PKUWC2018] 随机游走}
+            给定一棵 $n$ 个点的树，你从 $x$ 出发，每次等概率随机选择一条与所在点相邻的边走过去。
+
+            有 $Q$ 次询问。每次询问给出一个集合 $S$，求如果从 $x$ 出发一直随机游走，直到点集 $S$ 中的点都至少经过一次的话，期望游走几步。答案对 $998244353$ 取模。
+
+            特别地，点 $x$（即起点）视为一开始就被经过了一次。
+
+            $1\le n\le 18,1\le Q\le 5000,1\le |S|\le n$。
+        \end{block}
+
+        期望游走的步数也就是游走的时间。那么设随机变量 $x_i$ 表示第一次走到结点 $i$ 的时间。那么我们要求的就是 $E\left(\max_{i\in S}x_i\right)$，使用 Min-Max 容斥可以得到
+        $$
+        E\left(\max_{i\in S}x_i\right)
+        =\sum_{T\subseteq S}(-1)^{|T|-1}E\left(\min_{i\in T}x_i\right)
+        $$
+        
+        对于一个集合 $T\subseteq S$，考虑求出 $F(T)=E(\min_{i\in T}x_i)$。
+    \end{frame}
+
+    \begin{frame}
+        考虑 $E(\min_{i\in T}x_i)$ 的含义，是第一次走到 $T$ 中某一个点的期望时间。不妨设 $f(i)$ 表示从结点 $i$ 出发，第一次走到 $T$ 中某个结点的期望时间。
+        \begin{itemize}
+            \item 对于 $i\in T$，有 $f(i)=0$。
+            \item 对于 $i\notin T$，有$
+            \displaystyle f(i)=1+\frac{1}{\operatorname{deg}(i)}\sum_{(i,j)\in E}f(j)
+            $
+        \end{itemize}
+        如果直接高斯消元，复杂度 $O(n^3)$。那么我们对每个 $T$ 都计算 $F(T)$ 的总复杂度就是 $O(2^nn^3)$，不能接受。
+        \pause
+        
+        $\ $
+
+        我们使用树上消元的技巧。
+
+        不妨设根结点是 $1$，结点 $u$ 的父亲是 $p_u$。对于叶子结点 $i$，$f(i)$ 只会和 $i$ 的父亲有关。因此我们可以把 $f(i)$ 表示成 $f(i)=A_i+B_if(p_i)$ 的形式。
+
+        对于非叶结点 $i$，我们希望 $f(i)$ 也能表示成 $A_i+B_if(p_i)$ 的形式。考虑它的儿子序列 $j_1,\cdots,j_k$。由于 $f(j_e)=A_{j_e}+B_{j_e}f(i)$。因此可以得到
+        \vspace{-1em}
+        $$
+        f(i)=1+\frac{1}{\deg(i)}\sum_{e=1}^k\left(A_{j_e}+B_{j_e}f(i)\right)+\frac{f(p_i)}{\deg(i)}
+        $$
+    \end{frame}
+    \begin{frame}
+    那么变换一下可以得到
+    $$
+    f(i)=\frac{\deg(i)+\sum_{e=1}^kA_{j_e}}{\deg(i)-\sum_{e=1}^kB_{j_e}}+
+    \frac{f(p_i)}{\deg(i)-\sum_{e=1}^kB_{j_e}}
+    $$
+    这样可以一直倒推到根结点。而根结点没有父亲。也就是说
+    $$
+    f(1)=\frac{\deg(1)+\sum_{e=1}^kA_{j_e}}{\deg(1)-\sum_{e=1}^kB_{j_e}}
+    $$
+    解一下这个方程我们就得到了 $f(1)$，再从上往下推一次就得到了每个点的 $f(i)$。这样，我们可以对于每一个 $T$ 计算出 $F(T)$，时间复杂度 $O(2^nn)$。
+
+    \pause
+
+    每次回答询问是一个子集求和的形式，使用 FWT 做到 $O(2^nn)$ 预处理 $O(1)$ 询问。
+    \end{frame}
+
+
+    \subsection{子集反演}
+    \begin{frame}{子集反演}
+        \begin{block}{子集反演}
+            $$
+            \begin{aligned}
+                f(S)&=\sum_{T \subseteq S} g(T) \iff g(S)=\sum_{T \subseteq S}(-1)^{|S|-|T|} f(T)\\
+                f(S)&=\sum_{S\subseteq T} g(T) \iff g(S)=\sum_{S\subseteq T} (-1)^{|T|-|S|} f(T)
+            \end{aligned}
+            $$
+        \end{block}
+        \pause
+        \textbf{证明}：
+        第二个式子可以由第一个式子取补集后得到，下面只证明第一个式子的 $\implies $ 部分。
+    \end{frame}
+
+    \begin{frame}
+        直接将 $f(S)=\sum_{T \subseteq S} g(T)$ 代入 $\sum_{T \subseteq S}(-1)^{|S|-|T|} f(T)$ 中，得到
+        $$
+        \sum_{T \subseteq S}(-1)^{|S|-|T|}\sum_{X\subseteq T}g(X)=\sum_{X\subseteq S}g(X)\sum_{X\subseteq T\subseteq S}(-1)^{|S|-|T|}
+        $$
+        枚举 $|T|$
+        $$
+        \begin{aligned}
+            \text{上式}&=\sum_{X\subseteq S}g(X)\sum_{i=|X|}^{|S|}\binom{|S|-|X|}{i-|X|}(-1)^{|S|-i}\\
+            &=\sum_{X\subseteq S}g(X)\sum_{i=0}^{|S|-|X|}\binom{|S|-|X|}{i}(-1)^{|S|-|X|-i}\\
+            &=\sum_{X\subseteq S}g(X)[|X|=|S|]=g(S)
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{[ZJOI2016]小星星}
+            给一张 $n$ 个点的简单无向图，再给一棵 $n$ 个点的树，现在要给这棵树重标号，问有多少种重标号的方案使得这棵树是原图的一棵生成树。
+
+            $n\le 17$
+        \end{block}
+        \pause
+
+        先考虑一个暴力状压 DP，设 $f_{u,i,S}$ 表示把树上的节点 $u$ 映射为图上的节点 $i$，$u$ 子树内的所有点的映射到集合为 $S$ 的方案数。
+
+        转移需要枚举 $S$ 的子集，复杂度 $O(n^33^n)$，用 FWT 优化也只能做到 $O(n^42^n)$，过不了。
+
+    \end{frame}
+
+    \begin{frame}
+        本题的关键限制在于：任意两点的映射不能相同。当存在这一限制时无论怎么设都不好搞，所以设状态时需要把这个限制去掉，即两个树上的点现在可以映射到图上的同一个点。令
+        \begin{itemize}
+            \item $f(S)$ 表示将 $n$ 个树上的点映射到 $S$ 的映射数量，答案就是 $f(\{1,\cdots,n\})$
+            \item $g(S)$ 表示将 $n$ 个树上的点映射到 $S$ 的子集映射数量
+        \end{itemize}
+        那么显然有
+        $$
+        g(S)=\sum_{T\subseteq S}f(T)
+        $$
+        利用子集反演，我们只需求出所有 $g(T)$。
+        \pause
+        
+        修改一下之前的 DP，对于某个 $T$，设 $f_{u,i,T}$ 表示把树上的节点 $u$ 映射为图上的节点 $i$，每个节点映射到的点都 $\in T$ 的方案数，那么转移有
+        $$
+        f_{u,i,T} = \prod_{v\in \operatorname{son}(u)}\left(\sum_{k\in T,(i,k)\in E} f_{v,k,T}\right)
+        $$
+        最终 $g(T) = \sum_{j\in T}f_{root,j,T}$，复杂度为 $O(n^32^n)$。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{UOJ\#37. 【清华集训2014】主旋律}
+            给定一张 $n$ 个点 $m$ 条边的有向图，求有多少个边的子集满足删去这些边后整个图仍然强连通。答案 $\bmod 10^9+7$。
+
+            $n\le 15,0\le m\le n(n-1)$
+        \end{block}
+        \pause
+        正难则反，考虑求出有多少个删边的方案使得删边后的图不强连通。此时，对删边后的图缩点，缩点后得到的是一个非孤立点的 DAG。换句话说，它缩点后一定有至少一个 $0$ 度点，且缩点后的图不是孤立点。
+
+        我们先考虑怎么求缩点前至少有 $1$ 个零度点的子图数量。定义
+        \begin{itemize}
+            \item  $h(S)$ 表示点集 $S$ 的导出子图的至少有 $1$ 个零度点的子图数量
+            \item $f(T,S)$ 表示在点集 $S$ 的导出子图中，$T$ 恰好是所有入度为 $0$ 的点的子图数量；
+            \item $g(T,S)$ 表示在点集 $S$ 的导出子图中，$T$ 集合中的点一定入度为 $0$ ，$S-T$ 中的点无所谓的子图数量。
+        \end{itemize}
+        
+        我们考虑如何求 $h(S)$。
+    \end{frame}
+
+    \begin{frame}
+        令 $c(S,T)$ 表示 $\sum_{u\in S,v\in T}[(u,v)\in E]$ 是由 $S$ 指向 $T$ 的边的数量
+        \begin{itemize}
+            \item $g(T,S)=2^{c(S,S-T)}$
+            \item $\displaystyle g(T,S)=\sum_{T\subseteq R\subseteq S}f(R,S)$，子集反演得到 $\displaystyle f(T,S)=\sum_{T\subseteq R\subseteq S}(-1)^{|R|-|T|}g(R,S)$
+        \end{itemize}
+那么
+$$
+\begin{aligned}
+h(S)=&\sum_{T\subseteq S,T\ne \varnothing}f(T,S)=\sum_{T\subseteq S,T\ne \varnothing}\sum_{T\subseteq R\subseteq S}(-1)^{|R|-|T|}g(R,S)\\
+=&\sum_{R\subseteq S,R\ne \varnothing}(-1)^{|R|}g(R,S)\sum_{T\subseteq R\subseteq S,T\ne \varnothing} (-1)^{|T|}\\
+=&\sum_{R\subseteq S,R\ne \varnothing}(-1)^{|R|}g(R,S)([R=\varnothing]-1)\\
+=&\sum_{R\subseteq S,R\ne \varnothing}(-1)^{|R|+1}g(R,S) = \sum_{R\subseteq S,R\ne \varnothing}(-1)^{|R|+1}2^{c(S,S-R)}
+\end{aligned}
+$$
+    \end{frame}
+
+    \begin{frame}
+        回到原问题，令
+        \begin{itemize}
+            \item $f(S)$ 表示点集 $S$ 的导出子图的强连通子图数量，$f(\{1,\cdots,n\})$ 即为答案；
+            \item $g(S)$ 表示点集 $S$ 的导出子图的非强连通子图数量，$f(S)+g(S) = 2^{c(S,S)}$。
+        \end{itemize}
+
+        注意到我们求至少有 $1$ 个零度点的子图数量时，容斥系数只与 $0$ 度点的数量的奇偶性有关，于是定义
+        \begin{itemize}
+            \item $P(S)$ 表示将点集 $S$ 的导出子图划分为奇数个强连通分量的方案数
+            \item $Q(S)$ 表示将点集 $S$ 的导出子图划分为偶数个强连通分量的方案数
+        \end{itemize}
+        \pause
+        那么枚举 $T$ 表示缩点后的所有 $0$ 度点是原图中 $T$ 中的所有点,
+        $$
+        g(S)=\sum_{T\subset S}(P(T)-Q(T))\times 2^{c(S,S-T)}
+        $$
+
+        \vspace{-1em}
+        $P$ 和 $Q$ 的转移为
+        $$
+        P(S)=\sum_{T\subset S}f(T)\times Q(S-T),\quad Q(S)=\sum_{T\subset S}f(T)\times P(S-T)
+        $$
+        求 $c$ 可以用 bitset，复杂度是 $O(3^n\cdot \frac{m}{\omega})$
+    \end{frame}
+
+    \section{完}
+	\begin{frame}
+		\begin{center}
+			\begin{Huge}
+				完$\ $结$\ $撒$\ $花\\
+			\end{Huge}
+		\end{center}
+	\end{frame}
+
+\end{document}

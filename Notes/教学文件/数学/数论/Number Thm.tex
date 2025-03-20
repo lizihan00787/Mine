@@ -1,0 +1,1322 @@
+\documentclass[UTF8]{beamer}
+\usepackage{ctex}
+\usepackage{graphicx}
+\usepackage{ulem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{graphicx}
+
+\title{数论}
+\author{harryzhr}
+\date{2025 年 2 月 7 日}
+\usetheme{Berlin}
+\usefonttheme[onlymath]{serif}
+
+\geometry{paperheight=11.0cm,paperwidth=16.0cm}
+
+\begin{document}
+    \maketitle
+
+    \begin{frame}{Preface}
+        数论包含的知识非常多，\sout{但是大部分都没啥用}
+
+        所以下面就挑一些\sout{有用的}有意思的来讲了
+    \end{frame}
+
+    \section{欧几里得算法}
+    \subsection{欧几里得算法}
+    \begin{frame}{辗转相除法}
+        \begin{block}{更相减损术}
+            $$
+            \gcd(a,b) = \gcd(a-b, b)
+            $$
+        \end{block}
+
+        \begin{block}{欧几里得算法}
+            $$
+            \gcd(a,b)=\gcd(b,a \bmod b)
+            $$
+        \end{block}
+        注意到当 $a>b$ 时 $a\bmod b < \frac 12 a$，所以至多递归 $O(\log a)$ 层。
+    \end{frame}
+
+    \subsection{扩展欧几里得算法}
+
+    \begin{frame}{扩展欧几里得算法}
+        \begin{block}{扩展欧几里得算法}
+            用于求不定方程 
+            $$
+            ax+by=d
+            $$
+            的一组整数解，该方程有解当且仅当 $\gcd(a,b)\mid d$，下面假设 $d = \gcd(a,b)$。
+        \end{block}
+
+        设
+        $$
+        \begin{aligned}
+        ax+by&=\gcd(a,b)\\
+        bx_1+(a\bmod b)y_1&=\gcd(b,a\bmod b)
+        \end{aligned}
+        $$
+        假设我们已经通过递归求出 $x_1$ 和 $y_1$ 则
+        $$
+        x=y_1,\ y=x_1-\left\lfloor\frac{a}{b}\right\rfloor y_1
+        $$
+
+        递归边界是 $b=0$ 时，此时取 $x=1,y=0$ 即可。
+    \end{frame}
+
+    \begin{frame}{扩展欧几里得算法的推导}
+    由欧几里得定理可知：$\gcd(a,b)=\gcd(b,a\bmod b)$
+
+    所以 $ax+by=bx_1+(a\bmod b)y_1$
+
+    又因为 
+    $$
+    a\bmod b=a-\left(\left\lfloor\frac{a}{b}\right\rfloor\times b\right)
+    $$
+    所以 
+    $$
+    ax+by=bx_1+\left(a-\left(\left\lfloor\frac{a}{b}\right\rfloor\times b\right)\right)y_1
+    $$
+    整理得
+    $$
+    ax+by=ay_1+bx_1-\left\lfloor\frac{a}{b}\right\rfloor\times by_1=ay_1+b\left(x_1-\left\lfloor\frac{a}{b}\right\rfloor y_1\right)
+    $$
+    对比两侧系数即得到
+    $$
+    x=y_1,\ y=x_1-\left\lfloor\frac{a}{b}\right\rfloor y_1
+    $$
+    \end{frame}
+
+    \subsection{类欧几里得算法}
+    \begin{frame}{类欧几里得算法}
+        \begin{block}{洛谷P5170 【模板】类欧几里得算法}
+            给定 $n,\,a,\,b,\,c$ ，分别求
+            $$
+            \sum_{i=0}^{n}\left\lfloor \frac{ai+b}{c} \right\rfloor\,,\  \sum_{i=0}^{n}{\left\lfloor \frac{ai+b}{c} \right\rfloor}^2\,,\  \sum_{i=0}^{n}i\left\lfloor \frac{ai+b}{c} \right\rfloor
+            $$
+            答案对 $998244353$ 取模。多组数据。
+
+            $1 \leqslant T \leqslant 10^5,\ 0 \leqslant n,\,a,\,b,\,c \leqslant 10^9,\ c \neq 0$ 。
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        令
+        $$
+        f(a,b,c,n)=\sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor
+        $$
+        \begin{itemize}
+            \item $a\ge c$ 或者 $b\ge c$，将 $a,b$ 对 $c$ 取模
+        \end{itemize}
+        $$
+        \begin{aligned}
+        f(a,b,c,n)&=\sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor\\
+        &=\sum_{i=0}^n\left\lfloor
+        \frac{\left(\left\lfloor\frac{a}{c}\right\rfloor c+a\bmod c\right)i+\left(\left\lfloor\frac{b}{c}\right\rfloor c+b\bmod c\right)}{c}\right\rfloor\\
+        &=\frac{n(n+1)}{2}\left\lfloor\frac{a}{c}\right\rfloor+(n+1)\left\lfloor\frac{b}{c}\right\rfloor+
+        \sum_{i=0}^n\left\lfloor\frac{\left(a\bmod c\right)i+\left(b\bmod c\right)}{c}
+        \right\rfloor\\
+        &=\frac{n(n+1)}{2}\left\lfloor\frac{a}{c}\right\rfloor
+        +(n+1)\left\lfloor\frac{b}{c}\right\rfloor+f(a\bmod c,b\bmod c,c,n)
+        \end{aligned}
+        $$
+        现在只需考虑 $a<c$ 且 $b<c$ 的情况。
+    \end{frame}
+
+    \begin{frame}
+        $$
+        f(a,b,c,n)=\sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor
+        $$
+        \begin{itemize}
+            \item $a<c$ 且 $b< c$
+        \end{itemize}
+        把 $\left\lfloor \frac{ai+b}{c} \right\rfloor$ 用求和式展开
+        $$
+        \sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor
+        =\sum_{i=0}^n\sum_{j=0}^{\left\lfloor \frac{ai+b}{c} \right\rfloor-1}1
+        $$
+        \pause
+        交换和式
+        $$
+        =\sum_{j=0}^{\left\lfloor \frac{an+b}{c} \right\rfloor-1}\sum_{i=0}^n\left[j<\left\lfloor \frac{ai+b}{c} \right\rfloor\right]
+        $$
+    \end{frame}
+    \begin{frame}
+        把 $j<\left\lfloor \frac{ai+b}{c} \right\rfloor$ 这个条件转化一下，
+$$
+\begin{aligned}
+j<\left\lfloor \frac{ai+b}{c} \right\rfloor
+&\iff j+1\leq \left\lfloor \frac{ai+b}{c} \right\rfloor
+\iff j+1\leq \frac{ai+b}{c}\\
+&\iff jc+c\le ai+b \iff jc+c-b-1< ai\\
+&\iff \left\lfloor\frac{jc+c-b-1}{a}\right\rfloor< i
+\end{aligned}
+$$
+
+\vspace{-0.5em}
+令 $m=\left\lfloor \frac{an+b}{c} \right\rfloor$，那么原式化为
+\vspace{-1em}
+$$
+\begin{aligned}
+f(a,b,c,n)&=\sum_{j=0}^{m-1}
+\sum_{i=0}^n\left[i>\left\lfloor\frac{jc+c-b-1}{a}\right\rfloor \right]\\
+&=\sum_{j=0}^{m-1}
+(n-\left\lfloor\frac{jc+c-b-1}{a}\right\rfloor)\\
+&=nm-f\left(c,c-b-1,a,m-1\right)
+\end{aligned}
+$$
+递归即可。此时 $c$ 和 $a$ 交换了位置，复杂度同欧几里得算法，为 $O(\log n)$。
+    \end{frame}
+
+    \begin{frame}{模板题}
+        我们还需要求
+        $$
+        \begin{aligned}
+        g(a,b,c,n)&=\sum_{i=0}^ni\left\lfloor \frac{ai+b}{c} \right\rfloor\\
+        h(a,b,c,n)&=\sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor^2
+        \end{aligned}
+        $$
+    \end{frame}
+    \begin{frame}{推导 $g$}
+        \begin{itemize}
+            \item $a\ge c$ 或 $b\ge c$
+        \end{itemize}
+        $$
+        g(a,b,c,n)
+        =g(a\bmod c,b\bmod c,c,n)+\left\lfloor\frac{a}{c}\right\rfloor\frac{n(n+1)(2n+1)}{6}+\left\lfloor\frac{b}{c}\right\rfloor\frac{n(n+1)}{2}
+        $$
+        
+        \vspace{-0.5em}
+        \begin{itemize}
+            \item $a<c$ 且 $b<c$
+        \end{itemize}
+        \vspace{0.2em}
+        令 $m=\left\lfloor\frac{an+b}{c}\right\rfloor$，
+        $$
+    g(a,b,c,n)=\sum_{i=0}^ni\left\lfloor \frac{ai+b}{c} \right\rfloor=\sum_{j=0}^{m-1}
+    \sum_{i=0}^n\left[j<\left\lfloor\frac{ai+b}{c}\right\rfloor\right]\cdot i
+    $$
+方便起见，设 $t=\left\lfloor\frac{jc+c-b-1}{a}\right\rfloor$，
+$$
+\begin{aligned}
+&=\sum_{j=0}^{m-1}\sum_{i=0}^n[i>t]\cdot i=\sum_{j=0}^{m-1}\frac{1}{2}(t+n+1)(n-t)=\frac{1}{2}\left[mn(n+1)-\sum_{j=0}^{m-1}t^2-\sum_{j=0}^{m-1}t\right]\\
+&=\frac{1}{2}[mn(n+1)-h(c,c-b-1,a,m-1)-f(c,c-b-1,a,m-1)]
+\end{aligned}
+$$
+    \end{frame}
+
+    \begin{frame}{推导 $h$}
+        \begin{itemize}
+            \item $a\ge c$ 或 $b\ge c$
+        \end{itemize}
+        $$
+        \begin{aligned}
+        h(a,b,c,n)&=\sum_{i=0}^n \left\lfloor \dfrac{ai+b}{c}\right\rfloor^2=\sum_{i=0}^n\left(\left\lfloor\dfrac{a}{c}\right\rfloor i+\left\lfloor\frac{b}{c}\right\rfloor +\left\lfloor \dfrac{a\bmod c\times i+b\bmod c}{c}\right\rfloor\right)^2 \\
+        &=\sum_{i=0}^n\left(\left\lfloor\dfrac{a}{c}\right\rfloor^2 i^2+\left\lfloor\frac{b}{c}\right\rfloor^2 +\left\lfloor \dfrac{a \bmod  c\times i+b\bmod  c}{c}\right\rfloor^2+2\left\lfloor\dfrac{a}{c}\right\rfloor\left\lfloor\frac{b}{c}\right\rfloor i\right.\\
+        &\ \ \ \ \left.+2\left\lfloor\dfrac{a}{c}\right\rfloor\left\lfloor \dfrac{a\bmod  c\times i+b\bmod  c}{c}\right\rfloor i+2\left\lfloor\dfrac{b}{c}\right\rfloor\left\lfloor \dfrac{a\bmod  c\times i+b\bmod  c}{c}\right\rfloor\right)\\
+        &=\frac{n(n+1)(2n+1)}{6}\left\lfloor\dfrac{a}{c}\right\rfloor^2+(n+1)\left\lfloor\frac{b}{c}\right\rfloor^2+n(n+1)\left\lfloor\dfrac{a}{c}\right\rfloor\left\lfloor\frac{b}{c}\right\rfloor\\
+        &\ \ \ \ +2\left\lfloor\dfrac{a}{c}\right\rfloor g(a\bmod  c,b\bmod c,c,n)+2\left\lfloor\dfrac{b}{c}\right\rfloor f(a\bmod c,b\bmod c,c,n)\\
+        &\ \ \ \ +h(a\bmod c,b\bmod c,c,n)
+        \end{aligned}
+        $$
+    \end{frame}
+
+    \begin{frame}
+        \begin{itemize}
+            \item $a<c$ 且 $b<c$
+        \end{itemize}
+        令 $m=\left\lfloor\frac{an+b}{c}\right\rfloor$，$t=\left\lfloor\frac{cj+c-b-1}{a}\right\rfloor$
+$$
+h(a,b,c,n)=\sum_{i=0}^n \left\lfloor \dfrac{ai+b}{c}\right\rfloor^2
+$$
+将$n^2$写成$\left(2\sum_{i=1}^n i\right)-n$
+$$
+\begin{aligned}
+h(a,b,c,n)&=\sum_{i=0}^n\left(\left(2\sum_{j=1}^{\left\lfloor \frac{ai+b}{c}\right\rfloor}j\right)-\left\lfloor \dfrac{ai+b}{c}\right\rfloor\right)\\
+&=\left(2\sum_{i=0}^n\sum_{j=0}^{\left\lfloor \frac{ai+b}{c}\right\rfloor-1}j+1\right)-f(a,b,c,n)\\
+&=\left(2\sum_{j=0}^{m-1}\sum_{i=0}^n (j+1)\left[j< \left\lfloor \frac{ai+b}{c}\right\rfloor\right]\right)-f(a,b,c,n)
+\end{aligned}
+$$
+    \end{frame}
+
+    \begin{frame}
+其中
+$$
+\begin{aligned}
+&\sum_{j=0}^{m-1}\sum_{i=0}^n (j+1)\left[j< \left\lfloor \frac{ai+b}{c}\right\rfloor\right]=\sum_{j=1}^{m-1}(j+1)\sum_{i=0}^n \left[j< \left\lfloor \frac{ai+b}{c}\right\rfloor\right]\\
+=\,&\sum_{j=0}^{m-1}(j+1)\sum_{i=0}^n[i>t]=\sum_{j=0}^{m-1}(j+1)(n-t)\\
+=\,&\dfrac{m(m+1)}{2}n-f(c,c-b-1,a,m-1) -g(c,c-b-1,a,m-1)
+\end{aligned}
+$$
+所以 $h(a,b,c,n)=$
+$$
+m(m+1)n-2f(c,c-b-1,a,m-1)-2g(c,c-b-1,a,m-1)-f(a,b,c,n)
+$$
+\pause
+$f,g,h$ 相互递归调用即可。
+    \end{frame}
+
+    
+    % \section{中国剩余定理}
+    % \subsection{中国剩余定理}
+    % \begin{frame}{中国剩余定理 CRT}
+    %     用于解同余方程组，当 $p_1,p_2,\cdots,p_m$ \textbf{两两互质}时，求解方程组
+        
+    %     $$
+    %     \begin{cases}
+    %         x\equiv a_1\pmod{p_1}\\
+    %         x\equiv a_2\pmod{p_2}\\
+    %         \cdots\\
+    %         x\equiv a_m\pmod{p_m}
+    %     \end{cases}
+    %     $$
+    %     记 $M=\prod p_i,M_i=M/p_i$，$t_i$ 为 $M_i$ 在 $\bmod p_i$ 意义下的逆元，则最小正整数解为
+    %     $$
+    %     x=\sum_{i=1}^{n}a_it_iM_i \bmod M
+    %     $$
+    %     \pause
+    %     $x$ 在 $\bmod\ p_i$ 时,$a_it_iM_i\equiv a_i\pmod {p_i}$，其余项 $\bmod\  p_i=0$
+    % \end{frame}
+    % \subsection{扩展中国剩余定理}
+    % \begin{frame}{扩展中国剩余定理 exCRT}
+    %     用于求解 $p_i$ 不互质的同余方程组。\\
+        
+    %     先考虑方程组只有两个方程的情况：
+    %     $$
+    %     \begin{cases}
+    %         x\equiv a_1\pmod{p_1}\\
+    %         x\equiv a_2\pmod{p_2}\\
+    %     \end{cases}
+    %     $$
+    %     \pause
+    %     也就是一个不定方程 $x=k_1p_1+a_1=k_2p_2+a_2$，用 exgcd 求解（或判定无解）\\
+    %     设求出的最小的 $x=x_1$，现在我们得到了一个新的方程 
+        
+    %     $$
+    %     x\equiv x_1\pmod{\operatorname{lcm}(p_1,p_2)}
+    %     $$
+    %     \\
+    %     这个方程和上面的方程组等价，用这个新方程替换掉原来的方程组，接着依次求解即可。
+    % \end{frame}
+    % \subsection{例题}
+
+    % \begin{frame}{例题}
+    %     \begin{small}
+    %     \begin{block}{「NOI2018」屠龙勇士}
+    %         $\ \ \ $游戏的目标是按照编号 $1\sim n$ 顺序杀掉 $n$ 条巨龙，每条巨龙拥有一个初始的生命值 $a_i$ 。每条巨龙拥有恢复能力，当其使用恢复能力时，它的生命值就会每次增加 $p_i$，直至生命值非负。只有在攻击结束后且当生命值恰好为 $0$ 时它才会死去。\\
+    %         $\ \ \ $游戏开始时玩家拥有 $m$ 把攻击力已知的剑，每次面对巨龙时，玩家只能选择一把剑，当杀死巨龙后这把剑就会消失，但作为奖励，玩家会获得全新的一把剑。\\
+    %         $\ \ \ $你的策略如下：\\
+    %         \begin{itemize}
+    %             \item 每次选择当前拥有的，攻击力不高于巨龙初始生命值中攻击力最大的一把剑。如果没有，则选择攻击力最低的一把。记该武器的攻击力为 $atk$\\
+    %             \item 面对每条巨龙，使用上一步中选择的剑攻击巨龙 $x$ 次，巨龙的生命值减少 $x\times atk$\\
+    %             \item 之后，巨龙会不断使用恢复能力，每次恢复 $p_i$ 生命值。若在使用恢复能力前或某一次恢复后其生命值为 $0$，则巨龙死亡，玩家通过本关。\\
+    %         \end{itemize}
+    %         求一个最小的，使得你能通过每一关的常数 $x$。无解输出 $-1$。\\
+    %         $n,m\le 10^5,\operatorname{lcm} p_i\le 10^{12},a_i\le p_i,$攻击力$\le 10^6$
+    %     \end{block}
+    %     \end{small}
+    % \end{frame}
+    % \begin{frame}{例题}
+    %     显然打每一条龙时的攻击力是可以 $O(n\log n)$ 确定的，设每一关的攻击力为 $b_i$。\\
+    %     那么可以列出方程组
+    %     $$
+    %     \begin{cases}
+    %         b_1x\equiv a_1\pmod{p_1}\\
+    %         b_2x\equiv a_2\pmod{p_2}\\
+    %         \cdots\\
+    %         b_nx\equiv a_n\pmod{p_n}
+    %     \end{cases}
+    %     $$
+    %     \pause
+    %     考虑把它化为 exCRT 的标准形式
+    %     $$
+    %     bx\equiv a\pmod{p}\iff bx+py=a
+    %     $$
+    %     设它的解为 $x_1$，新的方程就是这样的
+    %     $$
+    %     x\equiv x_1\pmod{\frac{p}{\gcd(b,p)}}
+    %     $$
+    %     然后跑 exCRT 即可
+    % \end{frame}
+    % % \begin{frame}{例题}
+    % %     \begin{block}{CF338D GCD Table}
+    % %         给定长为 $k$ 的序列 $a_1,a_2,\cdots a_k$ 以及 $n,m$。询问是否存在 $(x,y)(x\le n,y\le m)$ 使得 $\forall i\in [1,k],\gcd(x,y+i-1)=a_i$\\
+    % %         $1\le n,m,a_i\le 10^{12},1\le k\le 10^4$
+    % %     \end{block}
+    % %     \pause
+    % %     若 $\gcd(x,y+i-1)=a_i$，$x\equiv 0\pmod{a_i},y\equiv (1-i) \pmod{a_i}$ 是必要条件\\
+    % %     所以最小的 $x$ 就应该是 $\operatorname{lcm} p_i$，最小的 $y$ 可以通过 exCRT 解出。\\
+    % %     因为这只是必要条件，还需要再带回去验证一遍。\\
+    % %     \pause
+    % %     但是 $x$ 和 $y$ 一定要取最小值吗？\\
+    % %     肯定的，解出的 $x$ 和 $y$ 一定满足 $\gcd(x,y+i-1)=ka_i,k\ge 1$。换句话说，上面的验证出来不行的情况，一定是 $\gcd(x,y+i-1)=ka_i,k\ge 2$，因为上面的两个方程组是必要条件。
+    % % \end{frame}
+    % \begin{frame}{例题}
+    %     \begin{block}{CF722F Cyclic Cipher}
+    %     有 $n$ 个数列，第 $i$ 个数列包含 $k_i$ 个 $\in[1,m]$ 的，互不相等的整数。\\
+    %     每一秒将所有数列循环左移一位（$a_i$ 到 $a_{i-1}$，$a_1$ 到 $a_k$）。重复 $10^{100}$ 秒，记录下每个时刻由每个数列的第一个数组成的序列。\\
+    %     对于每个 $i\in [1,m]$，求记录下的序列中，最长的由 $i$ 组成的连续的子序列的长度。\\
+    %     $n,m\le 10^5,k_i\le 40,\sum k_i\le 2\times 10^5$
+    %     \end{block}
+    %     \pause
+    %     对于每一个不同的数 $x$ 分别考虑，并且只考虑同时存在 $x$ 的连续数列。\\
+    %     假设 $x$ 在这些数列中出现的位置是 $p_i$（从 $0$ 开始编号），那么需要满足 \\
+    %     $$
+    %     x\equiv p_i\pmod {k_i}
+    %     $$
+    %     一段区间同时出现就是一堆这样的方程构成的方程组。\\
+    %     现在要做的就是判断一个方程组有没有解。
+    % \end{frame}
+    % \begin{frame}{例题}
+    %     \begin{itemize}
+    %         \item 双指针
+    %     \end{itemize}
+    %     对于一个固定的左端点，尽可能的延伸右端点。每次加入一个数时，都需要重新判断这整个方程组有没有解。\\
+    %     因为模数 $k_i\le 40$，对于相同的 $k_i$，$p_i$ 必须相同。因此最多有 $40$ 个方程。\\
+    %     每加进来一个暴力判断，左端点右移时暴力删除。\\
+    %     复杂度 $O(k\sum k \log lcm)$，$lcm\approx 10^{16}$\\
+    %     \pause
+    %     \begin{itemize}
+    %         \item 倍增+双指针
+    %     \end{itemize}
+    %     类似于 ST 表的做法，预处理出以 $i$ 为左端点，长为 $2^0,2^1,\cdots 2^{\log n}$ 的区间是否有解，如果有解，化为通解 $x\equiv a\pmod{lcm}$ 的形式。\\
+    %     两个区间合并的时候复杂度是 $O(\log lcm)$ 的，预处理的复杂度就是 $O(n\log n\log lcm)$ 的。\\
+    %     在双指针的时候，左端点右移的时候用倍增的方法求出新的 $x\equiv a\pmod{lcm}$，这样每次加入一个右端点的复杂度就是 $O(\log lcm)$\\
+    %     复杂度 $O(n\log n\log lcm+\sum k \log lcm)$
+    % \end{frame}
+
+    \section{欧拉定理}
+    \subsection{欧拉定理}
+    \begin{frame}{欧拉定理及其扩展}
+        \begin{block}{欧拉定理}
+            若 $\gcd(a,p)=1$，则
+            $$
+            a^c\equiv a^{c\bmod \varphi(p)}\pmod p
+            $$
+        \end{block}
+        费马小定理即欧拉定理在 $p$ 为质数时的特殊情况\\
+        \pause
+        \begin{block}{扩展欧拉定理}
+            $$
+            a^c\equiv\begin{cases}a^{c\bmod \varphi(p)} &\gcd(a,m)=1\\
+            a^c &\gcd(a,m)\neq 1 \land c< \varphi(p)\\
+            a^{c\bmod \varphi(p)+\varphi(p)} &\gcd(a,m)\neq 1 \land c\ge \varphi(p)
+            \end{cases}
+            \pmod p
+            $$
+        \end{block}
+    \end{frame}
+
+    \subsection{例题}
+    \begin{frame}{例题}
+        \begin{block}{LOJ525. 多项式}
+            给定 $k$，求出一个次数不超过 $6\times 10^4$，最高次项非 $0$ 的多项式 $f(x)$，使得 $\forall i\in[0,k-1],f(i)\bmod k=0$\\
+            $k\le 3\times 10^4$
+        \end{block}
+        \pause
+        根据扩展欧拉定理，$x^\varphi(k)\equiv x^{2\varphi(k)} \bmod k$\\
+        构造多项式 $x^{2\varphi(k)}-x^{\varphi(k)}$ 即可
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{「六省联考 2017」相逢是问候}
+            给定长为 $n$ 的初始序列 $a$，以及常数 $c,p$。$m$ 次操作：\\
+            \begin{itemize}
+                \item 将一个区间内的所有数替换为 $c^{a_i}$\\
+                \item 区间求和 $\bmod\  p$\\
+            \end{itemize}
+            $n,m\le 5\times 10^4,p\le 10^8$
+        \end{block}
+        \pause
+        记 $f(a,k,p)$ 表示 $a$ 经过 $k$ 次 $a=c^a$ 后 $\bmod\ p$ 的值。可以递归处理。\\
+        因为 $\varphi(p)$ 只会递归 $O(\log p)$ 层，所以这个值在 $k>2\log p$ 时是不变的。\\
+        \pause
+        所以对于没有操作 $2\log p$ 次的位置暴力修改，线段树维护：区间和，这个区间是否所有位置都修改过超过 $2\log p$ 次询问。\\
+        复杂度是 $O(n\log^2 p)$
+    \end{frame}
+
+    \section{筛法}
+    \subsection{莫比乌斯反演}
+    \begin{frame}{前置知识}
+        \sout{整除分块和莫比乌斯反演相信大家已经听了很多遍了，所以这里略过}
+        \begin{itemize}
+            \item 积性函数
+            \item Dirichlet 卷积
+            \item 线性筛素数、线性筛 $\mu,\varphi$
+        \end{itemize}
+    \end{frame}
+    \begin{frame}{积性函数}
+        常见的积性函数有
+        \begin{itemize}
+            \item 单位函数：$\varepsilon(n)=[n=1]$（完全积性）\\
+            \item 恒等函数：$\operatorname{id}_k(n)=n^k$（完全积性），当 $k=1$ 时，简记为 $id(n)=n$\\
+            \item 常数函数：$\operatorname{1}(n)=1$（完全积性）\\
+            \item 除数函数：$\sigma_k(n)=\sum_{d|n}d^k$，$\sigma_0(n)$ 即因数个数，简记为 $\operatorname{d}(n)$；$\sigma_1(n)$ 即因数之和，简记为 $\sigma(n)$\\
+            \item 欧拉函数：$\varphi(n)=\sum_{d=1}^n[\gcd(d,n)=1]$\\
+            \item 莫比乌斯函数：$\mu(x)=\begin{cases}1\ \ &(x=1)\\(-1)^k\ \ &(\text{$x$没有平方数因子，且$x$的质因子个数为$k$})\\0 &(\text{$x$有平方数因子})\end{cases}$
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}{数论分块（整除分块）}
+        \begin{block}{性质}
+            $\left\lfloor\frac{n}{i}\right\rfloor$ 的不同的取值只有 $O(\sqrt{n})$ 种。
+        \end{block}
+        \textbf{证明}. 对于 $i\in [1,\sqrt{n}]$，取值最多 $\sqrt{n}$ 个；对于 $i\in [\sqrt{n},n]$，$\left\lfloor\frac{n}{i}\right\rfloor\le \sqrt{n}$，取值最多 $\sqrt{n}$ 个。\\
+        \begin{tiny}{$\ $}\end{tiny}\\
+        \pause
+        然后我们需要对于一个 $i$ ，求出满足 $\left\lfloor\frac{n}{j}\right\rfloor=\left\lfloor\frac{n}{i}\right\rfloor$ 的最大的 $j$ 是多少。设 $\left\lfloor\frac{n}{i}\right\rfloor=k$
+        $$
+        \left\lfloor\frac{n}{j}\right\rfloor=k\implies k\le \frac{n}{j}<k+1
+        \implies \frac{1}{k+1} <\frac{j}{n}\le \frac{1}{k} \implies j\le \frac{n}{k}
+        \implies j\le \left\lfloor\frac{n}{\left\lfloor\frac{n}{i}\right\rfloor}\right\rfloor
+        $$
+        $j$ 取这个 $\left\lfloor\dfrac{n}{\left\lfloor\frac{n}{i}\right\rfloor}\right\rfloor$ 即可
+    \end{frame}
+
+    \begin{frame}{狄利克雷卷积的性质}
+        $$
+        \sum_{d|n}\mu(d)=[n=1]\iff  \mu \ast 1 =\varepsilon
+        $$
+        \textbf{证明}：设 $n=\prod p_i^{k_i},n'=\prod p_i$，$n$ 的质因数个数为 $m$\\
+        $$
+        \sum_{d|n}\mu(d)=\sum_{d|n'}\mu(d)=\sum_{i=0}^{m} \binom{m}{i} (-1)^i=(1+(-1))^m
+        $$
+        当且仅当 $m=0$ 即 $n=1$ 时 $\sum_{d|n}\mu(d)=1$\\
+    \end{frame}
+    \begin{frame}{狄利克雷卷积的性质}
+        $$
+        \sum_{d|n}\varphi(d)=n\iff  \varphi \ast 1 =\operatorname{id}
+        $$
+        \textbf{证明}：因为 $\varphi$ 是积性函数，只需要证明 $n=p^k(p\text{为质数})$ 的时候 $\sum_{d|n}\varphi(d)=n$ 成立即可。\\
+        $$
+        \sum_{i=0}^{k}\varphi(p^i)=1+\sum_{i=1}^{k}(p-1)p^{i-1}=p^k
+        $$
+        \pause
+        两边同时再卷上 $\mu $，还可以得到
+        $$
+        \varphi \ast 1 \ast \mu =\operatorname{id}\ast \mu\iff \varphi=\operatorname{id}\ast \mu
+        \iff \varphi(n)=\sum_{d|n}d\mu(\frac{n}{d})
+        $$
+    \end{frame}
+    \begin{frame}{狄利克雷卷积的性质}
+        $$
+        d=1\ast 1\iff d(n)=\sum_{d|n}1
+        $$
+
+        $$
+        \sigma=\operatorname{id}\ast 1\iff\sigma(n)=\sum_{d|n}d
+        $$
+
+        这两个都可以用定义得到
+    \end{frame}
+    \begin{frame}{莫比乌斯反演}
+        $$
+        g=f\ast 1
+        $$
+        两边同时卷一个$\mu$
+        $$
+        g\ast \mu=f\ast 1\ast \mu=f\ast \epsilon=f
+        $$
+        \pause
+        $$
+        g=f\ast 1\iff g\ast \mu=f
+        $$
+        用式子表示，就是
+        $$
+        g(n)=\sum\limits_{i|n}f(i)\iff f(n)=\sum\limits_{i|n}\mu\left(\dfrac{n}{i}\right)g(i)
+        $$
+        这个式子就是莫比乌斯反演
+    \end{frame}
+
+    \begin{frame}{热身题}
+            \begin{block}{洛谷P1829 [国家集训队]Crash的数字表格 / JZPTAB}
+                $T$ 组数据，求
+                $$
+                \sum_{i=1}^n\sum_{j=1}^m\operatorname{lcm}(i,j)
+                $$
+                $n,m\le 10^7,T\le 10^4$
+            \end{block}
+            \pause
+            把 $\operatorname{lcm}(i,j)$ 转化成 $\dfrac{ij}{\gcd(i,j)}=\gcd(i,j)\times \dfrac{i}{\gcd(i,j)}\times \dfrac{j}{\gcd(i,j)}$，枚举$\gcd(i,j)$\\
+            $$ 
+            =\sum_{d=1}^nd\sum_{i=1}^{n/d}\sum_{j=1}^{m/d}[\gcd(i,j)=1]ij
+            $$
+            整除分块之后只用考虑后面 $f(n,m)=\sum_{i=1}^n\sum_{j=1}^m[\gcd(i,j)=1]ij$ 怎么求
+    \end{frame}
+    \begin{frame}
+        记 $S(n)=\sum_{i=1}^n i=\frac{i(i+1)}{2}$
+        \begin{footnotesize}
+        $$
+        \begin{aligned}
+            f(n,m)&=\sum_{i=1}^n\sum_{j=1}^mij\sum_{k|\gcd(i,j)}\mu(k)\\
+            &=\sum_{k=1}^n\mu(k)k^2\sum_{i=1}^{n/k}\sum_{j=1}^{m/k}ij\\
+            &=\sum_{k=1}^n\mu(k)k^2S(\lfloor\frac{n}{k}\rfloor)S(\lfloor\frac{m}{k}\rfloor) 
+        \end{aligned}
+        $$
+        \end{footnotesize}
+        预处理 $x^2\mu (x)$ 的前缀和即可整除分块\\
+        现在是一个整除分块套一个整除分块的形式，多组数据可能过不太了，继续优化
+    \end{frame}
+    \begin{frame}
+        $$
+        \text{原式}=\sum_{d=1}^nd\sum_{k=1}^{n/d}\mu(k)k^2S(\lfloor\frac{n}{dk}\rfloor)S(\lfloor\frac{m}{dk}\rfloor)
+        $$
+        先枚举 $T=dk$
+        $$
+        =\sum_{T=1}^nS(\lfloor\frac{n}{T}\rfloor)S(\lfloor\frac{m}{T}\rfloor)T\sum_{k|T}\mu(k)k
+        $$
+        \pause
+        我们需要在线性复杂度内筛出 $T\sum_{k|T}\mu(k)k$ 的前缀和，也就是线性筛出 $f(n)=\sum_{i|n}\mu(i)i$，容易证明这个函数是积性的。\\
+        $\ $\\
+        因为 $\mu(x)$ 在 $x$ 有平方因子时答案为 $0$，所以如果 $f(i\times p)$ 在 $p|i$ 时，不会产生新的质因子，$f(i\times p)=f(i)$。\\
+        $\ $\\
+        然后就是简单的整除分块了，复杂度 $O(n+T\sqrt{n})$
+    \end{frame}
+    
+	\begin{frame}{热身题}
+		\begin{block}{「SDOI2014」数表}
+			有一张 $n\times m$ 的数表，其第 $i$ 行第 $j$ 列（$1\le i\le n,1\le j\le m$）的数值为能同时整除 $i$ 和 $j$ 的所有自然数之和。给定 $a$，计算数表中不大于 $a$ 的数之和。\\
+			$n,m\le 10^5$，$2\times 10^4$ 组数据
+		\end{block}
+        \pause
+		$\sigma(x)$表示 $x$ 的因数之和，如果不考虑 $\le a$ 的限制
+		$$
+		\begin{aligned}
+		ans&=\sum_{i=1}^n\sum_{j=1}^m\sigma(\gcd(i,j))\\
+        &=\sum_{d=1}^{n}\sigma(d)\sum_{i=1}^{n/d}\sum_{j=1}^{m/d}[\gcd(i,j)=1]\\
+		&=\sum_{d=1}^{n}\sigma(d)\sum_{i=1}^{n/d}\mu(i)\left\lfloor\frac{n}{di}\right\rfloor\left\lfloor\frac{m}{di}\right\rfloor\\
+		\end{aligned}
+		$$
+		
+	\end{frame}
+	\begin{frame}
+        和上面相同的套路，枚举 $T=di$
+		$$
+		ans=\sum_{T=1}^n\left\lfloor\frac{n}{T}\right\rfloor\left\lfloor\frac{m}{T}\right\rfloor\sum_{d|T}\sigma(d)\mu(\frac{T}{d})
+		$$
+        \pause
+		设 $f(x)=\sum_{d|x}\sigma(d)\mu(\frac{x}{d})$\\
+		现在的问题是，只有 $\sigma(d)\le a$ 时才能对 $f(x)$ 造成贡献。\\
+		将询问按照 $a$ 递增排序，每次 $a$ 增大时，把新的 $d$ 的贡献加进去。这一部分的复杂度是调和级数的 $O(n\log n)$。\\
+		\pause
+		现在我们需要单点修改 $f$，查询区间和，使用树状数组。\\
+		一共 $O(n\log n)$ 次修改，$O(q\sqrt{n}))$ 次查询，总复杂度 $O(n\log^2 n+q\sqrt{n}\log n)$
+	\end{frame}
+
+    \subsection{杜教筛}
+    \begin{frame}{杜教筛}
+        对于数论函数 $f$，杜教筛可以在低于线性时间的复杂度内计算 $S(n)=\sum_{i=1}^{n}f(i)$。\\
+        \begin{block}{洛谷P4213 【模板】杜教筛（Sum）}
+            求$\sum_{i=1}^n\varphi(i)$ 和 $\sum_{i=1}^n\mu(i)$\\
+            $1\le n<2^{31}$。
+        \end{block}
+        \pause
+        我们考虑一个更一般的情况，对于数论函数 $f$，计算 $S(n)=\sum_{i=1}^{n}f(i)$。
+        \pause
+
+        我们找一个积性函数 $g$，考虑其与 $f$ 的狄利克雷卷积：
+        $$
+        \begin{aligned}
+            \sum_{i=1}^{n}(f * g)(i) & =\sum_{i=1}^{n}\sum_{d \mid i}g(d)f\left(\frac{i}{d}\right)=\sum_{d=1}^ng(d)\left(\sum_{i=1}^{\lfloor\frac{n}{d}\rfloor}f(i)\right)\\
+                                    & =\sum_{i=1}^{n}g(i)S\left(\left\lfloor\frac{n}{i}\right\rfloor\right)
+        \end{aligned}
+        $$ 
+    \end{frame}
+    \begin{frame}
+        $S(n)=g(1)S(n)$ 可以写成 $\sum_{i=1}^{n}g(i)S\left(\left\lfloor\frac{n}{i}\right\rfloor\right)-\sum_{i=2}^{n}g(i)S\left(\left\lfloor\frac{n}{i}\right\rfloor\right)$，即\\
+        $$
+        \sum_{i=1}^{n}(f * g)(i)-\sum_{i=2}^ng(i)S(\left\lfloor\frac{n}{i}\right\rfloor)
+        $$
+        \pause
+        令 $f\ast g=h$，则：
+        $$
+        g(1)S(n)=\sum_{i=1}^{n}h(i)-\sum_{i=2}^ng(i)S(\left\lfloor\frac{n}{i}\right\rfloor)
+        $$
+        如果 $h$ 的前缀和是好求的，$g$ 的前缀和也是好求的，那么使用数论分块就可以递归快速求出 $S(n)$。
+
+        \pause
+
+        由 $\left\lfloor\frac{\lfloor\frac na\rfloor}{b}\right\rfloor=\left\lfloor\frac{n}{ab}\right\rfloor$ 可知，不同的 $\left\lfloor\frac{n}{i}\right\rfloor$ 只有 $O(\sqrt n)$ 种，于是我们只需记忆化求出所有 $O(\sqrt n)$ 个 $S(\left\lfloor\frac{n}{i}\right\rfloor)$ 的值即可。
+    \end{frame}
+    \begin{frame}{时间复杂度}
+        我们认为计算 $h$ 和 $g$ 的前缀和的时间复杂度均为 $O(1)$。设计算 $S(n)$ 的复杂度为 $T(n)$，由于我们有记忆化，所以有
+$$
+\begin{aligned}
+    T(n) & = \Theta(\sqrt n)+\sum_{k=1}^{\lfloor\sqrt n\rfloor} O(\sqrt k)+\sum_{k=2}^{\lfloor\sqrt n\rfloor} O\left(\sqrt{\dfrac{n}{k}}\right)\\
+         & = O\left(\int_{0}^{\sqrt n} \left(\sqrt{x} + \sqrt{\dfrac{n}{x}}\right) \mathrm{d}x\right)\\
+         & = O\left(n^{3/4}\right).
+\end{aligned}
+$$
+\end{frame}
+
+\begin{frame}
+若我们可以预处理出一部分 $S(k)$, 其中 $k=1,2,\dots,m$，$m\geq \lfloor\sqrt n\rfloor$. 设预处理的时间复杂度为 $T_0(m)$，则此时的 $T(n)$ 为：
+$$
+\begin{aligned}
+    T(n) & = T_0(m)+\sum_{k\in R(n);k>m} T(k)\\
+         & = T_0(m)+\sum_{k=1}^{\lfloor n/m \rfloor} O\left(\sqrt{\dfrac{n}{k}}\right)\\
+         & = O\left(T_0(m)+\int_{0}^{n/m} \sqrt{\dfrac{n}{x}} \mathrm{d}x\right)\\
+         & = O\left(T_0(m)+\dfrac{n}{\sqrt m}\right).
+\end{aligned}
+$$
+若 $T_0(m)=O(m)$（如线性筛），由均值不等式可知：当 $m=\Theta\left(n^{2/3}\right)$ 时，$T(n)$ 取得最小值 $O\left(n^{2/3}\right)$。
+\end{frame}
+\begin{frame}{筛 $\mu$}
+    $$
+    \mu \ast 1=\epsilon
+    $$
+    带到我们的式子里：
+    $$
+    \operatorname{1}(1)S(n)=\sum_{i=1}^n\epsilon(i)-\sum_{i=2}^n\operatorname{1}(i)S\left(\left\lfloor\frac{n}{i}\right\rfloor\right)
+    $$
+    即：
+    $$
+    S(n)=1-\sum_{i=2}^n\operatorname{1}(i)S\left(\left\lfloor\frac{n}{i}\right\rfloor\right)
+    $$
+    $\operatorname{1}(i)$ 的前缀和就是 $i$。杜教筛时间复杂度 $O(n^{\frac{2}{3}})$
+\end{frame}
+\begin{frame}{筛 $\varphi$}
+    法一：
+ $$
+\begin{aligned}
+    \sum_{i=1}^n \sum_{j=1}^n [\gcd(i,j)=1] & =\sum_{i=1}^n \sum_{j=1}^n \sum_{d \mid i,d \mid j} \mu(d)    \\
+                                            & =\sum_{d=1}^n \mu(d) {\left\lfloor \frac n d \right\rfloor}^2
+\end{aligned}
+$$
+由于题目所求的是 
+$\sum_{i=1}^n \sum_{j=1}^i [\gcd(i,j)=1]$, 所以我们排除掉 $i=1,j=1$ 的情况，并将结果除以 $2$ 即可。
+
+观察到，只需求出莫比乌斯函数的前缀和，就可以快速计算出欧拉函数的前缀和了。时间复杂度  $O(n^{\frac 2 3})$。
+\end{frame}
+\begin{frame}{筛 $\varphi$}
+    法二：
+    $$
+    \varphi \ast 1=\operatorname{id}
+    $$
+    带到我们的式子里：
+    $$
+    \operatorname{1}(1)S(n)=\sum_{i=1}^n\operatorname{id}(i)-\sum_{i=2}^n\operatorname{1}(i)S\left(\left\lfloor\frac{n}{i}\right\rfloor\right)
+    $$
+    即：
+    $$
+    S(n)=\frac{n(n+1)}{2}-\sum_{i=2}^n\operatorname{1}(i)S\left(\left\lfloor\frac{n}{i}\right\rfloor\right)
+    $$
+    $\operatorname{1}(i)$ 的前缀和就是 $i$。杜教筛时间复杂度 $O(n^{\frac{2}{3}})$
+
+\end{frame}
+
+\begin{frame}{例题}
+    \begin{block}{洛谷P3768 简单的数学题}
+        给定 $n$ 和模数 $p$，求
+$$
+\left(\sum_{i=1}^n\sum_{j=1}^n i\cdot j\cdot \gcd(i,j)\right) \bmod p
+$$
+
+$1\le n\le 10^{10},5 \times 10^8 \leq p \leq 1.1 \times 10^9$ 且 $p$ 为质数，4s。
+    \end{block}
+\end{frame}
+\begin{frame}
+    根据套路，使用 $\gcd(i,j)=\sum_{d|i,d|j}\varphi(d)$
+    $$
+    \begin{aligned}
+        &\ \ \ \,\sum_{i=1}^n\sum_{j=1}^n ij \gcd(i,j)\\
+        &=\sum_{i=1}^n\sum_{j=1}^nij\sum_{d|i,d|j}\varphi(d)\\
+        &=\sum_{d=1}^n\varphi(d)\sum_{d|i}\sum_{d|j}ij\\
+        &=\sum_{d=1}^n\varphi(d)d^2\sum_{i=1}^{\lfloor\frac{n}{d}\rfloor}\sum_{j=1}^{\lfloor\frac{n}{d}\rfloor}ij\\
+        &=\sum_{d=1}^n\varphi(d)d^2\left(\sum_{i=1}^{\lfloor\frac{n}{d}\rfloor}i\right)^2
+    \end{aligned}
+    $$
+    
+\end{frame}
+\begin{frame}
+    记 $F(n)=(\sum_{i=1}^ni)^2=\left(\frac{n(n+1)}{2}\right)^2$\\
+    $$
+    \begin{aligned}
+        \text{原式}&=\sum_{i=1}^n\varphi(i)i^2F\left(\left\lfloor\frac{n}{i}\right\rfloor\right)    
+    \end{aligned}
+    $$
+    后面的那部分整除分块即可，我们需要快速计算 $\varphi(i)i^2$的前缀和，考虑杜教筛：\\
+    $$
+    \sum_{i=1}^n\varphi(i)i^2
+    $$
+    令 $f=\varphi\cdot \operatorname{id}^2$，我们需要找到合适的 $g$。\\
+    \pause
+    为了 $(f\ast g)$ 求前缀和方便，由于 $i\cdot\frac{n}{i}=n$，取 $g=\operatorname{id}^2$，以消掉 $i$。\\
+    $$
+    (f\ast g)(n)=\sum_{d|n}\varphi(d)d^2\cdot \left(\frac{n}{d}\right)^2=\sum_{d|n}\varphi(d)n^2=n^2\sum_{d|n}\varphi(d)=n^3
+    $$
+\end{frame}
+\begin{frame}
+    $$
+    f=\varphi\cdot \operatorname{id}^2,g=\operatorname{id}^2
+    $$
+    带到我们的式子里：
+    $$
+    g(1)S(n)=\sum_{i=1}^n(f\ast g)(i)-\sum_{i=2}^n\operatorname{id}^2(i)S\left(\left\lfloor\frac{n}{i}\right\rfloor\right)
+    $$
+    \pause
+    $$
+    \sum_{i=1}^ni^2=\frac{n(n+1)(2n+1)}{6}
+    $$
+    $$
+    \sum_{i=1}^ni^3=\frac{n^2(n+1)^2}{4}
+    $$
+    于是 $(f\ast g)$ 和 $g$ 的前缀和都可以 $O(1)$ 求。复杂度 $O(n^{\frac{2}{3}})$
+\end{frame}
+
+    \begin{frame}{点乘}
+        定义\textbf{点乘}运算，对于两函数 $A, B$ ，其点乘 $A\cdot B$ 为一个新的函数，满足 $(A\cdot B)(n) = A(n)B(n)$ 。\\
+        当 $C$ 是完全积性函数时，有 $(A\cdot C) \ast (B\cdot C) = (A \ast B)\cdot C$。\\
+        \pause
+        下面是一些常见的基本和组：
+        \begin{itemize}
+            \item $\mu \cdot id_k$\\
+            $$
+            (\mu \cdot id_k)\ast id_k=(\mu \cdot id_k)\ast(1\cdot id_k)=(\mu \ast 1)\cdot id_k=\epsilon
+            $$
+            \item $\varphi \cdot id_k$\\
+            $$
+            (\varphi \cdot id_k)\ast id_k=(\varphi \cdot id_k)\ast(1\cdot id_k)=(\varphi \ast 1)\cdot id_k=id_{k+1}
+            $$
+        \end{itemize}
+    \end{frame}
+
+
+    \begin{frame}{例题}
+        \begin{block}{51Nod2026 Gcd and Lcm}
+            已知 
+            $$
+            f(x)=\sum_{d|x}\mu(d)\cdot d
+            $$
+            求下面式子的值：
+            $$
+            \sum_{i=1}^n\sum_{j=1}^nf(\gcd(i,j))\times f(\operatorname{lcm}(i,j))
+            $$
+            $n\le 10^9$
+        \end{block}
+    \end{frame}
+    \begin{frame}
+        对于所有积性函数，都有 $f(\gcd(i,j))f(\operatorname{lcm}(i,j))=f(i)f(j)$\\
+        这样问题变为：
+        $$
+        \begin{aligned}
+            &\ \ \ \ \sum_{i=1}^n\sum_{j=1}^nf(i)f(j)\\
+            &=\left(\sum_{i=1}^nf(i)\right)^2
+        \end{aligned}
+        $$
+        现在只需要求 $f(i)$ 的前缀和
+        \pause
+        $$
+        \begin{aligned}
+        \sum_{i=1}^nf(i)&=\sum_{i=1}^n\sum_{d|i}\mu(i)i\\
+        &=\sum_{i=1}^n\mu(i)i\left\lfloor\frac{n}{i}\right\rfloor
+        \end{aligned}
+        $$
+        根据基本和组杜教筛求出 $\mu(i)i$ 的前缀和，再套一层整除分块即可。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{「NOI2016」 循环之美}
+    
+   牛牛认为，如果在 $k$ 进制下，一个数的小数部分是纯循环的，那么它就是美的。现在，牛牛想知道：对于已知的十进制数 $n$ 和 $m$，在 $k$ 进制下，有多少个数值上互不相等的纯循环小数，可以用分数 $\frac xy$ 表示,其中 $1\le x\le n,1\le y\le m$，且 $x,y$ 是整数。一个数是纯循环的，当且仅当其可以写成以下形式：
+    $$a.\dot{c_1} c_2 c_3 \dots c_{p - 1} \dot{c_p}$$
+    
+    其中，$a$ 是一个整数，$p\ge 1$；对于 $1\le i\le p$，$c_i$ 是 $k$ 进制下的一位数字。
+    
+    例如，在十进制下，$0.45454545\cdots=0.\dot {4} \dot {5}$ 是纯循环的，它可以用 $\frac {5}{11}$、$\frac{10}{22}$ 等分数表示；在十进制下，$0.1666666\cdots=0.1\dot6$ 则不是纯循环的，它可以用 $\frac 16$ 等分数表示。需要特别注意的是，我们认为一个整数是纯循环的，因为它的小数部分可以表示成 $0$ 的循环或是 $k-1$ 的循环；而一个小数部分非 $0$ 的有限小数不是纯循环的。
+     
+    $1\leq n\leq 10^9$，$1\leq m \leq 10^9$，$2\leq k \leq 2\times 10^3 $。
+    
+        \end{block}
+    \end{frame}
+    \begin{frame}
+        
+    首先要求数值互不相同，就相当于要求分子分母互质（不互质就会重复）
+    
+    考虑怎么转化纯循环小数这个条件：
+    
+    设 $\frac{x}{y}$ 循环节为 $l$ 位，这意味着 $\frac{x}{y}$ 向左平移 $l$ 位后，小数点后的部分不变，即：
+    $$
+    xk^l\equiv x\pmod y
+    $$
+    $x,y$ 互质，因此只要 $k,y$ 互质即可。
+    
+    于是只需要求
+    $$
+    \sum_{i=1}^{n}\sum_{j=1}^{m}[\gcd(i,j)=1][\gcd(j,k)=1]
+    $$
+    \end{frame}
+    
+    \begin{frame}
+    $$
+    \begin{aligned}
+    &=\sum_{i=1}^{n}\sum_{j=1}^{m}[\gcd(i,j)=1][\gcd(j,k)=1]\\
+    &=\sum_{j=1}^{m}[\gcd(j,k)=1]\sum_{i=1}^{n}\sum_{d|\gcd(i,j)}\mu(d)\\
+    &=\sum_{d=1}^{n}[\gcd(d,k)=1]\mu(d)\sum_{j=1}^{m/d}\sum_{i=1}^{n/d}[\gcd(j,k)=1]\\
+    &=\sum_{d=1}^{n}[\gcd(d,k)=1]\mu(d)\lfloor\dfrac{n}{d}\rfloor\sum_{j=1}^{m/d}[\gcd(j,k)=1]
+    \end{aligned}
+    $$
+    
+    
+    这里可以整除分块了，考虑分别计算：
+    $$
+    f(x)=\sum_{i=1}^{x}[\gcd(i,k)=1],\ g(x,k)=\sum_{i=1}^{x}[\gcd(i,k)=1]\mu(i)
+    $$
+    
+    \end{frame}
+    
+    \begin{frame}
+        注意到 $k$ 非常小，由 $\gcd(i,k)=\gcd(i\bmod k,k)$，我们只需要对 $1\sim k$ 中每个数 $x$ $O(k^2)$ 预处理 $F_k(x)$ 表示 $\le x$ 的数中与 $k$ 互质的数的个数，即可 $\mathcal O(1)$ 求解单个 $f$。\\
+        \pause
+        但是 $g$ 不行，因为 $\mu(i)\not=\mu(i+k)$，两者的关系很复杂。
+    $$
+    \begin{aligned}
+    g(x,k)&=\sum_{i=1}^{x}[\gcd(i,k)=1]\mu(i)\\
+    &=\sum_{i=1}^{x}\mu(i)\sum_{d|\gcd(i,k)}\mu(d)\\
+    &=\sum_{d|k}^{x}\mu(d)\sum_{i=1}^{x/d}\mu(id)\\
+    \end{aligned}
+    $$
+    \end{frame}
+    \begin{frame}
+    
+    若 $\gcd(i,d)\not=1$ 则 $\mu(id)=0$，对答案没有贡献，因此当 $gcd(i,d)=1$，可以积性函数展开后面的 $\mu$。
+    
+    $$
+    \begin{aligned}
+    g(x,k)&=\sum_{d|k}^{x}\mu^2(d)\sum_{i=1}^{x/d}\mu(i)[\gcd(i,d)=1]\\
+    &=\sum_{d|k}\mu^2(d)g\left(\frac{x}{d},d\right)\\
+    \end{aligned}
+    $$
+    于是可以递归求解所有的 $g$，初始值 $g(x,1)=\sum_{i=1}^{x}\mu(i)$ 杜教筛即可。
+    
+    复杂度 $\mathcal O(\sqrt{n}\sigma_0(k)+n^{\frac{2}{3}})$
+    \end{frame}
+
+    \subsection{Powerful Number 筛}
+    \begin{frame}{Powerful Number}
+        定义：对于正整数 $n$，记 $n$ 的质因数分解为 
+$n = \prod_{i=1}^{m} p_{i}^{e_{i}}$。$n$ 是 Powerful Number（简称 PN） 当且仅当 $\forall 1 \le i \le m, e_{i} > 1$。
+\pause
+PN 有如下性质：
+\begin{enumerate}
+    \item 所有 PN 都可以表示成 $a^{2}b^{3}$ 的形式。\\
+    证明：若 $e_i$ 是偶数，则将 
+$p_{i}^{e_{i}}$ 合并进 $a^{2}$ 里；若 $e_i$ 为奇数，则先将 $p_{i}^{3}$ 合并进 $b^{3}$ 里，再将 $p_{i}^{e_{i}-3}$ 合并进 $a^{2}$ 里。\\
+    \item $n$ 以内的 PN 有 $O(\sqrt{n})$ 个。
+
+    证明：考虑枚举 $a$，再考虑满足条件的 $b$ 的个数，有 PN 的个数约等于
+    $$
+    \int_{1}^{\sqrt{n}} \sqrt[3]{\frac{n}{x^2}} \mathrm{d}x = O(\sqrt{n})
+    $$
+    
+\end{enumerate}
+\pause
+那么如何求出 $n$ 以内所有的 PN 呢？线性筛找出 $\sqrt{n}$ 内的所有素数，再 DFS 搜索各素数的指数即可。由于 $n$ 以内的 PN 至多有 $O(\sqrt{n})$ 个，所以至多搜索 $O(\sqrt{n})$ 次。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{CodeChef TABRARRAY}
+            给定一棵 $n$ 个点的以 $1$ 为根的有根树，以及一个常数 $K$。你需要往每个节点上填上一个正整数，同时，要求 $a_{fa_i}\bmod a_i=0$，且 $\prod_{i=1}^na_i\le K$。
+
+            求填数的方案数 $\bmod 998244353$。
+
+            $n\le 10^4,K\le 10^{14}$
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        先假设 $a_1=\operatorname{lcm}_{i=2}^na_i$，若当前的 $prod=\prod_{i=1}^na_i=x$，那么对答案的贡献是 $\lfloor\frac{K}{x}\rfloor$。
+        
+        $\ $\\
+
+        此时注意到一个质因数在 $prod$ 里的出现次数要么为 $0$，要么 $\ge 2$，也就是说，此时的 $prod$ 是一个 $\text{Powerful Number}$。这样的 $prod$ 只有 $O(\sqrt{K})$ 个。
+        \pause
+
+        $\ $\\
+        
+        而显然每个质因子是独立的，树形 DP。设 $f_{u,i,j}$ 表示以 $u$ 为根的子树内，$u$ 上填的数 $=i$，子树内所有填的数之和是 $j$，要求 $fa_u$ 填的数 $\ge u$ 填的数的方案数。前缀和优化转移做到 $O(n\log^3 K)$。注意因为我们钦定了 $a_1=\operatorname{lcm}_{i=2}^na_i$，所以一号点的转移略微有点特殊。
+
+        $\ $\\
+
+        然后我们在 dfs 找 $\text{PN}$ 的时候一起把方案数算出来就行了。总复杂度 $O(n\log^3K+\sqrt{K})$。
+    \end{frame}
+
+    \begin{frame}{Powerful Number筛}
+        Powerful Number筛要求存在一个函数 $g$ 满足：\\
+\begin{itemize}
+    \item $g$ 是积性函数。\\
+    \item $g$ 易求前缀和。\\
+    \item 对于质数 $p$，$g(p) = f(p)$。\\
+\end{itemize}
+假设现在要求积性函数 $f$ 的前缀和 
+$$
+F(n) = \sum_{i=1}^{n} f(i)
+$$
+    \end{frame}
+    \begin{frame}
+        首先，构造出一个易求前缀和的积性函数 $g$，且满足对于素数 $p$，$g(p) = f(p)$。记 
+$G(n) = \sum_{i=1}^{n} g(i)$。
+
+然后，构造函数 $h = f / g$，这里的 $/$ 表示狄利克雷卷积除法。根据狄利克雷卷积的性质可以得知 $h$ 也为积性函数，因此 $h(1) = 1$。$f = g \ast h$，这里 $\ast$ 表示狄利克雷卷积。
+
+对于素数 $p$，$f(p) = g(1)h(p) + g(p)h(1) = h(p) + g(p) \implies h(p) = 0$。根据 $h(p)=0$ 和 $h$ 是积性函数可以推出对于非 PN 的数 $n$ 有 $h(n) = 0$，即 $h$ 仅在 PN 处取有效值。
+    \end{frame}
+\begin{frame}
+现在，根据 $f = g \ast h$ 有
+ 
+$$
+\begin{aligned}
+F(n) = \sum_{i = 1}^{n} f(i)&= \sum_{i = 1}^{n} \sum_{d|i} h(d) g\left(\frac{i}{d}\right)\\
+     &= \sum_{d=1}^{n} \sum_{i=1}^{\lfloor \frac{n}{d}\rfloor} h(d) g(i)\\
+     &= \sum_{d=1}^{n} h(d) \sum_{i=1}^{\lfloor \frac{n}{d}\rfloor}  g(i) \\    
+     &= \sum_{d=1}^{n} h(d) G\left(\left\lfloor \frac{n}{d}\right\rfloor\right)\\
+     &= \sum_{\substack{d=1 \\ d \text{ is PN}}}^{n}h(d) G\left(\left\lfloor \frac{n}{d}\right\rfloor\right)
+\end{aligned}
+$$
+\end{frame}
+\begin{frame}
+$O(\sqrt{n})$ 找出所有 PN，计算出所有 $h$ 的有效值。对于 $h$ 有效值的计算，只需要计算出所有 $h(p^c)$ 处的值，就可以根据 $h$ 为积性函数推出 $h$ 的所有有效值。\\
+
+现在对于每一个有效值 $d$，计算 
+$h(d)G\left(\left\lfloor \dfrac{n}{d} \right\rfloor\right)$ 并累加即可得到 $F(n)$。\\
+
+下面考虑计算 $h(p^c)$，一共有两种方法：
+\begin{itemize}
+    \item 直接推出 $h(p^c)$ 仅与 $p,c$ 有关的计算公式，再根据公式计算 $h(p^c)$\\
+    \item 根据 $f = g \ast h$ 有 
+    $f(p^c) = \sum_{i=0}^c g(p^i)h(p^{c-i})$，移项可得 
+    $h(p^c) = f(p^c) - \sum_{i=1}^{c}g(p^i)h(p^{c-i})$，现在就可以枚举素数 $p$ 再枚举指数 $c$ 求解出所有 $h(p^c)$。
+    
+\end{itemize}
+\pause
+复杂度 $O(\sqrt n\log n)$，而且这个上界比较宽松
+\end{frame}
+\begin{frame}{例题}
+    \begin{block}{洛谷P5325 【模板】Min\_25 筛}
+        给定积性函数 $f$，其在质数的幂次的取值为 $f(p^k) = p^k(p^k-1)$，求 
+        $$
+        \sum_{i=1}^{n} f(i)
+        $$
+        $n\le 10^{10}$
+    \end{block}
+\pause
+
+易得 $f(p) = p(p-1) = \operatorname{id}(p)\cdot \varphi(p)$，构造 $g(n) = \operatorname{id}(n)\cdot\varphi(n)$。
+
+使用杜教筛求 $G(n)$，这是基本和组。
+
+之后 $h(p^k)$ 的取值可以枚举计算，这种方法不再赘述。\\
+\pause
+
+此外，此题还可以直接求出 $h(p^k)$ 仅与 $p, k$ 有关的公式
+\end{frame}
+\begin{frame}
+\vspace{-1em}
+$$
+\begin{aligned}
+& f(p^k) = \sum_{i=0}^{k} g(p^{k-i})h(p^i)\iff  p^k(p^k-1) = \sum_{i=0}^{k} p^{k-i}\varphi(p^{k-i}) h(p^i)\\
+\iff & p^k(p^k-1) = \sum_{i=0}^{k} p^{2k-2i-1}(p - 1) h(p^i)\\
+\iff & p^k(p^k-1) = h(p^k) + \sum_{i=0}^{k-1} p^{2k-2i-1}(p - 1) h(p^i)\\
+\iff & h(p^k) = p^k(p^k-1) - \sum_{i=0}^{k-1} p^{2k-2i-1}(p - 1) h(p^i)\\
+\iff & h(p^k) - p^2h(p^{k-1}) = p^{k}(p^k-1)-p^{k+1}(p^{k-1}-1) - p(p-1)h(p^{k-1})\\
+\iff & h(p^k) - ph(p^{k-1}) = p^{k+1} - p^k\\
+\iff & \frac{h(p^k)}{p^k} - \frac{h(p^{k-1})}{p^{k-1}} = p - 1\\
+\end{aligned}
+$$
+再根据 $h(p) = 0$，通过累加法即可推出 $h(p^k) = (k-1)(p-1)p^k$。
+\end{frame}
+% \begin{frame}{LOJ6053. 简单的函数}
+%         $f(p^c)=p \oplus c$（$p$ 为质数，$\oplus$ 表示异或）。求$\sum\limits_{i=1}^n f(i) \bmod (10^9+7)$。\\
+%         \pause
+% $$
+% f(p) =
+% \begin{cases}
+% p + 1 & p = 2 \\
+% p - 1 & \text{otherwise} \\
+% \end{cases}
+% $$
+% 构造 $g$ 为
+
+% $$
+% g(n) =
+% \begin{cases}
+% 3 \varphi(n) & 2 \mid n \\
+% \varphi(n) & \text{otherwise} \\
+% \end{cases}
+% $$
+% 易证 $g(p) = f(p)$ 且 $g$ 为积性函数。
+% \end{frame}
+% \begin{frame}
+% 下面考虑求 $G(n)$。
+% $$
+% \begin{aligned}
+% G(n)
+% &= \sum_{i=1}^{n}[i \bmod 2 = 1] \varphi(i) + 3 \sum_{i=1}^{n}[i \bmod 2 = 0] \varphi(i)\\
+% &= \sum_{i=1}^{n} \varphi(i) + 2\sum_{i=1}^{n} [i \bmod 2 = 0]\varphi(i) \\
+% &= \sum_{i=1}^{n} \varphi(i) + 2\sum_{i=1}^{\lfloor \frac{n}{2} \rfloor} \varphi(2i)
+% \end{aligned}
+% $$
+% 记
+% $S_1(n) = \sum_{i=1}^{n} \varphi(i)$，$S_2(n) = \sum_{i=1}^{n} \varphi(2i)$，则 
+ 
+% $$
+% G(n) = S_1(n) + 2S_2\left(\left\lfloor \dfrac{n}{2} \right\rfloor\right)。
+% $$
+
+% \end{frame}
+% \begin{frame}
+%     当 $2 \mid n$ 时，有
+% $$
+% \begin{aligned}
+% S_2(n)
+% &= \sum_{i=1}^{n} \varphi(2i) \\
+% &= \sum_{i=1}^{\frac{n}{2}} (\varphi(2(2i-1)) + \varphi(2(2i))) \\
+% &= \sum_{i=1}^{\frac{n}{2}} (\varphi(2i-1) + 2\varphi(2i)) \\
+% &= \sum_{i=1}^{\frac{n}{2}} (\varphi(2i-1) + \varphi(2i)) + \sum_{i=1}^{\frac{n}{2}} \varphi(2i) \\
+% &= \sum_{i=1}^{n} \varphi(i) + S_2\left(\frac{n}{2}\right)\\
+% &= S_1(n) + S_2\left(\left\lfloor \frac{n}{2} \right\rfloor\right)\\
+% \end{aligned}
+% $$
+% \end{frame}
+% \begin{frame}
+% 当 $2 \nmid n$ 时，有
+% $$
+% \begin{aligned}
+% S_2(n)
+% &= S_2(n-1) + \varphi(2n) \\
+% &= S_2(n-1) + \varphi(n) \\
+% &= \sum_{i=1}^{n-1} \varphi(i) + S_2\left(\frac{n-1}{2}\right) + \varphi(n)\\
+% &= S_1(n) + S_2\left(\left\lfloor \frac{n}{2} \right\rfloor\right)\\
+% \end{aligned}
+% $$
+% 综上，有 
+% $$ 
+% S_2(n) = S_1(n) + S_2\left(\left\lfloor \dfrac{n}{2} \right\rfloor\right)。
+% $$
+% $S_1$ 可以用杜教筛求，$S_2$ 直接按照公式推，这样 $G$ 也可以求出来了。
+% \end{frame}
+
+\begin{frame}{例题}
+    \begin{block}{SPOJ UDIVSUM - The Sum of Unitary Divisors}
+
+对于一个自然数 $n$，如果 $d\mid n$，且 $\gcd \left(d,\dfrac{n}{d}\right)=1$，则称 $d$ 为 $n$ 的“元因子”。
+
+我们定义函数 $\sigma^*(n)$ 表示 $n$ 的元因子之和。例如 $\sigma^*(1)=1$，$\sigma^*(2)=3$，$\sigma^*(6)=12$。
+
+$$S(n)=\sum^n_{i=1}\sigma^*(i)$$
+
+现给定 $n$，求 $S(n) \bmod 2^{64}$。
+
+    \end{block}
+\end{frame}
+\begin{frame}
+    $\sigma^{\ast}$ 的积性容易验证，则仅考虑其在质数幂处的值
+
+$$
+\sigma^{\ast}(p^k)=\sum_{i=0}^kp^i[\gcd(p^i, p^{k-i})=1]=\sum_{i=0}^k p^i[\min(i, k-i)=0]=p^k+[k>0]
+$$
+
+由于该积性函数具有很好的性质：$\sigma^{\ast}(p)=p+1=\sigma(p)$ ，故考虑 Powerful Number 筛：
+
+令积性函数 $h$ 满足 $\sigma^{\ast}=\sigma\ast h$
+$$
+\begin{aligned} \sigma^{\ast}(p^k)&=\sum_{i=0}^k\sigma(p^i)h(p^{k-i}) \end{aligned}
+$$
+
+
+易得 
+$$
+h(p^k)=\begin{cases} \begin{aligned} -p&, k=2 \\ 0 &, k\neq 2 \end{aligned} \end{cases}, k>0
+$$
+\end{frame}
+\begin{frame}
+    由 Powerful Number 筛，有：
+    $$
+    \begin{aligned} S(n)&=\sum_{i=1}^n\sigma^{\ast}(i) \\ 
+        &=\sum_{i=1}^n\sum_{d\mid i} h(d) \sigma({i\over d}) \\
+        &=\sum_{d=1}^n h(d)\sum_{i=1}^n[d\mid i] \sigma({i\over d}) \\
+        &=\sum_{d \in PN} h(d)\sum_{i=1}^{n/d} \sigma(i) \\
+        &=\sum_{d \in PN}  h(d)S_1(n/d) 
+        \end{aligned}
+    $$
+    而  $S_1(n)=\sum_{i=1}^n\sigma(i)=\sum_{i=1}^n \sum_{d\mid i}d=\sum_{d=1}^n d\cdot (n/d)$
+
+    对右边整除分块即可 $O(\sqrt{n})$ 时间内求解 $S_1(n)$，总复杂度 $O(\sqrt n\log n)$
+\end{frame}
+
+    \section{Stern-Brocot 树}
+    \subsection{Stern-Brocot 树}
+    \begin{frame}{Stern-Brocot 树}
+        Stern-Brocot 树是一种维护最简分数的数据结构。
+
+        Stern-Borcot 树可以在迭代构造第 $k$ 阶 Stern-Brocot 序列的过程中得到。第 $0$ 阶 Stern-Brocot 序列由两个简单的分数组成：
+        $$
+        \frac{0}{1},\ \frac{1}{0}.
+        $$
+
+        此处的 $\frac{1}{0}$ 严格意义上并不算是有理分数，可以理解为表示 $\infty$ 的最简分数。
+
+        在第 $k$ 阶 Stern-Brocot 序列相邻的两个分数 $\frac{a}{b}$ 和 $\frac{c}{d}$ 中间插入
+        $\frac{a+c}{b+d}$，就得到第 $k+1$ 阶 Stern-Brocot 序列。前几次迭代的结果如下：
+
+        $$
+        \begin{array}{ccccccccc}
+        &&&\dfrac{0}{1}, & \dfrac{1}{1}, & \dfrac{1}{0} &&&\\\\
+        &&\dfrac{0}{1}, & \dfrac{1}{2}, & \dfrac{1}{1}, & \dfrac{2}{1}, & \dfrac{1}{0} &&\\\\
+        \dfrac{0}{1}, & \dfrac{1}{3}, & \dfrac{1}{2}, & \dfrac{2}{3}, & \dfrac{1}{1}, & \dfrac{3}{2}, & \dfrac{2}{1}, & \dfrac{3}{1}, & \dfrac{1}{0}
+        \end{array}
+        $$
+    \end{frame}
+    \begin{frame}
+        用树来表示，就是 Stern-Brocot 树
+        \begin{center}
+            \includegraphics[scale=0.5]{sbtree.png}
+        \end{center}
+    \end{frame}
+    \begin{frame}
+        每个点上有一个"三元组"$(a,b,c)$，$\left(\dfrac{0}{1},\dfrac{1}{1},\dfrac{1}{0}\right)$ 作为根节点，且在每个节点 $\left(\dfrac{a}{b},\dfrac{p}{q},\dfrac{c}{d}\right)$ 后
+$\left(\dfrac{a}{b},\dfrac{a+p}{b+q},\dfrac{p}{q}\right)$ 为其左儿子，$\left(\dfrac{p}{q},\dfrac{p+c}{q+d},\dfrac{c}{d}\right)$ 为其右儿子
+
+        \pause
+
+        根据构造，Stern-Brocot 树显然是分数的\textbf{二叉搜索树}，即树上节点的中序遍历得到的分数序列是递增的。除此之外，他还满足如下两个重要性质：
+        \begin{itemize}
+            \item 最简性：Stern-Brocot 树构造出来的所有分数都是最简分数
+            \item 完全性：Stern-Brocot 树能构造出来任意一个正的最简分数
+        \end{itemize}
+
+        \pause
+
+        完全性是显然的，因为往子树搜索一定会让分子或者分母变大，这样对于任意一个最简分数 $\frac{p}{q}$，搜索次数是有限的。
+
+        下面证明最简性。
+    \end{frame}
+
+    \begin{frame}{最简性的证明}
+        三元组 $\left(\dfrac{a}{b},\dfrac{a+c}{b+d},\dfrac{c}{d}\right)$ 的构造意味着每个 Stern-Brocot 树上的节点都对应着一个矩阵
+$$
+S = \begin{pmatrix}
+b & d\\
+a & c
+\end{pmatrix}.
+$$
+
+由数学归纳法，$\frac ab$ 和 $\frac cd$ 其中一个是上一层的分数，不妨设 $\frac ab$ 是最简分数，即 $\gcd(a,b) = 1$，我们证明 $\gcd(c,d) = 1$。
+
+\pause
+
+Stern–Brocot 树的根节点是单位矩阵 $I$，而向左子节点移动和向右子节点移动则分别对应将当前节点矩阵右乘以矩阵
+$$
+L=\begin{pmatrix}
+1 & 1 \\
+0 & 1
+\end{pmatrix},\ R=\begin{pmatrix}
+1 & 0 \\
+1 & 1
+\end{pmatrix}.
+$$
+而我们有 $\det I=\det L=\det R = 1$，于是 $S$ 是 $I$ 和一堆 $L$ 和 $R$ 之积，则 $\det S =1$
+    \end{frame}
+
+    \begin{frame}
+于是
+$$
+bc-ad = \begin{vmatrix}
+b & d\\
+a & c
+\end{vmatrix} = 1
+$$
+于是有
+$$
+\gcd(c,d)\mid 1\implies \gcd(c,d) = 1
+$$
+    \end{frame}
+
+    \begin{frame}{Stern-Brocot 树上查找}
+        \begin{itemize}
+            \item 在 Stern-Brocot 树上查找一个确定的分数 $\frac{p}{q}$
+        \end{itemize}
+        每次暴力往左/右跳的复杂度是 $O(p+q)$ 的，无法接受。
+
+        这个复杂度高的原因是我们经常会连续往左/往右跳很多步，而一次往左跳再接一次往右跳（或者一次往右跳接一次往左跳）一定会让分子分母都至少变为原来的两倍。所以“拐弯”的次数是 $O(\log (p+q))$ 的。
+
+        只要我们能快速确定每次拐弯的位置就行了。
+
+        \pause
+
+        如果要查找的分数 $\dfrac{p}{q}$ 落入 $\dfrac{a}{b}$ 和 $\dfrac{c}{d}$ 之间，那么连续 $t$ 次向右移动时，右侧边界保持不动，而左侧节点移动到 $\dfrac{a+tc}{b+td}$ 处；反过来，连续 $t$ 次向左移动时，左侧边界保持不动，而右侧节点移动到 $\dfrac{ta+c}{tb+d}$ 处。因此，可以直接通过 $\dfrac{a+tc}{b+td}<\dfrac{p}{q}$ 或 $\dfrac{p}{q}<\dfrac{ta+c}{tb+d}$ 解出向右和向左移动的次数。
+
+        复杂度 $O(\log(p+q))$。
+    \end{frame}
+    \begin{frame}
+        \begin{itemize}
+            \item 大部分时候，我们在树上查找的分数其实是不确定的，比如我们需要根据当前分数的值跑一个二分查找的检验算法来决定具体是往左走还是往右走。
+        \end{itemize}
+
+        这个时候，把刚才通过解方程来确定次数的部分改为二分连续向左/向右的次数 $t$ 即可。复杂度 $O(\log^2(p+q))$。
+    \end{frame}
+    \subsection{例题}
+    \begin{frame}{例题}
+        \begin{block}{洛谷P5179 Fraction}
+
+给你四个正整数 $a,\,b,\,c,\,d$ ，求一个最简分数 $\frac{p}{q}$ 满足 $\frac{a}{b} < \frac{p}{q} < \frac{c}{d}$。
+
+若有多组解，输出 $q$ 最小的一组，若仍有多组解，输出 $p$ 最小的一组。
+
+$T\leqslant 500, a,b,c,d\leqslant 10^9$
+        \end{block}
+        \pause
+
+        在 Stern-Brocot 树上二分，连续移动次数可以二分算出来，也可以列出不等式解出来，复杂度 $O(T\log^2 a)$ 或者 $O(T\log a)$。
+    \end{frame}
+
+    \begin{frame}{例题}
+        \begin{block}{「BalkanOI 2003」Farey 序列}
+        求分子和分母都 $\leq n$ 的\textbf{最简真分数}组成的序列中第 $k$ 小的数。
+
+        $2 \leq n \leq 4 \times 10^4$（可加强到 $2\times 10^8$），$1 \leq k \leq$ 符合条件的分数的个数。
+        \end{block}
+        \pause
+        在 Stern-Brocot 树上二分，剩下的就是类似二分答案地，对于一个分数 $\frac{x}{y}$，我们需要计算 $\le \frac{x}{y}$ 的分子和分母都 $\leq n$ 的最简真分数数量。
+    \end{frame}
+
+    \begin{frame}
+        这个数量为
+        $$
+        \begin{aligned}
+            &\sum_{i=1}^n\sum_{j=1}^i[\gcd(i,j) = 1]\left[\frac ji\le \frac xy\right]\\
+            =\,& \sum_{i=1}^n\sum_{j=1}^u\sum_{d\mid gcd(i,j)}\mu(d)\left[\frac ji\le \frac xy\right]\\
+            =\,& \sum_{d=1}^n\mu(d)\sum_{i=1}^{n/d}\sum_{j=1}^i\left[\frac ji\le \frac xy\right]
+        \end{aligned}
+        $$
+        $\left[\frac ji\le \frac xy\right]$ 等价于 $\left[j\le \frac{ix}{y}\right]$，于是
+        $$
+        =\sum_{d=1}^n\mu(d)\sum_{i=1}^{\frac{n}{d}}\left\lfloor\frac{ix}{y}\right\rfloor
+        $$
+    \end{frame}
+
+    \begin{frame}
+        $$
+        \sum_{d=1}^n\mu(d)\sum_{i=1}^{\frac{n}{d}}\left\lfloor\frac{ix}{y}\right\rfloor
+        $$
+        整除分块，$\mu$ 的前缀和用杜教筛求，预处理 $O(n^{\frac 23})$，单次询问 $O(1)$。
+
+        后面的部分是一个类欧，整除分块，对于每个 $\frac{x}{y}$，需要做 $O(\sqrt n)$ 次类欧，每次类欧 $O(\log n)$。
+
+        由于在 Stern-Brocot 树上二分，每一个连续段需要 $O(\log n)$ 二分确定连续段长度，所以总复杂度为 $O(n^{\frac 23}+\sqrt n\log^3n)$。
+    \end{frame}
+
+    \section{完}
+	\begin{frame}
+		\begin{center}
+			\begin{Huge}
+				完$\ $结$\ $撒$\ $花\\
+			\end{Huge}
+			\ \\
+			\includegraphics[scale=0.35]{emojimix.png}
+		\end{center}
+	\end{frame}
+\end{document}
+

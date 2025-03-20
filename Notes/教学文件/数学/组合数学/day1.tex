@@ -1,0 +1,492 @@
+\documentclass{beamer}
+
+\usetheme{Berlin}
+\usecolortheme{seahorse}
+
+\usepackage{xeCJK}
+\usepackage{fontspec}
+
+\newfontfamily\chalkd{DejaVu Sans}
+
+%\setbeamerfont{normal text}{family = \chalkd, series = \mdseries}
+%\setbeamerfont{alerted text}{family = \chalkd,series = \bfseries}
+%\setbeamerfont{frametitle}{family = \chalkd,series=\bfseries}
+%,size={\fontsize{32}{36}}
+%\AtBeginDocument{\usebeamerfont{normal text}}
+
+\usefonttheme[onlymath]{serif}
+
+\setlength{\parindent}{2em}
+
+%Information to be included in the title page:
+
+\title{组合数学}
+\author{XKError}
+\date{2024.7.?}
+
+\begin{document}
+
+\logo{\includegraphics{logo.png}}
+
+\frame{\titlepage}
+
+\section{前置内容}
+
+\begin{frame}
+\frametitle{一些约定}
+\begin{itemize}
+\item $n!$ 表示 $n$ 的阶乘
+\item $n^{\underline{k}}$ 表示 $n$ 的 $k$ 次下降幂（上升幂同理）
+\item $A_m^n$ 表示 $m$ 个元素里取 $n$ 个组成排列的方案数
+\item $C_m^n$ 和 $\binom m n$ 表示 $m$ 个元素里取 $n$ 个组成集合的方案数
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{基本原理}
+
+\begin{itemize}
+\item 加法原理：如果完成一件事有 $n$ 类方法，第 $i$ 类有 $a_i$ 种方法，那么完成这件事总共有 $\sum{a_i}$ 种方法
+\item 乘法原理：如果完成一件事有 $n$ 个步骤，第 $i$ 步有 $a_i$ 种方法，那么完成这件事总共有 $\prod{a_i}$ 种方法
+\end{itemize}
+
+\end{frame}
+
+\section{组合数}
+
+\begin{frame}
+\frametitle{表达式}
+
+    $\binom n m = \frac{n!}{(n-m)!m!} = \frac{n^{\underline m}}{m!}$
+
+    $ $
+    \pause
+    
+    证明：先从 $n$ 个物品里依次取出 $m$ 个，方案数是 $n^{\underline m}$, 每种所求方式都被计数了 $m!$ 次，所以共有 $\frac {n!}{(n-m)!m!}$ 种方案。
+
+    $ $
+    \pause
+    
+    我们可以根据这个形式将定义域推广：$n\in\mathbb{R}，m\in\mathbb{Z}$。额外规定 $\binom nm = 0,m<0$ 以及 $0!=0^{\underline 0} = 1$
+
+\end{frame}
+
+\begin{frame}{递推式}
+
+    $\binom n m = \binom {n-1} {m-1} + \binom {n-1} m$
+    
+    $ $
+    \pause
+    
+    证明:考虑最后一个物品，要么取出来，那么要从前 $n-1$ 个物品中取 $m-1$ 个；要么不取，那么要从前 $n-1$ 个物品中取 $m$ 个。所以根据加法原理，就有上式成立。
+    
+\end{frame}
+
+\begin{frame}{对称性}
+
+    $\binom n m = \binom n {n-m}$
+
+    $ $
+    \pause 
+
+    证明：$\binom n m = \frac{n!}{(n-m)!m!} = \frac {n!}{(n-(n-m))!(n-m)!}=\binom n {n-m}$
+    
+\end{frame}
+
+\begin{frame}{吸收/相伴等式}
+
+    $\frac{\binom n m}{\binom {n-1}{m-1}} = \frac n m$
+
+    $ $
+    
+    $\frac{\binom n m}{\binom {n-1}{m}} = \frac n {n - m}$
+
+    $ $
+    
+    $\frac{\binom n m}{\binom {n}{m-1}} = \frac {n - m + 1} m$
+
+    $ $
+    \pause
+
+    证明：带入表达式即可。
+    
+\end{frame}
+
+\begin{frame}{上指标反转}
+
+    $\binom n m = (-1)^m\binom {m-n-1}{m}$
+
+    $ $
+    \pause
+
+    证明：$\binom nm = \frac {n^{\underline m}}{m!} = (-1)^m\frac{(-n)^{\overline m}}{m!}$
+
+    $ $
+    
+    $=(-1)^m\frac{(m-n-1)^{\underline m}}{m!} = (-1) ^ m \binom {m - n - 1} m$
+    
+\end{frame}
+
+\begin{frame}{三项式系数恒等式}
+
+    $\binom n m \binom m k = \binom n k \binom {n - k} {m - k}$
+
+    $ $
+    \pause
+
+    证明1：从 $n$ 个物品中先选出 $m$ 个，再从这 $m$ 个中选 $k$ 个，等价于先从 $n$ 个中选出 $k$ 个，再从剩下的 $n - k$ 个中选另外 $m - k$ 个。
+
+    $ $
+    \pause
+
+    证明2：$\binom n m \binom m k = \frac {n!} {(n - m)!(m - k)! k!} = \binom n k \binom {n - k}{m - k}$
+
+    $ $
+    \pause 
+    
+    观察证明2，我们可以得出另外一个东西，稍后再讲。
+    
+\end{frame}
+
+\begin{frame}{上指标求和}
+
+    $\sum\limits_{i = 0} ^n {\binom i m} = \binom {n + 1} {m + 1}$
+
+    $ $
+    \pause
+
+    证明：$\sum\limits_{i = 0} ^n {\binom i m} = \frac 1 {m!} \sum\limits_{i = 0} ^n {i ^{\underline m}} = \frac 1 {m!} \frac {n^{\underline{m + 1}}}{m + 1} = \frac {n^{\underline {m+1}}}{(m+1)!} = \binom {n + 1} {m + 1}$
+    
+\end{frame}
+
+\begin{frame}{练习一}
+
+    $\sum\limits_{i = 0} ^m {\binom {n + i}{i}}$
+
+    $ $
+    \pause
+
+    $\sum\limits_{i = 0} ^m {\binom {n + i}i} = \sum\limits_{i = 0} ^m {\binom {n + i}n} =\binom {n + m + 1} {n + 1}$
+    
+\end{frame}
+
+\begin{frame}{下指标求和（整行）}
+
+    $\sum\limits_{i = 0} ^n {\binom n i} = 2 ^n$
+
+    $ $
+    \pause
+
+    证明：从 $n$ 个物品中取出任意个数个物品的方案数，也就是大小为 $n$ 的集合的子集个数。
+
+    $ $
+    \pause
+
+    令人悲伤的是，我们没有简洁的办法求出更一般的前缀和，一般做法是分块打表，但是也有一些特殊的技巧可以使用。
+    
+\end{frame}
+
+\begin{frame}{例题一 HDU6333}
+    
+    给 $q$ 组询问，每次给出 $n,m$，求 $\sum\limits_{i=0}^m {\binom n i}$
+
+    $q,n,m\leq 10^5$，对 $10^9 + 7$ 取模。
+
+    $ $
+    \pause
+
+    把 $n,m$ 看成区间，使用莫队算法：
+    \begin{itemize}
+        \item $n \rightarrow n + 1$:$\sum\limits_{i=0}^m{\binom {n+1} i} = \sum\limits_{i=0}^m{\binom ni+\binom n {i - 1}} = 2\sum\limits_{i=0}^m \binom ni - \binom nm$
+        \item $m \rightarrow m + 1$:$\sum\limits_{i=0}^{m+1}{\binom n i} = \sum\limits_{i=0}^m{\binom ni} + \binom n{m + 1}$
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{下指标卷积 | 范德蒙德卷积}
+
+    $\sum\limits_{i = 0} ^{k} {\binom ni \binom m{k-i}} = \binom {n + m}k$
+
+    $ $
+    \pause
+
+    证明：从 $n$ 个中选 $i$ 个，从 $m$ 个中选 $k - i$ 个，实际上就是从 $n + m$ 个中选 $k$ 个。
+    
+\end{frame}
+
+\begin{frame}{练习二 | 下指标点积}
+
+    $\sum\limits_{i=0}^m {\binom ni\binom mi}$
+
+    $ $
+    \pause
+
+    $\sum\limits_{i = 0} ^m {\binom ni\binom mi} = \sum\limits_{i = 0}^m{\binom ni\binom m{m-i}} = \binom {n + m}{m}$
+
+\end{frame}
+
+\begin{frame}{上指标卷积}
+
+    $\sum\limits_{i = 0} ^ n{\binom i a\binom {n-i} b} = \binom {n + 1}{a + b + 1}$
+
+    $ $
+    \pause
+
+    证明：左式相当于把 $n$ 个物品分成左右两部分，然后左右分别选 $a$、$b$ 个，相当于选出一个间隔和 $a+b$ 个物品。如果把间隔也看做一个物品的话，相当于从 $n+1$ 个物品中选 $a+b+1$ 个物品。
+    
+\end{frame}
+
+\begin{frame}{练习三}
+
+    $\sum\limits_{i = m}^n{(-1)^i\binom ni \binom im}$
+
+    $ $
+    \pause
+
+    $\sum\limits_{i = m} ^n{(-1)^i \binom ni \binom im} = \sum\limits_{i = m} ^n{(-1)^i\binom nm\binom {n - m} {i - m}}$ 
+    
+    $ $
+    
+    $ = \binom nm\sum\limits_{i = m}^{n} {(-1)^i\binom {n - m}{i - m}} = \binom nm \sum\limits_{i = 0} ^{n - m}{(-1)^{i + m}\binom{n - m} i} $ 
+
+    $ $
+    
+    $= (-1)^m[n = m]$
+    
+\end{frame}
+
+\begin{frame}{例题二 | 有标号连通图计数}
+
+    如题，$n\leq10^3$。
+
+    $ $
+    \pause
+
+    记 $f_i$ 表示 大小为 $i$ 的有标号连通图的个数，$g_i$ 表示 大小为 $i$ 的有标号图的个数，则 $g_i = 2 ^{\binom n2}$。
+
+    考虑简单容斥，求 大小为 $i$ 的有标号不连通图的个数：假设 $1$ 号点所在连通块大小为 $j,(j<i)$，则有 $f_i = g_i - \sum\limits_{j = 1}^{i - 1}{\binom {i - 1}{j - 1}f_j}$。
+
+    $O(n^2)$ dp 即可。
+
+    $ $
+    \pause
+
+    值得一提的是，此题可以利用多项式做到 $O(n\log^2{n})$ 甚至 $O(n\log{n})$，不过那是后话了。
+    
+\end{frame}
+
+\begin{frame}{例题三 | 幼儿园篮球题}
+    
+    给定 $L$, $T$ 次询问，每次给 $n,m,k$，求：
+    
+    $\sum\limits_{i=0}^k{\binom mi\binom{n-m}{k-i}i^L}$
+
+    数据范围：$T\leq200,n,m,k\leq2\times10^7,L\leq2\times10^5$
+
+    $ $
+    \pause
+
+    Hint:$x^n=\sum\limits_{i = 0}^n{{n\brace i}x^{\underline i}}$
+    
+\end{frame}
+
+\begin{frame}{例题三 | 幼儿园篮球题}
+
+    $\sum\limits_{i=0}^k{\binom mi\binom{n-m}{k-i}i^L} = \sum\limits_{i = 0}^k{\binom mi\binom {n-m}{k-i}\sum\limits_{j=0}^L{{L\brace j}i^{\underline j}}}$
+
+    $ $
+    
+    $=\sum\limits_{i = 0}^k{\binom mi\binom {n-m}{k-i}\sum\limits_{j=0}^L{{L\brace j}\binom ij j!}} = \sum\limits_{j = 0}^L{\sum\limits_{i = 0}^k{j!{L\brace j}\binom mi\binom ij\binom{n-m}{k-i}}}$
+
+    $ $
+
+    $=\sum\limits_{j = 0}^L{\sum\limits_{i = 0}^k{j!{L\brace j}\binom mj\binom {m-j}{i-j}\binom{n-m}{k-i}}}=\sum\limits_{j = 0}^L{j!{L\brace j}\binom mj\sum\limits_{i = 0}^k{\binom {m-j}{i-j}\binom{n-m}{k-i}}}$
+
+    $ $
+
+    $=\sum\limits_{j = 0}^L{j!{L\brace j}\binom mj\binom {n-j}{k-j}}$
+
+    预处理一下斯特林数和组合数就可以 $O(L)$ 每次询问了。
+    
+\end{frame}
+
+\begin{frame}{Lucas 定理}
+
+    $\binom nm\equiv\binom{\lfloor \frac np\rfloor}{\lfloor \frac mp\rfloor}\binom{n\bmod p}{m\bmod p}\pmod p$
+
+    $ $
+    \pause
+
+    证明：首先注意到 $\binom pm \bmod p = [m=1\vee m=p]$
+
+    $ $
+
+    所以有 $(a+b)^p\equiv a^p+b^p\pmod p$
+
+    $ $
+    \pause
+
+    $\binom nm =[x^m](1+x)^n$，于是 $(1+x)^n = (1+x)^{p\lfloor\frac np\rfloor}(1+x)^{n\bmod p}$
+
+    $ $
+    \pause
+
+    又因为 $(1+x)^{p\lfloor\frac np\rfloor}\equiv(1+x^p)^{\lfloor\frac np\rfloor}\pmod p$，只有产生 $p$ 倍数处的贡献
+
+    $ $
+    \pause
+
+    而 $(1+x)^{n\bmod p}$ 只在 $0\rightarrow p-1$ 处产生贡献，所以每个位置刚好被贡献一次。
+     
+\end{frame}
+
+\begin{frame}{Lucas 定理}
+
+    故 $m$ 处所得贡献为 $\binom{\lfloor \frac np\rfloor}{\lfloor \frac mp\rfloor}\binom{n\bmod p}{m\bmod p}\bmod p$
+\end{frame}
+
+\section{二项式定理}
+
+\begin{frame}{二项式定理}
+
+    $(x+y)^n = \sum\limits_{i=0}^n{\binom ni x^{n-i}y^i}$
+
+    $ $
+    \pause
+
+    证明：考虑组合意义，左边相当于 $n$ 个 (x+y) 相乘，均为 1 次，所以最终一定得到 $\sum\limits_{i=0}^n{c_i x^{n-i}y^i}$，其中 $x^{n-i}y^i$ 这一项相当于从 $n-i$ 个 (x+y) 中选择 $x$，剩下的选 $y$，故系数 $c_i=\binom ni$。
+
+    $ $
+    \pause
+
+    值得注意的是，上升幂和下降幂也有类似定理： $(x+y)^{\underline n} = \sum\limits_{i=0}^n{\binom ni x^{\underline {n-i}}y^{\underline i}}$
+
+    $ $
+    \pause
+
+    证明：数学归纳法。
+    
+\end{frame}
+
+\begin{frame}{练习四 | 牛顿级数}
+
+    记 $\Delta^n a$ 表示数列 $a$ 差分 $n$ 次后的数列，那么有：
+
+    $\Delta^n a_i = \sum_{j = 0} ^ n{(-1)^j\binom nj a_{i-j}}$
+
+    $ $
+    \pause
+
+    证明：数学归纳法证明大家都会，今天来点大家想看的东西。
+
+    定义平移算子 $\mathrm{E}$，不变算子 $\mathrm I$，那么差分算子 $\Delta = \mathrm{I - E}$。
+    
+    所以
+    
+    $(\Delta^n a)_i = (\mathrm{I-E})^na_i=[(\sum\limits_{j=0}^n{(-1)^j\binom nj\mathrm{I^{n-j}E^j}})a]_i$
+    
+    $ $
+    
+    $=\sum\limits_{j=0}^n{(-1)^j\binom nja_{i-j}}$
+\end{frame}
+
+\section{错排}
+
+\begin{frame}{错排}
+
+    记 $f_n$ 表示长度为 $n$ 的，且不存在 $p_i=i$ 的排列的个数。
+
+    $ $
+    \pause
+
+    $p_n = (n-1)(p_{n-1}+p_n)$
+
+    $ $
+    \pause
+
+    证明：考虑物品 $1$ 有 $n-1$ 种放法，假如放到了位置 $k$，那位置 $k$ 处的物品有两种类型的放法：要么放在位置 $1$，那么剩下物品的放法就有 $f_{n-2}$；要么放在除 $1$ 外的其他位置，那么让最后排完了时排在 $1$ 位置的物品与排在 $k$ 位置的物品 $1$ 交换，再不看 $1$ 位置，就得到了一个 大小为 $n-1$ 的错排，也就是这种情况下的每种方案可以与大小为 $n-1$ 的错排一一对应，故这种情况有 $f_{n-1}$ 种方案。
+    
+\end{frame}
+
+\begin{frame}{例题四 | P7438 更简单的排列计数}
+    
+    记 $cyc_{\pi}$ 表示将排列 $\pi$ 看成置换，其中循环的个数。
+
+    给定 $n,k$ 和一个 $k-1$ 次多项式 $F$，对 $1\leq m\leq n$求
+    
+    $\sum\limits_{\pi} F(cyc_{\pi})$
+
+    其中 $|\pi| = m$,且 $\pi$ 为错排。
+
+    数据范围：$n\leq6\times10^5,k\leq100$，对 $998244353$ 取模。
+
+    $ $
+    \pause
+
+    Hint:$x^n=\sum\limits_{i = 0}^n{{n\brace i}x^{\underline i}}$
+    
+\end{frame}
+
+\begin{frame}{例题四 | P7438 更简单的排列计数}
+
+    首先把多项式部分处理一下，有：
+
+    $\sum\limits_{\pi}\sum\limits_{i=0}^{k-1}{f_icyc_{\pi}^i}=\sum\limits_{\pi}\sum\limits_{i=0}^{k-1}f_i\sum\limits_{j=0}^{i}{{i\brace j}\binom {cyc_{\pi}}j j!}$
+
+    $ $
+    
+    $=\sum\limits_{j=0}^{k-1}j!\sum\limits_{\pi}{\binom {cyc_{\pi}}j}\sum\limits_{i=j}^{k-1}f_i{i\brace j}$
+
+    $ $
+    \pause
+
+    其中 $\sum\limits_{i=j}^{k-1}f_i{i\brace j}$ 可以 $O(k^2)$ 预处理。
+    
+\end{frame}
+
+\begin{frame}{例题四 | P7438 更简单的排列计数}
+    
+    记 $p_{t,i}=\sum\limits_{|\pi|=t}{\binom {cyc_{\pi}}i}$，再记 $c_{t,i}$ 表示 $|\pi|=t,cyc_{\pi}=i$ 的 $\pi$ 的个数。
+
+    $ $
+    \pause
+
+    首先有 $c_{t,i} = (t-1)(c_{t-2,i-1} + c_{t-1,i})$
+
+    $ $
+    \pause
+
+    因为根据错排数的递推式的证明可以知道，第一种情形 $1$ 和 $k$ 构成了一个循环，所以剩下物品构成 $i-1$ 个循环；第二种情形循环数没变，所以剩下物品仍构成 $i$ 个循环。
+    
+\end{frame}
+
+\begin{frame}{例题四 | P7438 更简单的排列计数}
+
+    容易发现 $p_{t,i}=(t-1)(p_{t-1,i}+p_{t-2,i}+p_{t-2,i-1})$
+
+    $ $
+    \pause
+
+    $p_{t,i}=\sum\limits_{|\pi|}{\binom {cyc_{\pi}}i}=\sum\limits_{j=1}^{t}{\binom ji c_{t,j}}=(m-1)\sum\limits_{j=1}^t{\binom ji (c_{t-1,j}+c_{t-2,j-1})}$
+
+    $ $
+    \pause
+    
+    $=(m-1)\sum\limits_{j=1}^t{\binom jic_{t-1,j} +\binom{j-1}{i}c_{t-2,j-1}+\binom{j-1}{i-1}c_{t-2,j-1}}$
+
+    $ $
+    \pause
+
+    $=(m-1)(p_{t-1,i}+p_{t-2,i}+p_{t-2,i-1})$
+
+    $ $
+    \pause
+
+    于是 $O(nk+k^2)$ 预处理一下之后，对于每个 $m$ $O(k)$ 求答案即可。
+    
+\end{frame}
+
+\end{document}
+
