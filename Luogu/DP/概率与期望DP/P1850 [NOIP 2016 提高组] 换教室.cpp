@@ -54,9 +54,6 @@ inline void solve(){
     for(int i=2;i<=n;++i){
         dp[i][0][0]=dp[i-1][0][0]+dis[c[i-1][0]][c[i][0]];
         for(int j=1;j<=min(i,m);++j){
-            //int C1 = c[i - 1][0], C2 = c[i - 1][1], C3 = c[i][0], C4 = c[i][1];
-            //dp[i][j][0] = min(dp[i][j][0], min(dp[i - 1][j][0] + dis[C1][C3], dp[i - 1][j][1] + dis[C1][C3] * (1 - k[i - 1]) + dis[C2][C3] * k[i - 1]));
-            //dp[i][j][1] = min(dp[i][j][1], min(dp[i - 1][j - 1][0] + dis[C1][C3] * (1 - k[i]) + dis[C1][C4] * k[i], dp[i - 1][j - 1][1] + dis[C2][C4] * k[i] * k[i - 1] + dis[C2][C3] * k[i - 1] * (1 - k[i]) + dis[C1][C4] * (1 - k[i - 1]) * k[i] + dis[C1][C3] * (1 - k[i - 1]) * (1 - k[i])));
             dp[i][j][0]=min(dp[i][j][0],min(dp[i-1][j][0]+dis[c[i-1][0]][c[i][0]],dp[i-1][j][1]+(1-k[i-1])*dis[c[i-1][0]][c[i][0]]+k[i-1]*dis[c[i-1][1]][c[i][0]]));
             dp[i][j][1]=min(dp[i][j][1],min(dp[i-1][j-1][0]+(1-k[i])*dis[c[i-1][0]][c[i][0]]+k[i]*dis[c[i-1][0]][c[i][1]],dp[i-1][j-1][1]+(1-k[i-1])*(1-k[i])*dis[c[i-1][0]][c[i][0]]+(1-k[i-1])*k[i]*dis[c[i-1][0]][c[i][1]]+(1-k[i])*k[i-1]*dis[c[i-1][1]][c[i][0]]+k[i-1]*k[i]*dis[c[i-1][1]][c[i][1]]));
         }
