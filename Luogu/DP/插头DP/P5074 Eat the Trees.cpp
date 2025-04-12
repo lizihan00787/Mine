@@ -23,11 +23,11 @@ template<typename Ty,typename ...Args>
 inline void read(Ty &x,Args &...args) {read(x);read(args...);}
 int T=1;
 
-const int N=14;
+const int N=15;
 
-int n,m,S;
+ll n,m,S;
 
-int a[N][N],dp[N][N][10010];
+ll a[N][N],dp[N][N][10010];
 
 inline void solve(){
     read(n,m);
@@ -42,10 +42,20 @@ inline void solve(){
             for(int s=0;s<S;++s){
                 int p=(1<<j),q=(1<<(j-1));
                 int x=s&p,y=s&q;
-                if(!a[i][j]) if(!x && !y) dp[i][j][s]+=dp[i][j-1][s];
-                else if(!x && y && a[i+1][j]) dp[i][j][s]+=dp[i][j-1][s^q^p]+dp[i][j-1][s];
-                else if(x && y && a[i+1][j] && a[i][j+1]) dp[i][j][s]+=dp[i][j-1][s^q^p];
+                if(!a[i][j]){if(!x&&!y) dp[i][j][s]+=dp[i][j-1][s];}
+                else if(!x&&y&&a[i+1][j]) dp[i][j][s]+=dp[i][j-1][s^p^q]+dp[i][j-1][s]; 
+                else if(x&&y&&a[i+1][j]&&a[i][j+1]) dp[i][j][s]+=dp[i][j-1][s^p^q];
+                else if(!x&&!y) dp[i][j][s]+=dp[i][j-1][s^p^q];
+                else if(x&&!y&&a[i][j+1]) dp[i][j][s]+=dp[i][j-1][s^p^q]+dp[i][j-1][s]; 
             }
+    }
+    printf("%lld\n",dp[n][m][0]);
+    for(int i=0;i<=n;++i){
+        for(int j=0;j<=m;++j){
+            for(int s=0;s<=S;++s){
+                dp[i][j][s]=0;
+            }
+        }
     }
 }
 
