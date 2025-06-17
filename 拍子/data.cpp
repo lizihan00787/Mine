@@ -26,7 +26,11 @@ inline void read(P &x){
     x=res*f;
 }
 int T=1;
-mt19937 rnd(time(0));
+mt19937_64 rnd(chrono::steady_clock::now().time_since_epoch().count()); 
+
+int rand(int l,int r){
+    return uniform_int_distribution<int>(l,r)(rnd);
+}
 map<PII,bool> mp; 
 signed main(){
     auto solve=[&](){
