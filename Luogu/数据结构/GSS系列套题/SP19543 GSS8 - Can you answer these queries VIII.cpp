@@ -115,7 +115,7 @@ inline void solve() {
             t[y].val = b; pushup(y);
             rt = merge(merge(x, y), z);
         }
-        else if (op[0] == 'Q') {  
+        else if (op[0] == 'Q') {
             read(a, b, k);
             split(rt, x, y, a); split(y, y, z, b - a + 1);
             cout << t[y].res[k] << endl;
