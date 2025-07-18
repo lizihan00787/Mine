@@ -44,7 +44,7 @@ int h[N],lim,b[N],val[N];
 int ls[N],rs[N],root[N],num;
 
 void mis(int u){
-  for(int i=1;bin[i]<=n;++i) f[u][i]=f[f[u][i-1]][i-1];
+  	for(int i=1;bin[i]<=n;++i) f[u][i]=f[f[u][i-1]][i-1];
 }
 int find(int x){return x==fa[x]?x:fa[x]=find(fa[x]);}
 void update(int last,int &now,int l,int r,int x){
@@ -97,12 +97,11 @@ void solve(){
     }
 	for(int i=1;i<=dftot;++i) if(!ls[i]) dfs(find(i));
     while(q--){
-      int u,x,k;
-      read(u,x,k);
-      cout<<query(u,x,k)<<endl;
+		int u,x,k;
+		read(u,x,k);
+		cout<<query(u,x,k)<<endl;
     }
-
-  return;
+	return;
 }
 
 signed main(){
