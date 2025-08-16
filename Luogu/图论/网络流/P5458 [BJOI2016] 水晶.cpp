@@ -70,7 +70,7 @@ namespace Min_Cut{
                 e[i^1].f-=tmp;
             }
         }
-        return sum;
+        return sum; 
     }
     int dinic(int s,int t) {int maxf=0;while(bfs(s,t)) maxf+=dfs(s,t,0x3f3f3f3f);return maxf;}
 }

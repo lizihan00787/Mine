@@ -3,8 +3,6 @@ using namespace std;
 const double eps = 1e-8;
 const double Pi = acos(-1.0);
 const int N = 3e5 + 10;
-inline int dcmp(double x) { return (x < -eps) ? -1 : (x > eps ? 1 : 0); }
-inline double Abs(double x) { return x * dcmp(x); }
 
 namespace CG {
     struct pt {
@@ -14,29 +12,31 @@ namespace CG {
             y = _y;
         }
         inline void read() { scanf("%lf%lf", &x, &y); }
-    };
-    inline bool cmpx(const pt &a, const pt &b) { return (a.x != b.x) ? a.x < b.x : a.y < b.y; }
-
+    } O;
     typedef pt vec;
-    inline double Len(const vec &a) { return sqrt(a.x * a.x + a.y * a.y); } // Ä£³¤
-    inline double angle(const vec &a) { return atan2(a.y, a.x); }
     inline vec operator+(const vec &a, const vec &b) { return vec(a.x + b.x, a.y + b.y); }
     inline vec operator-(const vec &a, const vec &b) { return vec(a.x - b.x, a.y - b.y); }
     inline vec operator*(const vec &a, double b) { return vec(a.x * b, a.y * b); }
     inline vec operator/(const vec &a, double b) { return vec(a.x / b, a.y / b); }
+    inline double operator*(const vec &a, const vec &b) { return a.x * b.x + a.y * b.y; } // ç‚¹ç§¯
+    inline double operator^(const vec &a, const vec &b) { return a.x * b.y - a.y * b.x; } // å‰ç§¯
 
-    inline double operator*(const vec &a, const vec &b) { return a.x * b.x + a.y * b.y; } // µã»ı
-    inline double operator^(const vec &a, const vec &b) { return a.x * b.y - a.y * b.x; } // ²æ»ı
-
-    inline vec rotate(vec a, double theta) { // ½«µã»òÏòÁ¿aÈÆÔ­µã(ÏòÁ¿ÊÇ¶¥µã)ÄæÊ±ÕëĞı×ªthetaµÄ»¡¶È
+    inline double Len(const vec &a) { return sqrt(a.x * a.x + a.y * a.y); } // æ¨¡é•¿
+    inline double angle(const vec &a) { return atan2(a.y, a.x); }
+    inline bool cmpx(const pt &a, const pt &b) { return (a.x != b.x) ? a.x < b.x : a.y < b.y; }
+    inline int dcmp(double x) { return (x < -eps) ? -1 : (x > eps ? 1 : 0); }
+    inline double Abs(double x) { return x * dcmp(x); }
+    
+    inline double dis_PP(pt a, pt b) { return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }   
+    inline vec rotate(vec a, double theta) { // å°†ç‚¹æˆ–å‘é‡aç»•åŸç‚¹(å‘é‡æ˜¯é¡¶ç‚¹)é€†æ—¶é’ˆæ—‹è½¬thetaçš„å¼§åº¦
         double x = a.x * cos(theta) - a.y * sin(theta);
         double y = a.x * sin(theta) + a.y * cos(theta);
         return pt(x, y);
     }
     inline vec rotate_90(vec a) { return pt(a.y, -a.x); }
-    inline pt rotate_P(pt a, pt b, double theta) { return rotate(a - b, theta) + b; } // ½«µãaÈÆµãbÄæÊ±ÕëĞı×ªtheta
+    inline pt rotate_P(pt a, pt b, double theta) { return rotate(a - b, theta) + b; } // å°†ç‚¹aç»•ç‚¹bé€†æ—¶é’ˆæ—‹è½¬theta
 
-    // ÃüÃû¼¼ÇÉ£ºµãP(point)£¬Ïß¶ÎS(segment)£¬ÉäÏßR(ray)£¬Ö±ÏßL(line)
+    // å‘½åæŠ€å·§ï¼šç‚¹P(point)ï¼Œçº¿æ®µS(segment)ï¼Œå°„çº¿R(ray)ï¼Œç›´çº¿L(line)
     struct line {
         pt s, t;
         line(pt _s = pt(0, 0), pt _t = pt(0, 0)) {
@@ -55,50 +55,51 @@ namespace CG {
         if (dcmp(a2 - a1) != 0) return dcmp(a2 - a1) > 0;
         return dcmp((b.t - a.s) ^ (a.t - a.s)) > 0;
     }
-    inline bool operator==(pt a, pt b) { return (!dcmp(a.x - b.x)) && (!dcmp(a.y - b.y)); }
-    inline double dis_PP(pt a, pt b) { return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }              // µãaÓëµãb¼äµÄ¾àÀë
-    inline bool judge_PL(pt a, line b) { return !dcmp((a - b.s) ^ (b.t - b.s)); }                                         // ÅĞ¶ÏµãÊÇ·ñÔÚÖ±ÏßÉÏ
-    inline bool judge_PS(pt a, line b) { return (!dcmp((a - b.s) ^ (b.t - b.s))) && (dcmp((a - b.s) * (a - b.t)) <= 0); } // ÅĞ¶ÏµãÊÇ·ñÔÚÏß¶ÎÉÏ
+    inline bool operator==(pt a, pt b) { return (!dcmp(a.x - b.x)) && (!dcmp(a.y - b.y)); }           // ç‚¹aä¸ç‚¹bé—´çš„è·ç¦»
+    inline bool judge_PL(pt a, line b) { return !dcmp((a - b.s) ^ (b.t - b.s)); }                                         // åˆ¤æ–­ç‚¹æ˜¯å¦åœ¨ç›´çº¿ä¸Š
+    inline bool judge_PS(pt a, line b) { return (!dcmp((a - b.s) ^ (b.t - b.s))) && (dcmp((a - b.s) * (a - b.t)) <= 0); } // åˆ¤æ–­ç‚¹æ˜¯å¦åœ¨çº¿æ®µä¸Š
 
-    inline pt Footprint(pt a, line b) { // µãA¹ØÓÚÖ±ÏßSTµÄ´¹×ã
+    inline bool operator < (const pt &a, const pt &b) { double p = angle(a - O), q = angle(b - O); return p != q ? p < q : dis_PP(a, O) < dis_PP(b, O); }
+
+    inline pt Footprint(pt a, line b) { // ç‚¹Aå…³äºç›´çº¿STçš„å‚è¶³
         pt x = a - b.s, y = a - b.t, z = b.t - b.s;
-        double s1 = x * z, s2 = -1.0 * (y * z); // ·Ö±ğÇó³öAS£¬AT¹ØÓÚSTµÄÍ¶Ó°
+        double s1 = x * z, s2 = -1.0 * (y * z); // åˆ†åˆ«æ±‚å‡ºASï¼ŒATå…³äºSTçš„æŠ•å½±
         return b.s + z * (s1 / (s1 + s2));
     }
-    inline pt mirror(pt a, line b) { return a + (Footprint(a, b) - a) * 2.0; }                 // µãa¹ØÓÚÖ±ÏßbµÄ¶Ô³Æµã
-    inline double dis_PL(pt a, line b) { return Abs((a - b.s) ^ (a - b.t)) / Len(b.t - b.s); } // µãÓëÖ±ÏßµÄ¾àÀë:Ãæ»ı³ıÒÔµ×±ß³¤
-    inline double dis_PS(pt a, line b) {                                                       // µãÓëÏß¶ÎµÄ¾àÀë
+    inline pt mirror(pt a, line b) { return a + (Footprint(a, b) - a) * 2.0; }                 // ç‚¹aå…³äºç›´çº¿bçš„å¯¹ç§°ç‚¹
+    inline double dis_PL(pt a, line b) { return Abs((a - b.s) ^ (a - b.t)) / Len(b.t - b.s); } // ç‚¹ä¸ç›´çº¿çš„è·ç¦»:é¢ç§¯é™¤ä»¥åº•è¾¹é•¿
+    inline double dis_PS(pt a, line b) {                                                       // ç‚¹ä¸çº¿æ®µçš„è·ç¦»
         pt x = a - b.s, y = a - b.t, z = b.t - b.s;
-        if (dcmp(x * z) < 0) return Len(x); // ¾àÀë×ó¶Ëµã×î½ü
-        if (dcmp(y * z) > 0) return Len(y); // ¾àÀëÓÒ¶Ëµã×î½ü
+        if (dcmp(x * z) < 0) return Len(x); // è·ç¦»å·¦ç«¯ç‚¹æœ€è¿‘
+        if (dcmp(y * z) > 0) return Len(y); // è·ç¦»å³ç«¯ç‚¹æœ€è¿‘
         return dis_PL(a, b);
     }
-    inline pt point_PS(pt a, line b) { // µãaÔÚÏß¶ÎbÉÏ¾àÀë×î½üµÄµã
+    inline pt point_PS(pt a, line b) { // ç‚¹aåœ¨çº¿æ®µbä¸Šè·ç¦»æœ€è¿‘çš„ç‚¹
         pt x = a - b.s, y = a - b.t, z = b.t - b.s;
-        if (dcmp(x * z) < 0) return b.s; // ¾àÀë×ó¶Ëµã×î½ü
-        if (dcmp(y * z) > 0) return b.t; // ¾àÀëÓÒ¶Ëµã×î½ü
+        if (dcmp(x * z) < 0) return b.s; // è·ç¦»å·¦ç«¯ç‚¹æœ€è¿‘
+        if (dcmp(y * z) > 0) return b.t; // è·ç¦»å³ç«¯ç‚¹æœ€è¿‘
         return Footprint(a, b);
     }
 
-    inline pt cross_LL(line a, line b) { // Ö±ÏßµÄ½»µã
+    inline pt cross_LL(line a, line b) { // ç›´çº¿çš„äº¤ç‚¹
         pt x = a.t - a.s, y = b.t - b.s, z = a.s - b.s;
         return a.s + x * ((y ^ z) / (x ^ y));
     }
-    inline bool judge_cross_SL(line a, line b) { // ÅĞ¶ÏÏß¶ÎaÓëÖ±ÏßbÊÇ·ñÏà½»
+    inline bool judge_cross_SL(line a, line b) { // åˆ¤æ–­çº¿æ®µaä¸ç›´çº¿bæ˜¯å¦ç›¸äº¤
         if (!dcmp((a.t - a.s) ^ (b.t - b.s))) return false;
-        return judge_PS(cross_LL(a, b), a); // ¿´½»µãÊÇ·ñÔÚÏß¶ÎÉÏ¼´¿É
+        return judge_PS(cross_LL(a, b), a); // çœ‹äº¤ç‚¹æ˜¯å¦åœ¨çº¿æ®µä¸Šå³å¯
     }
-    inline bool judge_cross_SS(line a, line b) { // ÅĞ¶ÏÁ½Ïß¶ÎÊÇ·ñÏà½»
+    inline bool judge_cross_SS(line a, line b) { // åˆ¤æ–­ä¸¤çº¿æ®µæ˜¯å¦ç›¸äº¤
         if (maxx(a) < minx(b) || maxy(a) < miny(b)) return false;
         if (maxx(b) < minx(a) || maxy(b) < miny(a)) return false;
         double s1 = (a.t - a.s) ^ (b.s - a.s), s2 = (a.t - a.s) ^ (b.t - a.s);
         double s3 = (b.t - b.s) ^ (a.s - b.s), s4 = (b.t - b.s) ^ (a.t - b.s);
-        return dcmp(s1) * dcmp(s2) <= 0 && dcmp(s3) * dcmp(s4) <= 0; // aµÄ¶ËµãÔÚbµÄÁ½²àÇÒbµÄ¶ËµãÔÚaµÄÁ½²à
+        return dcmp(s1) * dcmp(s2) <= 0 && dcmp(s3) * dcmp(s4) <= 0; // açš„ç«¯ç‚¹åœ¨bçš„ä¸¤ä¾§ä¸”bçš„ç«¯ç‚¹åœ¨açš„ä¸¤ä¾§
     }
 }
 using namespace CG;
 
-namespace Polygon { // ¶à±ßĞÎ
+namespace Polygon { // å¤šè¾¹å½¢
     struct polygon {
         vector<pt> pts;
         inline pt &operator[](int x) { return pts[x]; }
@@ -108,7 +109,7 @@ namespace Polygon { // ¶à±ßĞÎ
         }
         inline void clear() { pts.clear(); }
         inline int nxt(int x) { return x < pts.size() - 1 ? x + 1 : 0; }
-        inline int include(pt p) { // µãÔÚ¶à±ßĞÎÉÏ£º0:ÔÚ¶à±ßĞÎÍâ,1:ÔÚ¶à±ßĞÎÄÚ£¬2£ºÔÚ¶à±ßĞÎµÄ±ßÉÏ
+        inline int include(pt p) { // ç‚¹åœ¨å¤šè¾¹å½¢ä¸Šï¼š0:åœ¨å¤šè¾¹å½¢å¤–,1:åœ¨å¤šè¾¹å½¢å†…ï¼Œ2ï¼šåœ¨å¤šè¾¹å½¢çš„è¾¹ä¸Š
             int cnt = 0;
             for (int i = 0; i < pts.size(); ++i) {
                 pt s = pts[i], t = pts[nxt(i)];
@@ -122,19 +123,19 @@ namespace Polygon { // ¶à±ßĞÎ
             return cnt & 1;
         }
 
-        inline double area() { // Ãæ»ı
+        inline double area() { // é¢ç§¯
             double ans = 0;
             for (int i = 1; i < pts.size() - 1; ++i) ans += (pts[i] - pts[0]) ^ (pts[nxt(i)] - pts[0]);
             return Abs(ans) / 2;
         }
-        inline double peri() { // ÖÜ³¤
+        inline double peri() { // å‘¨é•¿
             double ans = 0;
             for (int i = 0; i < pts.size(); ++i) ans += dis_PP(pts[i], pts[nxt(i)]);
             return ans;
         }
-        inline bool Left(pt x, pt l, pt r) { return dcmp((l - x) ^ (r - x)) <= 0; } // xlÊÇ·ñÔÚxr×ó²à
-        inline void rever() { reverse(pts.begin(), pts.end()); }                    // ×ªË³Ê±ÕëÎªÄæÊ±Õë
-        inline int include_bs(pt p) {                                               // ¶ş·Ö·¨ÅĞ¶ÏµãÊÇ·ñÔÚ¶à±ßĞÎÄÚ
+        inline bool Left(pt x, pt l, pt r) { return dcmp((l - x) ^ (r - x)) <= 0; } // xlæ˜¯å¦åœ¨xrå·¦ä¾§
+        inline void rever() { reverse(pts.begin(), pts.end()); }                    // è½¬é¡ºæ—¶é’ˆä¸ºé€†æ—¶é’ˆ
+        inline int include_bs(pt p) {                                               // äºŒåˆ†æ³•åˆ¤æ–­ç‚¹æ˜¯å¦åœ¨å¤šè¾¹å½¢å†…
             int n = pts.size();
             if (!Left(pts[0], p, pts[1])) return 0;
             if (!Left(pts[0], pts[n - 1], p)) return 0;
@@ -154,7 +155,7 @@ namespace Polygon { // ¶à±ßĞÎ
         }
         inline void insert(pt p) { pts.push_back(p); }
     };
-    inline bool disjoint(polygon A, polygon B) { // ¶à±ßĞÎABÊÇ·ñÏàÀë
+    inline bool disjoint(polygon A, polygon B) { // å¤šè¾¹å½¢ABæ˜¯å¦ç›¸ç¦»
         for (int i = 0; i < A.pts.size(); ++i) {
             line x = line(A[i], A[A.nxt(i)]);
             for (int j = 0; j < B.pts.size(); ++j) {
@@ -169,8 +170,8 @@ namespace Polygon { // ¶à±ßĞÎ
 }
 using namespace Polygon;
 
-namespace Hull {                     // Í¹°ü¡¢Ğı×ª¿¨¿Ç¡¢°ëÆ½Ãæ½»¡¢ãÉ¿É·òË¹»ùºÍ
-    inline void Andrew(polygon &p) { // AndrewËã·¨ÇóÍ¹°ü
+namespace Hull {                     // å‡¸åŒ…ã€æ—‹è½¬å¡å£³ã€åŠå¹³é¢äº¤ã€é—µå¯å¤«æ–¯åŸºå’Œ
+    inline void Andrew(polygon &p) { // Andrewç®—æ³•æ±‚å‡¸åŒ…
         vector<pt> q(p.pts.size() << 1);
         sort(p.pts.begin(), p.pts.end(), cmpx);
         int top = -1, n = p.pts.size();
@@ -188,8 +189,23 @@ namespace Hull {                     // Í¹°ü¡¢Ğı×ª¿¨¿Ç¡¢°ëÆ½Ãæ½»¡¢ãÉ¿É·òË¹»ùºÍ
         p.clear();
         for (int i = 0; i <= top; ++i) p.insert(q[i]);
     }
+    inline vector<pt> Graham(vector<pt> vec) { // atan2å‡½æ•°æ’åºå­˜åœ¨ç²¾åº¦é—®é¢˜ï¼ï¼ï¼ï¼
+        int n = ((int)vec.size());
+        for (int i = 1; i < n; ++i) if (vec[i].y < vec[0].y || (vec[i].y == vec[0].y && vec[i].x < vec[0].x)) swap(vec[0], vec[i]);
+        O = vec[0];
+        sort(vec.begin() + 1, vec.end());
+        vector<pt> s(n + 1);
+        int ed = 0;
+        for (int i = 0; i < n; ++i) {
+            while (ed >= 2 && dcmp((s[ed] - s[ed - 1]) ^ (vec[i] - s[ed - 1])) <= 0) --ed;
+            s[++ed] = vec[i];
+        }
+        vector<pt> res;
+        for (int i = 1; i <= ed; ++i) res.emplace_back(s[i]);
+        return res;
+    }
     inline double S(const pt &x, const pt &y, const pt &z) { return Abs((y - x) ^ (z - x)); }
-    inline double diam(polygon &p) { // Ğı×ª¿¨¿ÇÇóÍ¹°üÖ±¾¶
+    inline double diam(polygon &p) { // æ—‹è½¬å¡å£³æ±‚å‡¸åŒ…ç›´å¾„
         int n = p.pts.size();
         double ans = 0;
         for (int i = 0, j = 1; i < n; ++i) {
@@ -200,7 +216,7 @@ namespace Hull {                     // Í¹°ü¡¢Ğı×ª¿¨¿Ç¡¢°ëÆ½Ãæ½»¡¢ãÉ¿É·òË¹»ùºÍ
         }
         return ans;
     }
-    inline polygon SI(vector<line> q) { // °ëÆ½Ãæ½»Ëã·¨ S&I
+    inline polygon SI(vector<line> q) { // åŠå¹³é¢äº¤ç®—æ³• S&I
         int n = q.size();
         sort(q.begin(), q.end());
         vector<line> li(n + 1), L(n + 1);
@@ -225,23 +241,19 @@ namespace Hull {                     // Í¹°ü¡¢Ğı×ª¿¨¿Ç¡¢°ëÆ½Ãæ½»¡¢ãÉ¿É·òË¹»ùºÍ
         for (int j = l + 1; j <= r; ++j) P.insert(p[j]);
         return P;
     }
-    inline polygon merge(polygon A, polygon B) { // ãÉ¿É·òË¹»ùºÍ
+    inline polygon merge(polygon A, polygon B) { // é—µå¯å¤«æ–¯åŸºå’Œ
         int n = A.pts.size(), m = B.pts.size(), tot1 = 0, tot2 = 0;
         vector<pt> p(n + 1), q(m + 1);
-        for (int i = 1; i < n; ++i) p[++tot1] = A[i] - A[i - 1];
-        p[++tot1] = A[0] - A[n - 1];
-        for (int i = 1; i < m; ++i) q[++tot2] = B[i] - B[i - 1];
-        q[++tot2] = B[0] - B[m - 1];
+        for (int i = 1; i < n; ++i) p[++tot1] = A[i] - A[i - 1]; p[++tot1] = A[0] - A[n - 1];
+        for (int i = 1; i < m; ++i) q[++tot2] = B[i] - B[i - 1]; q[++tot2] = B[0] - B[m - 1];
         int i = 1, j = 1, tot = 0;
         pt last = pt(0, 0);
         polygon C;
         C.pts.resize(n + m + 1);
         C[0] = last = A[0] + B[0];
         while (i <= n && j <= m) {
-            if (dcmp(p[i] ^ q[j]) >= 0)
-                C[++tot] = last + p[i++], last = C[tot];
-            else
-                C[++tot] = last + q[j++], last = C[tot];
+            if (dcmp(p[i] ^ q[j]) >= 0) C[++tot] = last + p[i++], last = C[tot];
+            else C[++tot] = last + q[j++], last = C[tot];
         }
         while (i <= n) C[++tot] = last + p[i++], last = C[tot];
         while (j <= m) C[++tot] = last + q[j++], last = C[tot];
@@ -253,7 +265,7 @@ using Hull::Andrew;
 using Hull::diam;
 using Hull::merge;
 
-namespace Circle { // Ô²£ºÈıµãÈ·¶¨Ò»Ô²¡¢×îĞ¡Ô²¸²¸Ç
+namespace Circle { // åœ†ï¼šä¸‰ç‚¹ç¡®å®šä¸€åœ†ã€æœ€å°åœ†è¦†ç›–
     struct circle {
         pt o;
         double r;
@@ -261,18 +273,18 @@ namespace Circle { // Ô²£ºÈıµãÈ·¶¨Ò»Ô²¡¢×îĞ¡Ô²¸²¸Ç
             o = _o;
             r = _r;
         }
-        circle(pt A, pt B, pt C) { // ÈıµãÈ·¶¨Ò»Ô²
+        circle(pt A, pt B, pt C) { // ä¸‰ç‚¹ç¡®å®šä¸€åœ†
             pt D = (A + B) / 2, E = (B + C) / 2;
             o = cross_LL(line(D, D + rotate_90(B - A)), line(E, E + rotate_90(C - B)));
             r = dis_PP(o, A);
         }
-        inline bool include(pt p) { return dcmp(r - dis_PP(p, o)) >= 0; } // µãÔÚÔ²ÄÚ
+        inline bool include(pt p) { return dcmp(r - dis_PP(p, o)) >= 0; } // ç‚¹åœ¨åœ†å†…
         inline void print(int x) {
             printf("%.*lf\n", x, r);
             printf("%.*lf %.*lf", x, o.x, x, o.y);
         }
     };
-    inline circle mincov(const vector<pt> &p) { // ×îĞ¡Ô²¸²¸Ç
+    inline circle mincov(const vector<pt> &p) { // æœ€å°åœ†è¦†ç›–
         int n = p.size();
         circle c = circle(0, 0);
         for (int i = 0; i < n; ++i) {

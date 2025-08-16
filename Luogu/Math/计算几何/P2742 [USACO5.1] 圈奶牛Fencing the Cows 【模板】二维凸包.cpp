@@ -25,50 +25,57 @@ int T = 1;
 const int N = 1e5 + 20;
 
 int n;
+const double eps = 1e-8;
 struct pt {
     double x, y;
     pt(double _x = 0, double _y = 0) { x = _x, y = _y; }
-} p[N];
+    inline double len() { return sqrt(x * x + y * y); }
+} O;
 typedef pt vec;
+inline bool cmpx(const pt &a, const pt &b) { return (a.x != b.x) ? a.x < b.x : a.y < b.y; }
 inline vec operator + (const vec &a, const vec &b) { return vec(a.x + b.x, a.y + b.y); }
 inline vec operator - (const vec &a, const vec &b) { return vec(a.x - b.x, a.y - b.y); }
-inline vec operator * (const vec &a, double b) { return vec(a.x * b, a.y * b); }
-inline vec operator / (const vec &a, double b) { return vec(a.x / b, a.y / b); }
-inline double Len(const vec &a) { return sqrt(a.x * a.x + a.y * a.y); }
-inline double operator * (const vec &a, const vec &b) { return a.x * b.x + a.y * b.y; }
+inline vec operator * (const vec &x, double y) { return vec(x.x * y, x.y * y); }
+inline vec operator / (const vec &x, double y) { return vec(x.x / y, x.y / y); }
 inline double operator ^ (const vec &a, const vec &b) { return a.x * b.y - a.y * b.x; }
+inline double operator * (const vec &a, const vec &b) { return a.x * b.x + a.y * b.y; }
+inline double angle(const vec &a) { return atan2(a.y, a.x); }
+inline int dcmp(double x) { return (x < -eps ? -1 : (x > eps ? 1 : 0)); }
+inline double dis_PP(pt a, pt b) { return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }
+inline bool operator < (const pt &a, const pt &b) { double p = angle(a - O), q = angle(b - O); return p != q ? p < q : dis_PP(a, O) < dis_PP(b, O); }
 
-bool cmp(pt a, pt b) {
-    double tmp = (a - p[1]) ^ (b - p[1]);
-    if (tmp > 0) return 1;
-    else if (tmp == 0 && Len(a) < Len(b)) return 1;
-    return 0;
+inline vector<pt> Graham(vector<pt> vec) {
+    int n = ((int)vec.size());
+    for (int i = 1; i < n; ++i) if (vec[i].y < vec[0].y || (vec[i].y == vec[0].y && vec[i].x < vec[0].x)) swap(vec[0], vec[i]);
+    O = vec[0];
+    sort(vec.begin() + 1, vec.end());
+    vector<pt> s(n + 1);
+    int ed = 0;
+    for (int i = 0; i < n; ++i) {
+        while (ed >= 2 && dcmp((s[ed] - s[ed - 1]) ^ (vec[i] - s[ed - 1])) <= 0) --ed;
+        s[++ed] = vec[i];
+    }
+    s[++ed] = vec[0];
+    vector<pt> res;
+    for (int i = 1; i <= ed; ++i) res.emplace_back(s[i]);
+    return res;
 }
-
-int cnt = 1;
-pt s[N];
+pt q[N];
 
 inline void solve() {
     read(n);
     pt tmp;
-    for (int i = 1; i <= n; ++i) {
-        scanf("%lf%lf", &p[i].x, &p[i].y);
-        if (i != 1 && p[i].y < p[1].y) tmp = p[i], p[i] = p[1], p[1] = tmp;
-    }
-    sort(p + 2, p + n + 1, cmp);
-    s[1] = p[1];
-    for (int i = 2; i <= n; ++i) {
-        while (cnt > 1 && ((s[cnt] - s[cnt - 1]) ^ (p[i] - s[cnt])) < 0) cnt--;
-        s[++cnt] = p[i];
-    }
-    s[cnt + 1] = p[1];
+    vector<pt> p(n);
+    for (int i = 0; i < n; ++i) scanf("%lf%lf", &p[i].x, &p[i].y);
+    p = Graham(p);
+    int n = (int)(p.size());
     double ans = 0;
-    for (int i = 1; i <= cnt; ++i) ans += 1.0 * Len(s[i + 1] - s[i]);
+    for (int i = 0; i < n - 1; ++i) ans += 1.0 * (p[i + 1] - p[i]).len();
     printf("%.2lf\n", ans);
 }
 
 signed main() {
-    // freopen(".in","r",stdin);
+    // freopen("P2742_1.in","r",stdin);
     // freopen(".out","w",stdout);
     // read(T);
     while (T--) solve();
