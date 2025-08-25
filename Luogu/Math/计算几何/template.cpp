@@ -59,7 +59,6 @@ namespace CG {
     inline bool judge_PL(pt a, line b) { return !dcmp((a - b.s) ^ (b.t - b.s)); }                                         // 判断点是否在直线上
     inline bool judge_PS(pt a, line b) { return (!dcmp((a - b.s) ^ (b.t - b.s))) && (dcmp((a - b.s) * (a - b.t)) <= 0); } // 判断点是否在线段上
 
-    inline bool operator < (const pt &a, const pt &b) { double p = angle(a - O), q = angle(b - O); return p != q ? p < q : dis_PP(a, O) < dis_PP(b, O); }
 
     inline pt Footprint(pt a, line b) { // 点A关于直线ST的垂足
         pt x = a - b.s, y = a - b.t, z = b.t - b.s;
@@ -216,7 +215,7 @@ namespace Hull {                     // 凸包、旋转卡壳、半平面交、�
         }
         return ans;
     }
-    inline polygon SI(vector<line> q) { // 半平面交算法 S&I
+    inline polygon SI(vector<line> &q) { // 半平面交算法 S&I
         int n = q.size();
         sort(q.begin(), q.end());
         vector<line> li(n + 1), L(n + 1);
@@ -235,7 +234,6 @@ namespace Hull {                     // 凸包、旋转卡壳、半平面交、�
         }
         while (l < r && dcmp((li[l].t - p[r]) ^ (li[l].s - p[r])) > 0) --r;
         while (l < r && dcmp((li[r].t - p[l + 1]) ^ (li[r].s - p[l + 1])) > 0) ++l;
-
         p[r + 1] = cross_LL(li[r], li[l]), ++r;
         polygon P;
         for (int j = l + 1; j <= r; ++j) P.insert(p[j]);
