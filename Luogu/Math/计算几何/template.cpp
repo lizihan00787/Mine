@@ -55,7 +55,7 @@ namespace CG {
         if (dcmp(a2 - a1) != 0) return dcmp(a2 - a1) > 0;
         return dcmp((b.t - a.s) ^ (a.t - a.s)) > 0;
     }
-    inline bool operator==(pt a, pt b) { return (!dcmp(a.x - b.x)) && (!dcmp(a.y - b.y)); }           // 点a与点b间的距离
+    inline bool operator==(pt a, pt b) { return (!dcmp(a.x - b.x)) && (!dcmp(a.y - b.y)); }    
     inline bool judge_PL(pt a, line b) { return !dcmp((a - b.s) ^ (b.t - b.s)); }                                         // 判断点是否在直线上
     inline bool judge_PS(pt a, line b) { return (!dcmp((a - b.s) ^ (b.t - b.s))) && (dcmp((a - b.s) * (a - b.t)) <= 0); } // 判断点是否在线段上
 
