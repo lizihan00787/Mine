@@ -61,7 +61,7 @@ void update(int last, int &now, int l, int r, int x) {
 int query(int a, int x, int k) {
     int l = 1, r = lim;
     for (int j = 18; ~j; --j)
-        if (f[a][j] && val[f[a][j]] <= x) a = f[a][j];
+        if (f[a][j] && val[f[a][j]] <= x && f[a][j]) a = f[a][j];
     int v = root[rs[a]], u = root[ls[a] - 1];
     if (sum[v] - sum[u] < k) return -1;
     while (l < r) {
@@ -96,21 +96,23 @@ void solve() {
     for (int i = 1; i <= n; ++i) h[i] = lower_bound(b + 1, b + 1 + lim, h[i]) - b;
     sort(e + 1, e + 1 + m);
     dftot = n;
+    int las = 0;
     for (int i = 1; i <= m; ++i) {
         int u = find(e[i].u), v = find(e[i].v);
         if (u != v) {
             val[++dftot] = e[i].w, fa[u] = fa[v] = dftot;
-            g[dftot].push_back(u);
+            g[dftot].push_back(u);  
             g[dftot].push_back(v);
             f[u][0] = f[v][0] = dftot;
             if (dftot - n == n - 1) break;
         }
     }
     for (int i = 1; i <= dftot; ++i)
-        if (!ls[i]) dfs(find(i));
+        if (!ls[i] && find(i) == i) dfs(find(i));
     while (q--) {
         int u, x, k;
         read(u, x, k);
+        u = (u ^ las) % n + 1, k = (k ^ las) % n + 1, x = x ^ las;
         cout << query(u, x, k) << endl;
     }
     return;

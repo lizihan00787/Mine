@@ -1,0 +1,16 @@
+\beamer@sectionintoc {1}{组合数}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{组合恒等式}{2}{0}{1}
+\beamer@subsectionintoc {1}{2}{例题}{47}{0}{1}
+\beamer@sectionintoc {2}{Lucas 定理}{64}{0}{2}
+\beamer@subsectionintoc {2}{1}{Lucas 定理}{64}{0}{2}
+\beamer@subsectionintoc {2}{2}{例题}{73}{0}{2}
+\beamer@sectionintoc {3}{卡特兰数}{81}{0}{3}
+\beamer@subsectionintoc {3}{1}{卡特兰数的通项公式}{81}{0}{3}
+\beamer@subsectionintoc {3}{2}{例题}{90}{0}{3}
+\beamer@sectionintoc {4}{二项式反演}{101}{0}{4}
+\beamer@subsectionintoc {4}{1}{二项式反演}{101}{0}{4}
+\beamer@subsectionintoc {4}{2}{例题}{107}{0}{4}
+\beamer@sectionintoc {5}{牛顿级数}{126}{0}{5}
+\beamer@subsectionintoc {5}{1}{牛顿级数}{126}{0}{5}
+\beamer@subsectionintoc {5}{2}{例题}{138}{0}{5}
+\beamer@sectionintoc {6}{完}{146}{0}{6}

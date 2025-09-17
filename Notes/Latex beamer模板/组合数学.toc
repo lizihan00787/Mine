@@ -1,0 +1,9 @@
+\beamer@sectionintoc {1}{前言}{2}{0}{1}
+\beamer@sectionintoc {2}{组合数学}{4}{0}{2}
+\beamer@subsectionintoc {2}{1}{组合恒等式}{4}{0}{2}
+\beamer@subsectionintoc {2}{2}{二项式系数}{31}{0}{2}
+\beamer@subsectionintoc {2}{3}{容斥原理}{41}{0}{2}
+\beamer@sectionintoc {3}{二项式反演}{49}{0}{3}
+\beamer@subsectionintoc {3}{1}{二项式反演}{49}{0}{3}
+\beamer@sectionintoc {4}{Lucas 定理}{69}{0}{4}
+\beamer@subsectionintoc {4}{1}{Lucas 定理}{69}{0}{4}
